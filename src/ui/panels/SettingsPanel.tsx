@@ -7,6 +7,7 @@ import { memoryStore, memoryStoreValue } from '@/history/memory';
 import { ANGLE_MODES } from '@/core/numbers/angle';
 import { SelectField, Notice } from '@/ui/components/primitives';
 import { ACCENT_PRESETS, CONTRAST_OPTIONS, THEME_OPTIONS, type ContrastMode } from '@/ui/theme/presets';
+import { PALETTE_PACKS, paletteById, paletteSwatchStyle } from '@/ui/theme/palettes';
 import {
   applyBackup,
   backupFileName,
@@ -47,7 +48,7 @@ export function SettingsPanel() {
         <h2>Appearance</h2>
         <div className="grid grid--form">
           <SelectField
-            label="Theme"
+            label="Light or dark"
             value={settings.theme}
             onChange={(value) => settingsStore.set({ theme: value as ThemeMode })}
             options={THEME_OPTIONS}
@@ -66,10 +67,18 @@ export function SettingsPanel() {
                   onClick={() => settingsStore.set({ accent: preset.value })}
                 />
               ))}
+              <button
+                type="button"
+                className="btn btn--small"
+                onClick={() => settingsStore.set({ accent: '' })}
+                aria-label="Use the palette's own accent colour"
+              >
+                Palette accent
+              </button>
               <label className="swatch swatch--custom" title="Custom accent colour">
                 <input
                   type="color"
-                  value={settings.accent}
+                  value={settings.accent || paletteById(settings.palette ?? 'classic').light.accent}
                   onChange={(event) => settingsStore.set({ accent: event.target.value })}
                   aria-label="Custom accent colour"
                 />
@@ -77,6 +86,57 @@ export function SettingsPanel() {
             </div>
           </div>
         </div>
+      </section>
+
+      <section className="card">
+        <h2>
+          Theme gallery <span className="pill">{PALETTE_PACKS.length} palettes · 2 each</span>
+        </h2>
+        <p className="muted">
+          Each palette comes in a light and a dark version, so the “Light or dark” choice above doubles what you
+          see here. Palettes are part of the app: no downloads, no accounts, and your choice is remembered offline.
+        </p>
+        <ul className="themes" role="list">
+          {PALETTE_PACKS.map((pack) => {
+            const active = (settings.palette ?? 'classic') === pack.id;
+            return (
+              <li key={pack.id}>
+                <button
+                  type="button"
+                  className={`theme-card${active ? ' is-active' : ''}`}
+                  aria-pressed={active}
+                  aria-label={`${pack.label} palette${active ? ' (current)' : ''}`}
+                  onClick={() => settingsStore.set({ palette: pack.id, accent: '' })}
+                >
+                  <span className="theme-card__preview" aria-hidden="true">
+                    <span className="theme-card__preview-pane" style={paletteSwatchStyle(pack.id, 'dark', true)}>
+                      <span className="theme-card__bar" />
+                      <span className="theme-card__bar theme-card__bar--short" />
+                      <span className="theme-card__dot" />
+                    </span>
+                    <span className="theme-card__preview-pane" style={paletteSwatchStyle(pack.id, 'light', false)}>
+                      <span className="theme-card__bar" />
+                      <span className="theme-card__bar theme-card__bar--short" />
+                      <span className="theme-card__dot" />
+                    </span>
+                  </span>
+                  <span className="theme-card__text">
+                    <strong>
+                      {pack.label}
+                      {pack.tags.includes('accessibility') ? <span className="badge">high contrast</span> : null}
+                      {pack.tags.includes('popular') ? <span className="badge">popular</span> : null}
+                    </strong>
+                    <span className="theme-card__desc">{pack.description}</span>
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+        <p className="field__hint" data-testid="theme-current">
+          Showing <strong>{paletteById(settings.palette ?? 'classic').label}</strong>
+          {settings.accent ? ` with the custom accent ${settings.accent}` : ' with its own accent colour'}.
+        </p>
       </section>
 
       <section className="card">

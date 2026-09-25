@@ -3,14 +3,15 @@
 [![CI](https://github.com/omnica/omnica/actions/workflows/ci.yml/badge.svg)](https://github.com/omnica/omnica/actions/workflows/ci.yml)
 [![Deploy](https://github.com/omnica/omnica/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/omnica/omnica/actions/workflows/deploy-pages.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-1.2.0-informational.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.3.0-informational.svg)](./CHANGELOG.md)
 
 A **free**, offline-first scientific, engineering and graphing calculator for the web, desktop and
 mobile. No accounts, no ads, no paid APIs, no premium tiers — every calculation runs on your device.
 
-> Status: **release 1.2.0** — all 29 phases (0–28) plus the natural-language **Ask OmniCalc** layer (typo-tolerant), 688 automated tests
-> passing, static build verified offline, and deployment/packaging tooling included for every major
-> platform. See [PROJECT_STATUS.md](./PROJECT_STATUS.md) for the phase-by-phase detail.
+> Status: **release 1.3.0** — all 29 phases (0–28) plus the natural-language **Ask OmniCalc** layer
+> (typo-tolerant), a 151-entry knowledge base that answers "what is pi", offline intake for PDF/Word/
+> Excel/PowerPoint/text files, ten colour palettes, an adaptive layout for every screen, and
+> packaging for every app store. See [PROJECT_STATUS.md](./PROJECT_STATUS.md) for the details.
 
 ## What it does
 
@@ -20,10 +21,13 @@ mobile. No accounts, no ads, no paid APIs, no premium tiers — every calculatio
 | Analyse | graphing (zoom/pan/trace, roots, extrema, areas), calculus (derivatives, integrals, limits, series), equation solver, matrices & vectors, statistics, probability |
 | Convert | unit converter (13 categories), physical & mathematical constants, number systems and bitwise logic |
 | Applied | engineering (electrical, physics, geometry), finance & everyday (loans, interest, ROI, percentages, dates, tips) |
-| System | history with favourites, memory slots, settings, themes, backup export/import, installable offline PWA |
+| Explain | **Ask in plain words** ("20 percent of 250", "solve 3x + 5 = 20"), a 151-entry knowledge base ("what is pi", "define acceleration", "what unit is N"), stored formulas and constants that can be sent straight to the calculator |
+| Read your files | drop a **PDF, Word, Excel, PowerPoint, OpenDocument, CSV, JSON, text or image** file and OmniCalc lists the questions inside it and solves them — read on your device, never uploaded |
+| System | history with favourites, memory slots, settings, **ten colour palettes** in light and dark, adaptive layout for phone/tablet/desktop, backup export/import, installable offline PWA |
 
 Extras: command palette (`Ctrl/Cmd+K`), full keyboard navigation, high-contrast and reduced-motion
-modes, English-first UI that works from a 320 px phone upward.
+modes, and a fluid layout that adapts from a 320 px phone to a split-screen tablet to a wide desktop
+(container queries, safe-area insets, landscape and print passes).
 
 ## Run it anywhere
 
@@ -36,7 +40,9 @@ modes, English-first UI that works from a 320 px phone upward.
 | Own server | `docker compose up -d --build` → `http://localhost:8080` |
 | nginx / Apache / S3 | Static files + the cache headers in [DEPLOYMENT.md](./DEPLOYMENT.md) |
 | Desktop (Win/macOS/Linux) | `npm run desktop:build` (Tauri v2, ~10 MB installers) |
-| Android / iOS | Install the PWA, or `cargo tauri android|ios init` |
+| Google Play | `npm run store:twa:build` (TWA) or `npm run mobile:android:build` (native) |
+| App Store | `npm run mobile:ios:init && npm run mobile:ios:build` |
+| Other stores | `docs/STORES.md` — Microsoft Store, F-Droid, Amazon, Samsung, Huawei, Snap, Flathub, Homebrew, Winget… |
 
 Everything above ships the same build: one engine, one UI, no per-platform forks.
 
@@ -48,7 +54,11 @@ Everything above ships the same build: one engine, one UI, no per-platform forks
 | [DEPLOYMENT.md](./DEPLOYMENT.md) | static hosting recipes, PWA verification, cache headers |
 | [docs/DESKTOP.md](./docs/DESKTOP.md) | Tauri/Electron packaging and mobile notes |
 | [CONTRIBUTING.md](./CONTRIBUTING.md) | workflow, code rules, how to add a tool |
-| [docs/PUBLISHING.md](./docs/PUBLISHING.md) | five-minute publishing guide for every platform |
+| [docs/PUBLISHING.md](./docs/PUBLISHING.md) | five-minute publishing guide for the web platforms |
+| [docs/STORES.md](./docs/STORES.md) | step-by-step Play Store, App Store and every other store |
+| [docs/STORE_LISTING.md](./docs/STORE_LISTING.md) | ready-to-paste store listing text |
+| [PRIVACY.md](./PRIVACY.md) | privacy policy (served as `privacy.html` for store submissions) |
+| [docs/ASK.md](./docs/ASK.md) | every sentence Ask OmniCalc understands |
 | [CHANGELOG.md](./CHANGELOG.md) | release history |
 | [SECURITY.md](./SECURITY.md) | threat model, hardening measures, how to report a vulnerability |
 | [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) | community expectations |
@@ -68,7 +78,7 @@ Everything above ships the same build: one engine, one UI, no per-platform forks
 ```bash
 npm ci
 npm run dev        # http://localhost:5173
-npm run verify     # typecheck + 688 tests + production build (the gate for every change)
+npm run verify     # themes:check + typecheck + 727 tests + production build (the gate for every change)
 npm run build      # type-check + production bundle + service worker
 npm run preview    # serve the production build
 ```
@@ -122,7 +132,7 @@ Rules the codebase enforces (all covered by automated guard tests):
 | Gate | Command | What it covers |
 | --- | --- | --- |
 | Typecheck | `npm run typecheck` | strict TS across app, tests and build scripts |
-| Tests | `npm test` | 688 tests: engine, every math domain, every panel, a11y sweep, integration, perf and safety guardrails |
+| Tests | `npm test` | 727 tests: engine, every math domain, every panel, knowledge and file intake, themes, packaging, a11y sweep, integration, perf and safety guardrails |
 | Build | `npm run build` | production bundle + generated service worker |
 | All three | `npm run verify` | the single release gate (also run by CI on Node 20 and 22) |
 

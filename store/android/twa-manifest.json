@@ -1,0 +1,39 @@
+{
+  "packageId": "app.omnica.calculator",
+  "host": "REPLACE-WITH-YOUR-DEPLOYED-HOST.example.com",
+  "webManifestUrl": "https://REPLACE-WITH-YOUR-DEPLOYED-HOST.example.com/manifest.webmanifest",
+  "name": "OmniCalc — Free Scientific Calculator",
+  "launcherName": "OmniCalc",
+  "display": "standalone",
+  "orientation": "any",
+  "themeColor": "#0b1020",
+  "themeColorDark": "#0b1020",
+  "navigationColor": "#0b1020",
+  "navigationColorDark": "#0b1020",
+  "backgroundColor": "#0b1020",
+  "startUrl": "/",
+  "fullScopeUrl": "/",
+  "iconUrl": "https://REPLACE-WITH-YOUR-DEPLOYED-HOST.example.com/icons/icon-512.png",
+  "maskableIconUrl": "https://REPLACE-WITH-YOUR-DEPLOYED-HOST.example.com/icons/icon-512-maskable.png",
+  "monochromeIconUrl": "https://REPLACE-WITH-YOUR-DEPLOYED-HOST.example.com/favicon.svg",
+  "splashScreenFadeOutDuration": 200,
+  "appVersionName": "1.3.0",
+  "appVersionCode": 10300,
+  "minSdkVersion": 21,
+  "enableNotifications": false,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "generatorApp": "bubblewrap-cli",
+  "features": {},
+  "shortcuts": [
+    { "name": "Calculator", "shortName": "Calc", "url": "/#/calculator" },
+    { "name": "Graphing", "shortName": "Graph", "url": "/#/graph" },
+    { "name": "Unit converter", "shortName": "Units", "url": "/#/conversions" },
+    { "name": "Ask OmniCalc", "shortName": "Ask", "url": "/#/ask" }
+  ],
+  "signingKey": {
+    "path": "./android.keystore",
+    "alias": "omnica"
+  },
+  "appVersion": "1.3.0"
+}

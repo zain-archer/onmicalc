@@ -6,6 +6,8 @@ export type FractionMode = 'auto' | 'decimal' | 'fraction';
 
 export interface Settings {
   theme: ThemeMode;
+  /** Palette pack id (see `src/ui/theme/palettes.json`). */
+  palette: string;
   accent: string;
   angleMode: AngleMode;
   /** Significant digits used when formatting results. */
@@ -22,6 +24,7 @@ export interface Settings {
 
 export const DEFAULT_SETTINGS: Settings = {
   theme: 'system',
+  palette: 'classic',
   accent: '#6366f1',
   angleMode: 'DEG',
   precision: 12,

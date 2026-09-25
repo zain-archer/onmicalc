@@ -1,11 +1,6 @@
-// OmniCalc desktop shell.
-//
-// The web build is embedded as-is: every calculation happens in the same
-// TypeScript engine the browser uses, and the app makes no network requests.
+// OmniCalc desktop entry point. Mobile uses `omnica_lib::run()` directly.
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    tauri::Builder::default()
-        .run(tauri::generate_context!())
-        .expect("error while running OmniCalc");
+    omnica_lib::run();
 }

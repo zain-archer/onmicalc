@@ -1,10 +1,24 @@
 # OmniCalc — Project Status
 
-_Last updated: 2026-09-25 (Phases 0–28 complete, release 1.0.0 · Phase 29 Ask OmniCalc layer, releases 1.1.0 and 1.2.0)_
+_Last updated: 2026-09-25 (Phases 0–28 complete, release 1.0.0 · Phase 29 Ask OmniCalc layer, 1.1.0–1.2.0 · 1.3.0 themes, adaptive layout, knowledge base, file intake and store packaging)_
 
 ## Current phase
 
-**Phase 29 — Plain-language entry ("Ask OmniCalc")** (complete). All 29 original phases are implemented and shipped (**1.0.0**); **1.1.0** adds the intent layer so the app can be used without knowing which tool to open, and **1.2.0** makes that layer typo-tolerant.
+**Phase 29 — Plain-language entry ("Ask OmniCalc")** (complete). All 29 original phases are implemented and shipped (**1.0.0**); **1.1.0** adds the intent layer so the app can be used without knowing which tool to open, **1.2.0** makes that layer typo-tolerant, and **1.3.0** adds selectable themes, a layout that adapts to every device, a sourced knowledge base ("what is pi"), offline reading of PDF/Office/text files, and packaging for every app store.
+
+## 1.3.0 — Themes, adaptive layout, understanding everything, app stores
+
+| Piece | Where | What it does |
+| --- | --- | --- |
+| Palette data | `src/ui/theme/palettes.json` | Ten palettes (Classic, Solarized, Dracula, Nord, GitHub, Sepia, High Contrast, Ocean, Sunset, Forest) × light and dark, each defined once as eleven tokens with tags (`popular`, `accessibility`, `more`). |
+| Theme generator | `scripts/gen-themes.mjs` → `src/styles/themes.css` | `npm run themes` writes the stylesheet; `npm run themes:check` fails `npm run verify` if the generated file drifts from the data, so hand edits cannot ship. |
+| Theme plumbing | `src/ui/theme/palettes.ts`, `theme.ts`, `src/settings/types.ts`, `index.html` | `settings.palette` is applied as `data-palette` on the document root before first paint (no flash), the browser/OS `theme-color` follows the palette, and a custom accent is only used when it is a valid hex that differs from the palette's own accent. |
+| Theme gallery | `src/ui/panels/SettingsPanel.tsx` | Every palette shown as a card with live light/dark previews, grouped popular/accessibility/more, keyboard- and screen-reader-labelled, with a one-click reset to the palette accent. |
+| Adaptive layout | `src/styles/global.css`, `index.html` | Fluid type/spacing scale, container queries at 520 px and 760 px (panels adapt to their own width, not the window), safe-area insets with `viewport-fit=cover`, `100dvh`, landscape and ≤360 px passes, a 701–900 px tablet sidebar, touch-only sizing, a print sheet and `prefers-contrast`/`prefers-reduced-transparency` support. |
+| Knowledge base | `src/knowledge/index.ts`, `entries/*.json` | 151 sourced entries (mathematics 63, physics 45, chemistry 14, computing 15, finance 14) with definition, detail, formula, units, source and related tool. `resolveTerm` answers exactly, suggests near misses, and recognises terms it knows elsewhere (units, constants, functions) instead of inventing an answer. |
+| Definitions in Ask | `src/intents/capabilities/knowledge.ts` | "what is pi" (entry + CODATA value + live check), "what is a mile" (unit and category), "define ohm's law" (entry + formula), "search for energy", "list physics constants", "what formulas do you know". Unknown terms are reported, never fabricated. A new `accepts()` guard keeps arithmetic ("what is 12 + 34 * 2") with the calculator rather than the definition engine. |
+| File intake | `src/knowledge/files.ts`, `src/knowledge/pdf.ts`, `src/ui/panels/AskPanel.tsx` | Attach or drop a PDF, Word, Excel, PowerPoint, OpenDocument, CSV/TSV, JSON, XML, YAML, LaTeX, log, source or text file: it is read on the device (Office formats unzipped with `DecompressionStream('deflate-raw')`, PDFs decoded by a built-in raw-DEFLATE inflater with `Tj`/`TJ` operators), the questions inside are listed as chips and solved one after another, and the extracted text stays editable. Images are displayed but never guessed at — OmniCalc says it has no OCR instead of inventing text. |
+| Store packaging | `docs/STORES.md`, `store/`, `scripts/gen-store-icons.mjs`, `scripts/gen-assetlinks.mjs`, `src-tauri/` | Step-by-step Google Play (TWA *and* native Tauri Android), App Store, Microsoft Store, F-Droid, Amazon/Samsung/Huawei, Snap/Flathub/AppImage/deb/rpm/AUR and Winget/Homebrew recipes; generated Play/App Store artwork; a Digital Asset Links generator; a Tauri mobile entry point; and `src/packaging.test.ts` guardrails that fail the build if versions, identifiers, icons, scripts or listing text drift apart. |
 
 ## Phase 29 — Plain-language entry layer (1.1.0 → 1.2.0)
 
@@ -142,13 +156,19 @@ value.
 
 ## In progress
 
-Nothing — 1.1.0 (Ask OmniCalc) is released and the project is in maintenance mode.
+Nothing — 1.3.0 is complete and verified (themes, adaptive layout, knowledge base, file intake, store
+packaging).
 
 ## Remaining
 
-Nothing outstanding from the original plan (phases 0–28 are all complete and released). Future work
-would be new phases beyond it, each following the same discipline:
+Nothing outstanding from the original plan (phases 0–28 are all complete and released, and the
+post-release passes — natural-language entry, typo tolerance, themes, adaptive layout, the knowledge
+base, file intake and store packaging — are in 1.3.0). Future work would be new phases beyond it,
+each following the same discipline:
 
+- OCR for pictures of questions (today images are shown and the user types the question; there is no
+  on-device OCR and the app refuses to pretend otherwise).
+- More knowledge entries (151 today) and worked examples attached to each formula.
 - Symbolic (closed-form) integration and equation rearrangement, with the same “say so when unsure”
   policy as the numeric methods.
 - 3-D surface plotting and vector fields.
@@ -164,27 +184,30 @@ would be new phases beyond it, each following the same discipline:
 | Engine and math domains (core, math, constants, conversions, history, settings) | 21 | 294 | passing |
 | Applied calculators (engineering, finance) | 2 | 27 | passing |
 | Graphing | 1 | 15 | passing |
-| UI panels, shell, palette, theme and shortcuts | 16 | 102 | passing |
+| UI panels, shell, themes, palettes and shortcuts | 17 | 113 | passing |
 | Intent layer (routing, answers, patterns, units) | 1 | 117 | passing |
 | Typo tolerance (distance, readings, mistyped requests) | 1 | 41 | passing |
+| Knowledge base and file intake (formats, PDF, worksheet questions) | 1 | 15 | passing |
 | PWA (status, install, updates) | 3 | 8 | passing |
 | Storage, backup and export | 2 | 12 | passing |
-| Integration (every tool renders, cross-panel flows) | 1 | 24 | passing |
+| Integration (every tool renders, cross-panel flows) | 1 | 25 | passing |
 | Performance and safety guardrails | 2 | 14 | passing |
-| Constants → engine integration | 1 | 14 | passing |
-| Accessibility sweep (per-tool semantics) | 1 | 21 | passing |
-| **Total** | **52** | **688** | **all passing** |
+| Store packaging guardrails (versions, icons, listing text) | 1 | 11 | passing |
+| Constants → engine integration | 1 | 8 | passing |
+| Accessibility sweep (per-tool semantics) | 1 | 22 | passing |
+| **Total** | **55** | **727** | **all passing** |
 
-`npx tsc -b --force` is clean. `npm run verify` (typecheck → tests → build) is the release gate and
-is green.
+`npx tsc -b --force` is clean. `npm run verify` (themes:check → typecheck → tests → build) is the
+release gate and is green.
 
 ## Build status
 
-`npm run build` succeeds — initial entry chunk 313.79 kB (98.82 kB gzip) plus 22.95 kB CSS (5.13 kB
-gzip), with 18 on-demand chunks between 2.3 kB and 89.4 kB (the Ask panel chunk carries the intent
-layer and every capability pack; it is fetched only when that tool is opened). The service worker
-precaches all 38 emitted assets (including `robots.txt` and `sitemap.xml`) under a content-hash cache
-name (`omnica-0bb12a5677e7`). The output is pure static files: no server, no rewrites, no environment
+`npm run build` succeeds — initial entry chunk 322.79 kB (101.86 kB gzip) plus 32.14 kB CSS (7.31 kB
+gzip, up from 22.95 kB with the ten palettes and the adaptive-layout rules), with 18 on-demand chunks
+between 2.3 kB and 184.4 kB (the Ask panel chunk carries the intent layer, every capability pack and
+the file readers; it is fetched only when that tool is opened). The service worker precaches all 39
+emitted assets (including `robots.txt`, `sitemap.xml` and `privacy.html`) under a content-hash cache
+name (`omnica-e87db937cbba`). The output is pure static files: no server, no rewrites, no environment
 variables.
 
 ## Deployment status
@@ -199,7 +222,11 @@ Publishable to every major platform with committed configuration:
 | Docker / any registry | `Dockerfile`, `docker/nginx.conf`, `docker-compose.yml` |
 | nginx, Apache, S3, `file://` | recipes in `DEPLOYMENT.md` |
 | GitHub Releases | `.github/workflows/release.yml` (tag `v*`) |
-| Desktop + mobile | `src-tauri/` + `docs/DESKTOP.md` |
+| Desktop + mobile | `src-tauri/` (Tauri v2, with the mobile entry point) + `docs/DESKTOP.md` |
+| Google Play | `store/android/twa-manifest.json` + `npm run store:twa:build` (TWA) or `npm run mobile:android:build` (native) |
+| Apple App Store | `npm run mobile:ios:init && npm run mobile:ios:build` |
+| Microsoft Store, F-Droid, Amazon, Samsung, Huawei, Snap, Flathub, Winget, Homebrew | recipes in `docs/STORES.md`; listing text in `docs/STORE_LISTING.md` |
+| Privacy policy for store forms | `PRIVACY.md`, served as `dist/privacy.html` |
 
 Local verification done here: production build served with `npm run preview`, offline reload, zero
 post-load network requests, `npm audit` clean. The app has **not** been published to a public URL
@@ -209,7 +236,9 @@ workflows and configs above need nothing else.
 ## Known bugs
 
 None open. Every issue found during the production pass (constants availability, `G` case handling,
-garbled `e_charge` symbol, unlabelled memory fields) is fixed and covered by a regression test.
+garbled `e_charge` symbol, unlabelled memory fields) is fixed and covered by a regression test, and
+the 1.3.0 pass fixed the one routing regression it introduced ("what is 12 + 34 * 2" going to the
+definition engine) by adding and testing a capability `accepts()` guard.
 
 ## Deliberate design decisions
 
@@ -223,6 +252,10 @@ garbled `e_charge` symbol, unlabelled memory fields) is fixed and covered by a r
 - Where a closed form is unavailable or input is not a polynomial, the solver says so explicitly
   rather than returning an approximate "answer".
 - No `eval`/`new Function` anywhere; all expressions go through the hand-written parser.
+- Definitions are data with a source attached (`src/knowledge/entries/*.json`); a term that is not in
+  the knowledge base is reported as unknown with near matches, never filled in from a guess.
+- Files are read in memory on the device and never uploaded, and pictures are shown rather than
+  "read": there is no OCR, and the app says so instead of inventing a question.
 
 ## Key facts for future sessions
 
@@ -231,6 +264,9 @@ garbled `e_charge` symbol, unlabelled memory fields) is fixed and covered by a r
 - Add a tool by editing `src/ui/tools.ts` and registering its panel in `src/ui/shell/AppShell.tsx`;
   flip `status` to `ready` only when UI + logic + errors + tests + docs exist.
 - Storage keys are versioned (`omnica.settings.v1`); bump the suffix on breaking changes.
-- Run `npx tsc -b --force && npx vitest run && npm run build` after every phase.
+- Run `npx tsc -b --force && npx vitest run && npm run build` after every phase (`npm run verify` also
+  runs `themes:check` first).
+- `src/styles/themes.css` is generated from `src/ui/theme/palettes.json` — never edit it by hand.
+- Knowledge lives in `src/knowledge/entries/*.json`; adding an entry needs no code change.
 - All trigonometry goes through `src/math/trigonometry` so exact-angle behaviour and domain checks
   are preserved.

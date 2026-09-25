@@ -136,10 +136,10 @@ export interface PlanOptions {
 }
 
 /** A bare sum like "2^10" or "(3+4)*2" is arithmetic even without the word "calculate". */
-function looksLikeArithmetic(raw: string): boolean {
+export function looksLikeArithmetic(raw: string): boolean {
   const trimmed = raw.trim();
   if (trimmed.length < 2) return false;
-  if (!/[\d)]/.test(trimmed) || !/[-+*/^%]/.test(trimmed)) return false;
+  if (!/[\d)]/.test(trimmed) || !/[-+*/^%!]/.test(trimmed)) return false;
   // Strip digits, operators and punctuation: if letters remain it is prose,
   // a variable ("x^2 - 5x + 6") or a function call, not a bare sum.
   return trimmed.replace(/[\d.]+/g, '').replace(/[-+*/^%(),;:\s]/g, '').length === 0;
@@ -147,6 +147,7 @@ function looksLikeArithmetic(raw: string): boolean {
 
 export function scoreCapabilities(raw: string): { capability: Capability; score: number }[] {
   return everyCapability()
+    .filter((capability) => !capability.accepts || capability.accepts(raw))
     .map((capability) => {
       const keywords = Math.max(0, ...capability.keywords.map((keyword) => keywordScore(raw, keyword)));
       const examples = exampleScore(raw, capability);

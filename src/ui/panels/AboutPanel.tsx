@@ -48,6 +48,9 @@ export function AboutPanel() {
         </p>
         <ul className="ticks">
           <li>Ask in plain words — “how many miles is 42 km”</li>
+          <li>Definitions on demand — “what is pi”, “define acceleration”, “what unit is N”</li>
+          <li>Drop in a PDF, Word, Excel, PowerPoint or text file and solve its questions</li>
+          <li>Ten colour palettes, light and dark, in Settings</li>
           <li>100% offline capable</li>
           <li>No data ever leaves the device</li>
           <li>Open source ({APP_LICENSE})</li>

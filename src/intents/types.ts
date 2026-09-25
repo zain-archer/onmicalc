@@ -136,6 +136,13 @@ export interface Capability {
    * the field values.
    */
   patterns?: PatternSpec[];
+  /**
+   * Optional last word on whether this capability should be considered at all.
+   * Keeps a broad template ("what is X") away from requests that belong to a
+   * more specific tool ("what is 12 + 34 * 2" is arithmetic, not a definition).
+   * Ignored when the caller forces a capability by id.
+   */
+  accepts?(raw: string): boolean;
   run(context: SolveContext): SolveOutcome;
 }
 

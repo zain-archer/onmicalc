@@ -4,6 +4,7 @@ import { historyStore, type HistoryEntry } from '@/history/store';
 import { memoryStore } from '@/history/memory';
 import { draftStore } from '@/ui/bus';
 import { APP_VERSION } from '@/version';
+import { isPaletteId } from '@/ui/theme/palettes';
 
 /**
  * Local backup format. Everything lives in this file — no account, no server,
@@ -75,9 +76,11 @@ function cleanSettings(value: unknown): Settings {
   const base = { ...DEFAULT_SETTINGS };
   const settings: Settings = { ...base };
   if (value.theme === 'light' || value.theme === 'dark' || value.theme === 'system') settings.theme = value.theme;
-  if (typeof value.accent === 'string' && /^#[0-9a-f]{6}$/i.test(value.accent)) {
+  // An empty accent means "use the palette's own colour", so it is valid too.
+  if (typeof value.accent === 'string' && (value.accent === '' || /^#[0-9a-f]{6}$/i.test(value.accent))) {
     settings.accent = value.accent;
   }
+  if (typeof value.palette === 'string' && isPaletteId(value.palette)) settings.palette = value.palette;
   if (value.angleMode === 'DEG' || value.angleMode === 'RAD' || value.angleMode === 'GRAD') {
     settings.angleMode = value.angleMode;
   }

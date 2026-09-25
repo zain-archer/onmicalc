@@ -9,7 +9,7 @@ In a hurry? [docs/PUBLISHING.md](./docs/PUBLISHING.md) is the two-command-per-pl
 this document.
 
 ```bash
-npm run verify                       # mandatory gate: typecheck, 688 tests, production build
+npm run verify                       # mandatory gate: themes, typecheck, 727 tests, production build
 npx serve dist                       # or: npm run preview
 docker compose up -d --build         # self-hosted container → http://localhost:8080
 ```

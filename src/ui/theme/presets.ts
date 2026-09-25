@@ -7,6 +7,9 @@ export interface AccentPreset {
   value: string;
 }
 
+/** `#000000` means "use the palette's own accent" (the default). */
+export const PALETTE_ACCENT = '';
+
 export const ACCENT_PRESETS: readonly AccentPreset[] = [
   { id: 'indigo', label: 'Indigo', value: '#6366f1' },
   { id: 'sky', label: 'Sky', value: '#0ea5e9' },
@@ -36,9 +39,14 @@ export function isAccentPreset(value: string): boolean {
 }
 
 /** Validates a CSS colour so a hand-typed value can never break the theme. */
-export function normaliseAccent(value: string): string {
+/** True when the string is a safe 6-digit hex colour. */
+export function isHexColour(value: string): boolean {
+  return /^#[0-9a-f]{6}$/i.test(value.trim());
+}
+
+export function normaliseAccent(value: string, fallback = '#6366f1'): string {
   const trimmed = value.trim();
-  return /^#[0-9a-f]{6}$/i.test(trimmed) ? trimmed.toLowerCase() : '#6366f1';
+  return /^#[0-9a-f]{6}$/i.test(trimmed) ? trimmed.toLowerCase() : fallback;
 }
 
 export function nextThemeMode(current: ThemeMode): ThemeMode {

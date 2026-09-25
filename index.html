@@ -36,11 +36,14 @@
       (function () {
         try {
           var raw = localStorage.getItem('omnica.settings.v1');
-          var t = raw ? (JSON.parse(raw).theme || 'system') : 'system';
+          var saved = raw ? JSON.parse(raw) : {};
+          var t = saved.theme || 'system';
           var dark = t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
-          document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-          var accent = raw ? JSON.parse(raw).accent : null;
-          if (accent) document.documentElement.style.setProperty('--accent', accent);
+          var root = document.documentElement;
+          root.dataset.theme = dark ? 'dark' : 'light';
+          root.dataset.palette = saved.palette || 'classic';
+          // A custom accent may be null/empty (meaning "use the palette's own").
+          if (saved.accent) root.style.setProperty('--accent', saved.accent);
         } catch (e) { /* ignore: defaults apply */ }
       })();
     </script>

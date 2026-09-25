@@ -46,12 +46,22 @@ describe('applyTheme', () => {
     expect(root.style.getPropertyValue('--accent')).toBe('#10b981');
   });
 
-  it('defaults to normal contrast, full motion and a safe accent', () => {
+  it('defaults to normal contrast, full motion and the palette accent', () => {
     applyTheme('light', 'not-a-colour');
     const root = document.documentElement;
     expect(root.dataset.contrast).toBe('normal');
     expect(root.dataset.motion).toBe('full');
-    expect(root.style.getPropertyValue('--accent')).toBe('#6366f1');
+    // No inline accent: the palette's own colour from the stylesheet is used.
+    expect(root.style.getPropertyValue('--accent')).toBe('');
+    expect(root.dataset.palette).toBe('classic');
+  });
+
+  it('applies a custom accent only when one is set', () => {
+    applyTheme('dark', '#123456', { palette: 'ocean' });
+    expect(document.documentElement.style.getPropertyValue('--accent')).toBe('#123456');
+    // Setting the palette's own colour back to normal removes the override.
+    applyTheme('dark', '', { palette: 'ocean' });
+    expect(document.documentElement.style.getPropertyValue('--accent')).toBe('');
   });
 
   it('resolves the system theme through the media query', () => {

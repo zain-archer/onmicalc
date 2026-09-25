@@ -50,8 +50,10 @@ Expect a much larger installer; no OmniCalc code changes are needed either way.
 
 1. Simplest: install the PWA from the browser (Add to Home Screen). It is offline-capable and looks
    native, and it stays free forever.
-2. Native wrappers: Tauri v2 supports Android and iOS (`cargo tauri android init`,
-   `cargo tauri ios init`), reusing the same configuration.
+2. Native wrappers: Tauri v2 supports Android and iOS (`npm run mobile:android:init`,
+   `npm run mobile:ios:init`) and, for the App Store, Capacitor is a documented fallback.
+   Store listings, signing and the upload steps for Play, the App Store and every other platform are
+   in [`STORES.md`](./STORES.md).
 
 ## Publishing the desktop builds from CI
 
@@ -62,7 +64,7 @@ only secret needed, and only if you choose to sign.
 
 ## Release checklist
 
-- [ ] `npm run verify` green (typecheck + 688 tests + production build)
+- [ ] `npm run verify` green (themes:check + typecheck + 727 tests + production build)
 - [ ] `README.md`, `CHANGELOG.md` and `PROJECT_STATUS.md` updated
 - [ ] Version bumped in `package.json` and `src-tauri/tauri.conf.json` — the UI and backups read it from there
 - [ ] Fresh-profile smoke test: first run, keyboard-only navigation, offline reload, export/import

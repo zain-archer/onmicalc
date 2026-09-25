@@ -28,6 +28,39 @@ The app opens on **Ask OmniCalc** (`#/ask`). Type a sentence in ordinary words, 
 | Money | `compound interest on 1000 at 5 percent for 10 years` · `loan of 200000 at 6 percent for 30 years` · `roi on 1000 growing to 1600 in 5 years` |
 | Dates & time | `days between 2024-01-01 and 2026-09-25` · `how old am I if born 1995-04-12` · `time between 09:00 and 17:30` |
 
+## Definitions and explanations
+
+OmniCalc carries a **151-entry knowledge base** (mathematics 63, physics 45, chemistry 14, computing
+15, finance 14) written as data: definition, a longer note, the formula where one exists, units, tags,
+a source and a link to the tool that computes with it.
+
+| What you want | Type something like | You get |
+| --- | --- | --- |
+| A definition | `what is pi` · `define acceleration` · `define entropy` | the entry, its formula, units and source — plus a live numeric check for constants |
+| A unit explained | `what is a mile` · `what unit is N` · `what is a nibble` | the unit, its category and its exact definition relative to the base unit |
+| A formula | `formula for kinetic energy` · `what is the equation for density` · `how do i calculate power` | the formula and what each variable means, ready to send to the calculator or the graph |
+| Everything about a topic | `search for energy` · `list physics constants` · `what formulas do you know` | ranked matches (15 for "energy"), constants by area, or every stored formula |
+
+An unknown term is never invented: you get the nearest entries that do exist, or `“x” is not in the
+knowledge base — try another wording`.
+
+## Questions inside your files
+
+Attach a file in the Ask panel (button or drag-and-drop) and OmniCalc reads it **on your device** and
+lists the questions it finds as chips; the first is solved straight away.
+
+| Format | How it is read |
+| --- | --- |
+| PDF | built-in extractor: `FlateDecode` streams (raw-DEFLATE inflater written for the job), `Tj`/`TJ`/`'`/`"` text operators, string escapes, page count. A scanned or CID-only PDF is reported as a picture, never guessed at |
+| Word `.docx`, Excel `.xlsx`, PowerPoint `.pptx` | unzipped in the browser with `DecompressionStream('deflate-raw')` — paragraphs, cell values and slide text |
+| OpenDocument `.odt`/`.ods`/`.odp` | `content.xml` paragraphs and cells |
+| Text, Markdown, CSV/TSV, JSON, XML, YAML, LaTeX, logs, source code | read directly, markup stripped |
+| Images (`.png`, `.jpg`, …) | shown to you; OmniCalc does **not** do image recognition and says so rather than inventing text |
+
+The extracted text appears in an editable box, so an imperfect read is fixable in place, and **Skip to
+the next question** walks down the list. Question detection scores each line by instruction verb
+("solve", "calculate", "convert"), an `=`, numbers with operators, and a trailing question mark.
+
 ## Typos are fine
 
 You do not have to spell anything correctly — words are matched against everything the app knows
@@ -78,7 +111,8 @@ so “I want to know” can never become “watt” or “now”). History store
 ## Extending it
 
 Add a `Capability` object in `src/intents/capabilities/*.ts` (id, title, promise, group, keywords,
-examples, inputs, optional `patterns`, and a `run()` that returns result blocks), then export it from
+examples, inputs, optional `patterns`, an optional `accepts(sentence)` guard that can rule the
+capability out before scoring, and a `run()` that returns result blocks), then export it from
 `capabilities/index.ts`. Typo tolerance, the “everything you can ask” list and the routing tests all
 pick it up automatically. Tests in `src/intents/intents.test.ts` automatically require every capability
 to be well-formed, to route from its own examples, and to answer its documented sentences.

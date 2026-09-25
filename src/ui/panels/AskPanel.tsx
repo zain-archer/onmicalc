@@ -6,6 +6,7 @@ import { appendToDraft, askStore } from '@/ui/bus';
 import { useStore } from '@/storage/useStore';
 import { notify } from '@/ui/notify';
 import { CopyButton, Notice, NumberField, TextField } from '@/ui/components/primitives';
+import { candidateTasks, extractFile, type ExtractedFile } from '@/knowledge/files';
 
 /**
  * "Ask OmniCalc" — the plain-language front door.
@@ -111,14 +112,24 @@ function BlockView({ block }: { block: ResultBlock }) {
   );
 }
 
+/** Human-readable file size for the "from <file>" card. */
+function describeSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} kB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 export function AskPanel() {
   const [request, setRequest] = useState('');
+  const [attachment, setAttachment] = useState<ExtractedFile | null>(null);
+  const [extracted, setExtracted] = useState('');
   const [fields, setFields] = useState<Record<string, string>>({});
   const [settled, setSettled] = useState<{ plan: Plan; outcome: SolveOutcome } | null>(null);
   const [failure, setFailure] = useState<PlanFailure | null>(null);
   const [pinned, setPinned] = useState<string | null>(null);
   const ask = useStore(askStore);
   const handled = useRef(0);
+  const fileInput = useRef<HTMLInputElement>(null);
 
   const preview = useMemo(() => {
     if (request.trim().length < 3) return null;
@@ -184,6 +195,29 @@ export function AskPanel() {
     run(handedOver);
   }, [ask]);
 
+  /** Read a file locally, then answer its first question straight away. */
+  const readFile = async (file: File) => {
+    const result = await extractFile(file);
+    setAttachment(result);
+    setExtracted(result.text);
+    const tasks = candidateTasks(result.text);
+    if (tasks.length > 0) {
+      setPinned(null);
+      setRequest(tasks[0]!);
+      run(tasks[0]!);
+    } else {
+      setRequest('');
+      setSettled(null);
+      setFailure(null);
+    }
+  };
+
+  const onDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+    const file = event.dataTransfer?.files?.[0];
+    if (file) void readFile(file);
+  };
+
   const useExample = (text: string) => {
     setPinned(null);
     setRequest(text);
@@ -197,7 +231,12 @@ export function AskPanel() {
 
   return (
     <div className="stack ask">
-      <form className="card ask__form" onSubmit={submit}>
+      <form
+        className="card ask__form"
+        onSubmit={submit}
+        onDragOver={(event) => event.preventDefault()}
+        onDrop={onDrop}
+      >
         <h2>What do you want to do?</h2>
         <p>
           Type it in your own words — OmniCalc works out the maths, unit or tool. No account, no sending your data
@@ -245,6 +284,27 @@ export function AskPanel() {
             Clear
           </button>
         </div>
+        <div className="ask__attach">
+          <input
+            ref={fileInput}
+            className="visually-hidden"
+            type="file"
+            aria-label="Attach a file with a question in it"
+            accept=".txt,.md,.csv,.tsv,.json,.xml,.yaml,.yml,.tex,.log,.pdf,.docx,.xlsx,.pptx,.odt,.ods,.odp,.png,.jpg,.jpeg,.webp,.gif,.bmp,text/*,application/pdf,image/*"
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              if (file) void readFile(file);
+              event.target.value = '';
+            }}
+          />
+          <button className="btn" type="button" onClick={() => fileInput.current?.click()}>
+            Attach a file
+          </button>
+          <span className="field__hint">
+            PDF, Word, Excel, PowerPoint, OpenDocument, CSV, JSON or text — read on your device, never uploaded.
+            You can also drop a file here.
+          </span>
+        </div>
         <div className="ask__starters">
           <span className="ask__label">Try one:</span>
           {STARTERS.map((example) => (
@@ -287,6 +347,93 @@ export function AskPanel() {
               {capability.title}
             </button>
           ))}
+        </div>
+      ) : null}
+
+      {attachment ? (
+        <div className="card ask__file" data-testid="ask-file">
+          <h2>
+            From {attachment.name} <span className="pill">{describeSize(attachment.size)}</span>
+          </h2>
+          {attachment.imageUrl ? (
+            <img className="ask__image" src={attachment.imageUrl} alt={`The attached picture ${attachment.name}`} />
+          ) : null}
+          <ul className="ask-list">
+            {attachment.notes.map((note) => (
+              <li key={note}>{note}</li>
+            ))}
+          </ul>
+          {attachment.text ? (
+            <>
+              <div className="ask__starters">
+                <span className="ask__label">Questions found:</span>
+                {candidateTasks(attachment.text).map((task) => (
+                  <button
+                    className="chip"
+                    type="button"
+                    key={task}
+                    onClick={() => {
+                      setRequest(task);
+                      setFields({});
+                      run(task);
+                    }}
+                  >
+                    {task.length > 64 ? `${task.slice(0, 61)}…` : task}
+                  </button>
+                ))}
+              </div>
+              <label className="field">
+                <span className="field__label">
+                  Text read from the file <span className="field__unit">edit it if the read was imperfect</span>
+                </span>
+                <textarea
+                  className="field__input field__input--area"
+                  rows={6}
+                  value={extracted}
+                  spellCheck={false}
+                  onChange={(event) => setExtracted(event.target.value)}
+                />
+              </label>
+              <div className="ask__actions">
+                <button
+                  className="btn btn--primary"
+                  type="button"
+                  onClick={() => {
+                    const task = candidateTasks(extracted)[0] ?? extracted.split('\n')[0] ?? '';
+                    if (!task.trim()) return;
+                    setRequest(task);
+                    setFields({});
+                    run(task);
+                  }}
+                >
+                  Solve from this text
+                </button>
+                <button
+                  className="btn"
+                  type="button"
+                  onClick={() => {
+                    const [first] = candidateTasks(extracted);
+                    if (first) {
+                      setRequest(first);
+                      setExtracted(extracted.replace(first, ''));
+                    }
+                  }}
+                >
+                  Skip to the next question
+                </button>
+                <button
+                  className="btn"
+                  type="button"
+                  onClick={() => {
+                    setAttachment(null);
+                    setExtracted('');
+                  }}
+                >
+                  Remove the file
+                </button>
+              </div>
+            </>
+          ) : null}
         </div>
       ) : null}
 

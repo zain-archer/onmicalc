@@ -9,6 +9,21 @@ beforeEach(() => {
 });
 
 describe('settings panel', () => {
+  it('picks a palette from the theme gallery', () => {
+    render(<SettingsPanel />);
+    fireEvent.click(screen.getByRole('button', { name: /Dracula palette/i }));
+    expect(settingsStore.get().palette).toBe('dracula');
+    expect(screen.getByTestId('theme-current').textContent).toMatch(/Dracula/);
+  });
+
+  it('offers a widely liked set of palettes and a high-contrast option', () => {
+    render(<SettingsPanel />);
+    for (const label of ['Indigo', 'Solarized', 'Dracula', 'Nord', 'GitHub', 'Paper']) {
+      expect(screen.getByRole('button', { name: new RegExp(`${label} palette`, 'i') })).toBeTruthy();
+    }
+    expect(screen.getAllByText('high contrast').length).toBeGreaterThan(0);
+  });
+
   it('changes the accent colour from the preset palette', () => {
     render(<SettingsPanel />);
     fireEvent.click(screen.getByRole('button', { name: /Accent Emerald/ }));
@@ -23,7 +38,7 @@ describe('settings panel', () => {
 
   it('switches theme, contrast and motion preferences', () => {
     render(<SettingsPanel />);
-    fireEvent.change(screen.getByLabelText('Theme'), { target: { value: 'dark' } });
+    fireEvent.change(screen.getByLabelText('Light or dark'), { target: { value: 'dark' } });
     expect(settingsStore.get().theme).toBe('dark');
 
     fireEvent.change(screen.getByLabelText('Contrast'), { target: { value: 'high' } });

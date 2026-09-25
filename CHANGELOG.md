@@ -4,6 +4,73 @@ All notable changes to OmniCalc are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [semantic versioning](https://semver.org/).
 
+## [1.3.0] — 2026-09-25
+
+Four things in one release: the app now fits every screen, ships ten colour palettes, explains what
+things *are*, and reads the questions out of your files — plus one-command packaging for the app
+stores.
+
+### Added — knowledge base (`src/knowledge/`)
+
+- **151 sourced explanations** (mathematics 63, physics 45, chemistry 14, computing 15, finance 14)
+  stored as plain data with a one-line definition, a longer note, a formula where one exists, units,
+  tags, a CODATA/standard source and links to the tool that computes with them.
+- **Lookup without guessing** (`resolveTerm`): an exact term wins, otherwise a near miss is suggested
+  rather than assumed, and a term the app knows somewhere else (a unit, a constant, a function) is
+  reported as such instead of being "corrected" into a different word.
+- **`define` in Ask OmniCalc** — "what is pi" → the π entry with its CODATA value, source and a live
+  check; "what is a mile" → the unit; "define ohm's law" → the entry, its formula and its variables.
+  Unknown terms are listed with close matches; nothing is ever invented.
+- **`knowledgeSearch`** — "search for energy" (15 matches), "list physics constants" (21),
+  "what formulas do you know" (81 stored formulas).
+
+### Added — read your files (`src/knowledge/files.ts`, `src/knowledge/pdf.ts`)
+
+- **Offline intake for PDF, Word (.docx), Excel (.xlsx), PowerPoint (.pptx), OpenDocument
+  (.odt/.ods/.odp), plain text, Markdown, CSV/TSV, JSON, XML, YAML, LaTeX, logs and source files.**
+  Office formats are unzipped in the browser with `DecompressionStream('deflate-raw')` — no library,
+  no upload, no network.
+- **A PDF text extractor written from scratch**: raw-DEFLATE inflater (fixed *and* dynamic Huffman),
+  `FlateDecode` streams, `Tj`/`TJ`/`'`/`"` operators with `Td`/`TD`/`T*` line breaks, PDF string
+  escapes and octal codes. A scanned or CID-only PDF says "this looks like a picture" instead of
+  producing mojibake.
+- **Worksheet mode in the Ask panel**: attach a file (button or drag-and-drop) and the questions in
+  it are listed as chips; the first one is solved straight away, the extracted text is shown and
+  editable, and "Solve from this text" / "Skip to the next question" work down the list.
+  `candidateTasks()` scores lines by instruction verb, an `=`, operators and question marks.
+- Images are shown, never claimed: there is no OCR, and the panel says so.
+
+### Added — themes (`src/ui/theme/palettes.json` → `src/styles/themes.css`)
+
+- **Ten palettes × light and dark = 20 combinations**, each defined once as data and generated into
+  CSS by `npm run themes` (`themes:check` fails the build on drift). The popular set is Classic,
+  Solarized, Dracula, Nord, GitHub and Sepia; accessibility adds High Contrast; more adds Ocean,
+  Sunset and Forest.
+- A **theme gallery** in Settings with live previews of both modes, keyboard- and screen-reader
+  labelled, plus the existing accent colour, system mode, contrast and reduced-motion switches.
+  Applying a palette also updates the browser/OS `theme-color`.
+- `settings.palette` round-trips through backup/restore with validation.
+
+### Added — adaptive layout (`src/styles/global.css`)
+
+- Fluid type and spacing scale, container queries at 520 px and 760 px so panels adapt to the space
+  they are given rather than the window, safe-area insets with `viewport-fit=cover`, `100dvh` height
+  on mobile, a sidebar layout for 701–900 px tablets, a hidden bottom nav in landscape, a 360 px
+  pass, hover-free styling for touch devices, a print stylesheet and a `prefers-contrast` bump.
+
+### Added — store packaging (`docs/STORES.md`, `src-tauri/`)
+
+- **Android**: Bubblewrap/TWA recipe for Google Play plus a Tauri Android recipe for a real native
+  WebView app (`npm run android:init`), with keystore, signing, AAB and Play-console steps.
+- **iOS**: Tauri iOS recipe plus a Capacitor fallback, Xcode archive and App Store Connect steps.
+- **Everywhere else**: Microsoft Store (MSIX), Snap, Flathub, AUR, Homebrew, Winget, F-Droid, Amazon
+  Appstore, Samsung Galaxy Store and Huawei AppGallery, each with the exact commands.
+
+### Changed
+
+- `npm run verify` now starts with `themes:check`, so a palette edited by hand cannot ship out of
+  sync with the generated stylesheet.
+
 ## [1.2.0] — 2026-09-25
 
 Typos no longer send Ask OmniCalc down the wrong path: mistyped words are read as the word you meant,

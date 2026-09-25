@@ -7,10 +7,14 @@ Everything is committed and configured. Pick a target, run two commands, share t
 ```bash
 cd omnica
 git init                       # already done in this workspace
-git add -A && git commit -m "OmniCalc 1.0.0"
+git add -A && git commit -m "OmniCalc 1.3.0"
 git remote add origin git@github.com:<you>/omnica.git
 git push -u origin main
 ```
+
+> Shipping to the **Play Store, App Store, Microsoft Store, F-Droid, Snap, Flathub** and the rest is
+> covered step by step in [`STORES.md`](./STORES.md), with ready-to-paste listing text in
+> [`STORE_LISTING.md`](./STORE_LISTING.md).
 
 ## 1. GitHub Pages (free, zero config)
 

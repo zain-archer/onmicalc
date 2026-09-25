@@ -143,3 +143,30 @@ describe('Ask OmniCalc panel', () => {
     expect(screen.queryByTestId('ask-headline')).toBeNull();
   });
 });
+
+describe('Ask OmniCalc — files', () => {
+  it('reads a text file, lists its questions and answers the first one', async () => {
+    render(<AskPanel />);
+    const file = new File(['Chapter 1\nSolve 3x + 5 = 20\nWhat is 20 percent of 250?\n'], 'homework.txt', {
+      type: 'text/plain',
+    });
+    const input = screen.getByLabelText('Attach a file with a question in it') as HTMLInputElement;
+    fireEvent.change(input, { target: { files: [file] } });
+
+    expect(await screen.findByTestId('ask-file')).toBeDefined();
+    const headlineText = await screen.findByTestId('ask-headline');
+    expect(headlineText.textContent ?? '').toMatch(/x\s*=\s*5/);
+
+    fireEvent.click(screen.getByRole('button', { name: 'What is 20 percent of 250?' }));
+    expect((await screen.findByTestId('ask-headline')).textContent ?? '').toContain('50');
+  });
+
+  it('never claims to read a picture', async () => {
+    render(<AskPanel />);
+    const file = new File([new Uint8Array([1, 2, 3])], 'question.png', { type: 'image/png' });
+    fireEvent.change(screen.getByLabelText('Attach a file with a question in it'), { target: { files: [file] } });
+
+    const card = await screen.findByTestId('ask-file');
+    expect(card.textContent ?? '').toMatch(/image recognition/i);
+  });
+});

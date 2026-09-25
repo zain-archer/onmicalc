@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import App from './App';
 import { registerServiceWorker } from './pwa/register';
 import './styles/global.css';
+import './styles/themes.css';
 
 const container = document.getElementById('root');
 if (!container) throw new Error('Root element #root is missing from index.html');

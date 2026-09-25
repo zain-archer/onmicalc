@@ -7,6 +7,7 @@ import { probabilityCapability, regressionCapability, statisticsCapability } fro
 import { matrixCapability, vectorCapability } from './matrices';
 import { capacitorCapability, geometryCapability, ohmsLawCapability, physicsQuantityCapability } from './physics';
 import { dateTimeCapability, interestCapability, splitBillCapability } from './money';
+import { defineCapability, formulaCapability, knowledgeSearchCapability } from './knowledge';
 
 /** Every capability the Ask panel can use, in no particular order (the scorer ranks them). */
 const CAPABILITIES: Capability[] = [
@@ -37,6 +38,9 @@ const CAPABILITIES: Capability[] = [
   geometryCapability,
   interestCapability,
   dateTimeCapability,
+  defineCapability,
+  knowledgeSearchCapability,
+  formulaCapability,
 ];
 
 export function everyCapability(): Capability[] {

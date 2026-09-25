@@ -1,0 +1,828 @@
+[
+ {
+  "id": "acceleration",
+  "term": "acceleration",
+  "aliases": [
+   "a",
+   "rate of change of velocity"
+  ],
+  "symbol": "a",
+  "summary": "The rate at which velocity changes, measured in metres per second squared.",
+  "detail": "a = Δv / t for constant acceleration. Because velocity has direction, turning at steady speed is also accelerating.",
+  "unit": "m/s²",
+  "formula": "(v - u) / t",
+  "source": "SI derived quantity",
+  "seeAlso": [
+   "velocity",
+   "force",
+   "gravity"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "velocity",
+  "term": "velocity",
+  "aliases": [
+   "v",
+   "speed with direction"
+  ],
+  "symbol": "v",
+  "summary": "Speed together with direction; the rate of change of position.",
+  "detail": "Average velocity is displacement over time. Speed is the magnitude of velocity, so a car on a roundabout at constant speed still has changing velocity.",
+  "unit": "m/s",
+  "formula": "d / t",
+  "source": "SI derived quantity",
+  "seeAlso": [
+   "speed",
+   "acceleration",
+   "momentum"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "force",
+  "term": "force",
+  "aliases": [
+   "f",
+   "push",
+   "pull"
+  ],
+  "symbol": "F",
+  "summary": "Any interaction that changes an object's motion or shape; F = ma.",
+  "detail": "One newton is the force that gives a 1 kg mass an acceleration of 1 m/s². Forces always come in equal and opposite pairs (Newton's third law).",
+  "unit": "N (kg·m/s²)",
+  "formula": "m * a",
+  "source": "SI derived unit",
+  "seeAlso": [
+   "mass",
+   "acceleration",
+   "newton",
+   "weight"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "newton",
+  "term": "newton",
+  "aliases": [
+   "n",
+   "newtons"
+  ],
+  "symbol": "N",
+  "summary": "The SI unit of force: the force needed to accelerate one kilogram at one metre per second squared.",
+  "unit": "N = kg·m/s²",
+  "source": "SI Brochure (2019)",
+  "seeAlso": [
+   "force",
+   "weight",
+   "joule"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "mass",
+  "term": "mass",
+  "aliases": [
+   "m"
+  ],
+  "symbol": "m",
+  "summary": "The amount of matter in an object — a measure of its inertia, unchanged by location.",
+  "detail": "Mass is not weight: a 70 kg astronaut has the same mass on the Moon but only about one sixth of the weight.",
+  "unit": "kg",
+  "source": "SI base quantity",
+  "seeAlso": [
+   "weight",
+   "density",
+   "kilogram"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "weight",
+  "term": "weight",
+  "aliases": [
+   "w"
+  ],
+  "symbol": "W",
+  "summary": "The force of gravity on an object: W = mg.",
+  "detail": "On Earth g is about 9.80665 m/s², so a 1 kg mass weighs about 9.81 N. Weight changes with location; mass does not.",
+  "unit": "N",
+  "formula": "m * g",
+  "source": "SI derived quantity",
+  "seeAlso": [
+   "mass",
+   "gravity"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "gravity",
+  "term": "gravity",
+  "aliases": [
+   "gravitational acceleration",
+   "g"
+  ],
+  "symbol": "g",
+  "summary": "The acceleration caused by gravitational attraction; at the Earth's surface about 9.80665 m/s².",
+  "detail": "g varies slightly with latitude and altitude — about 9.78 m/s² at the equator and 9.83 m/s² at the poles.",
+  "unit": "m/s²",
+  "source": "CODATA / SI standard gravity",
+  "seeAlso": [
+   "weight",
+   "free fall",
+   "newton's law of gravitation"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "joule",
+  "term": "joule",
+  "aliases": [
+   "j",
+   "joules"
+  ],
+  "symbol": "J",
+  "summary": "The SI unit of energy and work: one newton-metre, or one watt for one second.",
+  "detail": "Lifting an apple about one metre takes roughly one joule. A kilowatt-hour is 3.6 million joules.",
+  "unit": "J = N·m = kg·m²/s²",
+  "source": "SI Brochure (2019)",
+  "seeAlso": [
+   "energy",
+   "watt",
+   "kinetic energy"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "work",
+  "term": "work",
+  "aliases": [
+   "work done"
+  ],
+  "symbol": "W",
+  "summary": "Energy transferred by a force moving an object: W = Fd cos θ.",
+  "detail": "Pushing a wall does no work in the physics sense — the wall does not move, so no energy is transferred.",
+  "unit": "J",
+  "formula": "F * d * cos(theta)",
+  "source": "Classical mechanics",
+  "seeAlso": [
+   "energy",
+   "force",
+   "power"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "kinetic-energy",
+  "term": "kinetic energy",
+  "aliases": [
+   "ke",
+   "energy of motion"
+  ],
+  "symbol": "KE",
+  "summary": "The energy an object has because it is moving: ½mv².",
+  "detail": "Because velocity is squared, doubling speed quadruples kinetic energy — which is why stopping distances grow fourfold when speed doubles.",
+  "unit": "J",
+  "formula": "0.5 * m * v^2",
+  "source": "Classical mechanics",
+  "seeAlso": [
+   "potential energy",
+   "momentum",
+   "work"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "potential-energy",
+  "term": "potential energy",
+  "aliases": [
+   "pe",
+   "stored energy"
+  ],
+  "symbol": "PE",
+  "summary": "Energy stored because of position: mgh near the Earth's surface, ½kx² in a spring.",
+  "unit": "J",
+  "formula": "m * g * h",
+  "source": "Classical mechanics",
+  "seeAlso": [
+   "kinetic energy",
+   "hooke's law"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "power",
+  "term": "power",
+  "aliases": [
+   "p"
+  ],
+  "symbol": "P",
+  "summary": "The rate of energy transfer: one watt is one joule per second.",
+  "detail": "P = W/t, and electrically P = VI = I²R = V²/R.",
+  "unit": "W (J/s)",
+  "formula": "W / t",
+  "source": "SI derived unit",
+  "seeAlso": [
+   "energy",
+   "watt",
+   "ohm's law"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "momentum",
+  "term": "momentum",
+  "aliases": [
+   "p",
+   "linear momentum"
+  ],
+  "symbol": "p",
+  "summary": "Mass times velocity; the quantity conserved when no external force acts.",
+  "detail": "Momentum has direction. In a rocket or a collision, total momentum before and after is the same (Newton's third law in action).",
+  "unit": "kg·m/s",
+  "formula": "m * v",
+  "source": "Classical mechanics",
+  "seeAlso": [
+   "impulse",
+   "kinetic energy",
+   "conservation of momentum"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "density",
+  "term": "density",
+  "aliases": [
+   "ρ",
+   "mass per volume"
+  ],
+  "symbol": "ρ",
+  "summary": "Mass per unit volume: ρ = m/V.",
+  "detail": "Water is about 1000 kg/m³, air at sea level about 1.2 kg/m³, steel about 7850 kg/m³. Objects float when their density is lower than the fluid's.",
+  "unit": "kg/m³",
+  "formula": "m / V",
+  "source": "SI derived quantity",
+  "seeAlso": [
+   "mass",
+   "volume",
+   "pressure"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "pressure",
+  "term": "pressure",
+  "aliases": [
+   "p"
+  ],
+  "symbol": "p",
+  "summary": "Force per unit area: one pascal is one newton per square metre.",
+  "detail": "Atmospheric pressure at sea level is about 101 325 Pa. Pressure acts in all directions, which is why a dam wall is built thicker at the bottom.",
+  "unit": "Pa (N/m²)",
+  "formula": "F / A",
+  "source": "SI derived unit",
+  "seeAlso": [
+   "force",
+   "area",
+   "pascal"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "energy",
+  "term": "energy",
+  "summary": "The capacity to do work, measured in joules; it is conserved, only converted between forms.",
+  "detail": "Falling water converts gravitational potential energy into kinetic energy, and a turbine converts that into electrical energy — each step losing some to heat.",
+  "unit": "J",
+  "source": "Classical mechanics",
+  "seeAlso": [
+   "joule",
+   "kinetic energy",
+   "potential energy",
+   "work"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "wave-speed",
+  "term": "wave speed",
+  "aliases": [
+   "wave equation"
+  ],
+  "symbol": "v",
+  "summary": "For a wave, speed = frequency × wavelength: v = fλ.",
+  "detail": "Light in vacuum always travels at c = 299 792 458 m/s regardless of wavelength; in a medium its speed drops by the refractive index factor.",
+  "unit": "m/s",
+  "formula": "f * lambda",
+  "source": "Wave mechanics",
+  "seeAlso": [
+   "frequency",
+   "wavelength",
+   "speed of light"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "frequency",
+  "term": "frequency",
+  "aliases": [
+   "f",
+   "hertz"
+  ],
+  "symbol": "f",
+  "summary": "How many cycles happen per second, measured in hertz (Hz).",
+  "detail": "Period T = 1/f. A 50 Hz mains supply completes 50 cycles every second, so its period is 20 ms.",
+  "unit": "Hz (1/s)",
+  "formula": "1 / T",
+  "source": "SI derived unit",
+  "seeAlso": [
+   "period",
+   "wave speed",
+   "wavelength"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "ohm-law",
+  "term": "ohm's law",
+  "aliases": [
+   "ohms law",
+   "ohm law",
+   "v=ir"
+  ],
+  "summary": "Voltage equals current times resistance: V = IR.",
+  "detail": "It holds for ohmic conductors at constant temperature. Combining with P = VI gives P = I²R and P = V²/R.",
+  "formula": "I * R",
+  "source": "Gustav Ohm, 1827",
+  "seeAlso": [
+   "voltage",
+   "current",
+   "resistance",
+   "power"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "voltage",
+  "term": "voltage",
+  "aliases": [
+   "potential difference",
+   "emf",
+   "volts"
+  ],
+  "symbol": "V",
+  "summary": "The energy transferred per unit charge between two points, measured in volts.",
+  "detail": "One volt is one joule per coulomb. Voltage is always measured *between* two points.",
+  "unit": "V (J/C)",
+  "source": "SI derived unit",
+  "seeAlso": [
+   "current",
+   "resistance",
+   "ohm's law"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "current",
+  "term": "electric current",
+  "aliases": [
+   "current",
+   "amps",
+   "amperage"
+  ],
+  "symbol": "I",
+  "summary": "The rate of flow of electric charge, measured in amperes (coulombs per second).",
+  "detail": "Conventional current flows from positive to negative, the opposite direction to the electrons themselves.",
+  "unit": "A (C/s)",
+  "source": "SI base unit",
+  "seeAlso": [
+   "voltage",
+   "charge",
+   "resistance"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "resistance",
+  "term": "resistance",
+  "aliases": [
+   "resistor",
+   "ohms"
+  ],
+  "symbol": "R",
+  "summary": "How strongly a component opposes current: R = V/I.",
+  "unit": "Ω (V/A)",
+  "formula": "V / I",
+  "source": "SI derived unit",
+  "seeAlso": [
+   "ohm's law",
+   "resistivity",
+   "conductance"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "capacitance",
+  "term": "capacitance",
+  "aliases": [
+   "capacitor",
+   "farads"
+  ],
+  "symbol": "C",
+  "summary": "Charge stored per volt across a capacitor: C = Q/V.",
+  "detail": "Energy stored is ½CV². In an RC circuit the time constant τ = RC is the time to reach about 63% of the final voltage.",
+  "unit": "F (C/V)",
+  "formula": "Q / V",
+  "source": "SI derived unit",
+  "seeAlso": [
+   "capacitor energy",
+   "time constant"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "ideal-gas",
+  "term": "ideal gas law",
+  "aliases": [
+   "ideal gas equation",
+   "pv=nrt"
+  ],
+  "summary": "PV = nRT links pressure, volume, amount of gas and temperature.",
+  "detail": "Holds well for gases at low pressure. R = 8.314462618… J/(mol·K).",
+  "formula": "n * R * T / V",
+  "source": "Kinetic theory",
+  "seeAlso": [
+   "boltzmann constant",
+   "pressure",
+   "temperature"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "speed-of-light",
+  "term": "speed of light",
+  "aliases": [
+   "c",
+   "lightspeed"
+  ],
+  "symbol": "c",
+  "summary": "299 792 458 m/s in vacuum, exactly, by definition of the metre.",
+  "detail": "Nothing carrying information can exceed it. It takes light about 1.28 s to travel from the Moon to the Earth.",
+  "value": 299792458,
+  "unit": "m/s",
+  "source": "SI Brochure (2019)",
+  "seeAlso": [
+   "light year",
+   "relativity",
+   "wave speed"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "gravitational-constant",
+  "term": "gravitational constant",
+  "aliases": [
+   "big g",
+   "newton's constant"
+  ],
+  "symbol": "G",
+  "summary": "The constant in Newton's law of gravitation, about 6.6743 × 10⁻¹¹ m³ kg⁻¹ s⁻².",
+  "value": 6.6743e-11,
+  "unit": "m³/(kg·s²)",
+  "formula": "G * m1 * m2 / r^2",
+  "source": "CODATA 2018",
+  "seeAlso": [
+   "gravity",
+   "weight"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "snells-law",
+  "term": "snell's law",
+  "aliases": [
+   "snells law",
+   "refraction law"
+  ],
+  "summary": "Light bends at a boundary so that n₁sin θ₁ = n₂sin θ₂.",
+  "detail": "The refractive index n = c/v measures how much a medium slows light. Going from dense to thin glass at a steep angle gives total internal reflection — the basis of fibre optics.",
+  "formula": "n1 * sin(theta1)",
+  "source": "Geometrical optics",
+  "seeAlso": [
+   "refractive index",
+   "total internal reflection"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "half-life",
+  "term": "half-life",
+  "aliases": [
+   "half life",
+   "t½"
+  ],
+  "symbol": "t½",
+  "summary": "The time for half of a radioactive sample to decay.",
+  "detail": "After n half-lives the fraction remaining is (1/2)^n, so after 10 half-lives less than 0.1% is left. Carbon-14 has a half-life of about 5730 years.",
+  "formula": "ln(2) / lambda",
+  "source": "Nuclear physics",
+  "seeAlso": [
+   "radioactive decay",
+   "exponential function"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "specific-heat",
+  "term": "specific heat capacity",
+  "aliases": [
+   "specific heat",
+   "heat capacity"
+  ],
+  "summary": "The energy needed to raise one kilogram of a substance by one kelvin.",
+  "detail": "Water needs 4186 J/(kg·K) — unusually high, which is why it is used in heating systems and why coastal climates are mild.",
+  "unit": "J/(kg·K)",
+  "formula": "Q / (m * dT)",
+  "source": "Thermodynamics",
+  "seeAlso": [
+   "heat",
+   "temperature"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "efficiency",
+  "term": "efficiency",
+  "aliases": [
+   "efficiency of a machine"
+  ],
+  "summary": "Useful output energy divided by total input energy, usually given as a percentage.",
+  "detail": "Real machines are always below 100% because of friction, heat loss and sound. A car engine is typically 25–40% efficient.",
+  "unit": "%",
+  "formula": "(useful / total) * 100",
+  "source": "Thermodynamics",
+  "seeAlso": [
+   "energy",
+   "power"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "free-fall",
+  "term": "free fall",
+  "summary": "Motion under gravity alone, with no air resistance.",
+  "detail": "All objects fall with the same acceleration regardless of mass (g ≈ 9.81 m/s²). Feather and hammer dropped on the Moon land together, as Apollo 15 showed.",
+  "formula": "0.5 * g * t^2",
+  "source": "Classical mechanics",
+  "seeAlso": [
+   "gravity",
+   "acceleration"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "centre-of-mass",
+  "term": "centre of mass",
+  "aliases": [
+   "center of mass",
+   "centroid"
+  ],
+  "summary": "The point where an object's mass can be treated as concentrated for many calculations.",
+  "detail": "An object balances on its centre of mass. For a uniform rod it is the midpoint; for a triangle it is the average of the three vertices.",
+  "formula": "(x1 + x2 + x3) / 3",
+  "source": "Classical mechanics",
+  "seeAlso": [
+   "moment",
+   "torque"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "spring-constant",
+  "term": "hooke's law",
+  "aliases": [
+   "spring constant",
+   "hookes law"
+  ],
+  "summary": "The extension of a spring is proportional to the force applied: F = kx, up to the elastic limit.",
+  "detail": "The energy stored in a stretched spring is ½kx², not kx — the force rises as the spring stretches.",
+  "formula": "k * x",
+  "source": "Robert Hooke, 1676",
+  "seeAlso": [
+   "potential energy",
+   "young's modulus"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "doppler",
+  "term": "doppler effect",
+  "aliases": [
+   "doppler shift",
+   "redshift"
+  ],
+  "summary": "The change in observed frequency when a source and observer move relative to each other.",
+  "detail": "An approaching siren sounds higher, a receding one lower. The same effect on light gives the redshift used to measure how fast galaxies recede.",
+  "source": "Wave physics",
+  "seeAlso": [
+   "frequency",
+   "wavelength",
+   "sound"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "entropy",
+  "term": "entropy",
+  "aliases": [
+   "disorder"
+  ],
+  "symbol": "S",
+  "summary": "A measure of how many ways a system's energy can be arranged — of its disorder.",
+  "detail": "The second law of thermodynamics says the entropy of an isolated system never decreases: heat flows hot to cold, and perpetual motion machines are impossible.",
+  "unit": "J/K",
+  "source": "Thermodynamics",
+  "seeAlso": [
+   "thermodynamics",
+   "heat",
+   "temperature"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "torque",
+  "term": "torque",
+  "aliases": [
+   "moment of force",
+   "moment"
+  ],
+  "symbol": "τ",
+  "summary": "The turning effect of a force: τ = F·d, where d is the perpendicular distance from the pivot.",
+  "detail": "Torque is what tightens a bolt: the same force on a longer spanner turns it more easily.",
+  "unit": "N·m",
+  "formula": "F * d",
+  "source": "Classical mechanics",
+  "seeAlso": [
+   "force",
+   "moment",
+   "centre of mass"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "impulse",
+  "term": "impulse",
+  "aliases": [
+   "impulse of a force"
+  ],
+  "symbol": "J",
+  "summary": "Force multiplied by the time it acts: it equals the change in momentum.",
+  "detail": "Airbags and crumple zones stretch the impact time so the same momentum change needs a smaller force.",
+  "unit": "N·s",
+  "formula": "F * t",
+  "source": "Classical mechanics",
+  "seeAlso": [
+   "momentum",
+   "force"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "wavelength",
+  "term": "wavelength",
+  "aliases": [
+   "lambda"
+  ],
+  "symbol": "λ",
+  "summary": "The distance between two identical points on a wave, such as crest to crest.",
+  "detail": "Visible light runs from about 380 nm (violet) to 750 nm (red).",
+  "unit": "m",
+  "formula": "v / f",
+  "source": "Wave physics",
+  "seeAlso": [
+   "frequency",
+   "wave speed",
+   "spectrum"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "temperature",
+  "term": "temperature",
+  "aliases": [
+   "temp"
+  ],
+  "summary": "A measure of the average kinetic energy of particles in a substance, in kelvin, celsius or fahrenheit.",
+  "detail": "Absolute zero (0 K = −273.15 °C) is the point at which no more thermal energy can be removed. Kelvin is the SI unit and has no degree symbol.",
+  "unit": "K / °C / °F",
+  "source": "Thermodynamics",
+  "seeAlso": [
+   "heat",
+   "boltzmann constant",
+   "kelvin"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "heat",
+  "term": "heat",
+  "aliases": [
+   "thermal energy"
+  ],
+  "symbol": "Q",
+  "summary": "Energy transferred because of a temperature difference, measured in joules.",
+  "detail": "Heat and temperature are different: a bath of warm water holds more heat than a red-hot nail, even though the nail is hotter.",
+  "unit": "J",
+  "formula": "m * c * dT",
+  "source": "Thermodynamics",
+  "seeAlso": [
+   "temperature",
+   "specific heat capacity"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "refractive-index",
+  "term": "refractive index",
+  "aliases": [
+   "index of refraction",
+   "refraction"
+  ],
+  "symbol": "n",
+  "summary": "How much a medium slows light: n = c/v.",
+  "detail": "Water is about 1.33, window glass 1.5, diamond 2.42 — which is why diamonds sparkle so strongly.",
+  "formula": "c / v",
+  "source": "Geometrical optics",
+  "seeAlso": [
+   "snell's law",
+   "speed of light"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "magnetic-field",
+  "term": "magnetic field",
+  "aliases": [
+   "b field",
+   "flux density"
+  ],
+  "symbol": "B",
+  "summary": "The region where magnetic forces act, measured in tesla.",
+  "detail": "The Earth's field is about 50 microtesla; an MRI scanner is 1.5–3 tesla, tens of thousands of times stronger.",
+  "unit": "T (tesla)",
+  "source": "Electromagnetism",
+  "seeAlso": [
+   "electric field",
+   "induction",
+   "maxwell's equations"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "electric-field",
+  "term": "electric field",
+  "aliases": [
+   "e field"
+  ],
+  "symbol": "E",
+  "summary": "Force per unit positive charge at a point, measured in volts per metre.",
+  "formula": "F / q",
+  "source": "Electromagnetism",
+  "seeAlso": [
+   "voltage",
+   "charge",
+   "coulomb's law"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "kelvin",
+  "term": "kelvin",
+  "aliases": [
+   "absolute temperature"
+  ],
+  "symbol": "K",
+  "summary": "The SI base unit of temperature, starting at absolute zero with no negative values.",
+  "detail": "K = °C + 273.15. A change of one kelvin equals a change of one degree celsius.",
+  "unit": "K",
+  "source": "SI Brochure (2019)",
+  "seeAlso": [
+   "temperature",
+   "boltzmann constant"
+  ],
+  "area": "Physics"
+ },
+ {
+  "id": "work-energy-theorem",
+  "term": "work-energy theorem",
+  "summary": "The net work done on an object equals its change in kinetic energy.",
+  "detail": "It links forces to motion without needing to track time, and explains why braking distance grows with the square of speed.",
+  "formula": "W = 0.5 * m * v^2",
+  "source": "Classical mechanics",
+  "seeAlso": [
+   "work",
+   "kinetic energy"
+  ],
+  "area": "Physics"
+ }
+]

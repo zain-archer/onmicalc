@@ -1,0 +1,1049 @@
+[
+ {
+  "id": "pi",
+  "term": "pi",
+  "aliases": [
+   "π",
+   "the number pi",
+   "pi constant"
+  ],
+  "symbol": "π",
+  "summary": "The ratio of a circle's circumference to its diameter.",
+  "detail": "Irrational and transcendental: it never ends and never repeats. Archimedes bounded it by 223/71 < π < 22/7; it is now known to over 100 trillion digits.",
+  "value": 3.14159265358979,
+  "display": "3.14159265358979",
+  "formula": "pi",
+  "source": "Mathematical constant (used by the engine as pi or π)",
+  "seeAlso": [
+   "tau",
+   "radian",
+   "circle"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "e",
+  "term": "e",
+  "aliases": [
+   "euler's number",
+   "eulers number",
+   "napier's constant"
+  ],
+  "symbol": "e",
+  "summary": "Base of the natural logarithm, about 2.71828.",
+  "detail": "Defined as the limit of (1 + 1/n)^n as n grows, or as the value where the curve y = e^x has slope 1. It appears wherever growth or decay is proportional to size.",
+  "value": 2.718281828459045,
+  "display": "2.718281828459045",
+  "source": "Mathematical constant",
+  "seeAlso": [
+   "natural logarithm",
+   "exponential function"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "tau",
+  "term": "tau",
+  "aliases": [
+   "τ"
+  ],
+  "symbol": "τ",
+  "summary": "The circle constant equal to 2π, about 6.28319.",
+  "detail": "One full turn in radians. Some authors prefer τ because formulas like C = τr and ω = τf have no stray factor of two.",
+  "value": 6.283185307179586,
+  "display": "6.283185307179586",
+  "formula": "tau",
+  "source": "Mathematical constant",
+  "seeAlso": [
+   "pi",
+   "radian"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "golden-ratio",
+  "term": "golden ratio",
+  "aliases": [
+   "phi",
+   "φ"
+  ],
+  "symbol": "φ",
+  "summary": "The number (1 + √5)/2 ≈ 1.618, the ratio at which a line divided into two parts satisfies the whole:long = long:short.",
+  "value": 1.618033988749895,
+  "display": "1.618033988749895",
+  "formula": "(1 + sqrt(5)) / 2",
+  "source": "Mathematical constant",
+  "seeAlso": [
+   "fibonacci"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "circle",
+  "term": "circle",
+  "summary": "The set of points at a fixed distance (the radius) from a centre.",
+  "detail": "Area = πr², circumference = 2πr. A circle is not a polygon, so its perimeter has no straight-sided approximation.",
+  "formula": "pi * r^2",
+  "source": "Elementary geometry",
+  "seeAlso": [
+   "pi",
+   "sphere",
+   "radian"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "pythagoras",
+  "term": "pythagorean theorem",
+  "aliases": [
+   "pythagoras",
+   "pythagorean",
+   "right triangle theorem"
+  ],
+  "summary": "In a right-angled triangle, the square on the hypotenuse equals the sum of the squares on the other two sides: a² + b² = c².",
+  "detail": "The basis of Euclidean distance, and the reason the diagonal of a unit square is √2 — a length no fraction can measure exactly.",
+  "formula": "sqrt(a^2 + b^2)",
+  "source": "Euclid, Elements I.47",
+  "seeAlso": [
+   "distance formula",
+   "trigonometry"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "quadratic-formula",
+  "term": "quadratic formula",
+  "summary": "The solutions of ax² + bx + c = 0 are x = (−b ± √(b² − 4ac)) / 2a.",
+  "detail": "The part under the root, b² − 4ac, is the discriminant: positive gives two real roots, zero one repeated root, negative a complex conjugate pair.",
+  "formula": "(-b + sqrt(b^2 - 4*a*c)) / (2*a)",
+  "source": "Standard algebra",
+  "seeAlso": [
+   "discriminant",
+   "parabola"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "discriminant",
+  "term": "discriminant",
+  "summary": "For ax² + bx + c, the quantity b² − 4ac that decides how many real roots the equation has.",
+  "formula": "b^2 - 4*a*c",
+  "source": "Standard algebra",
+  "seeAlso": [
+   "quadratic formula"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "derivative",
+  "term": "derivative",
+  "aliases": [
+   "differentiation",
+   "rate of change",
+   "gradient"
+  ],
+  "summary": "The instantaneous rate at which a function changes — the slope of its graph at a point.",
+  "detail": "Written f'(x) or dy/dx, defined as the limit of (f(x+h) − f(x))/h as h → 0. Differentiating x² gives 2x, sin x gives cos x, and eˣ is its own derivative.",
+  "formula": "(f(x + h) - f(x)) / h",
+  "source": "Differential calculus",
+  "seeAlso": [
+   "integral",
+   "limit",
+   "slope"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "integral",
+  "term": "integral",
+  "aliases": [
+   "integration",
+   "antiderivative",
+   "area under the curve"
+  ],
+  "summary": "The accumulated total of a function — the area under its graph between two limits.",
+  "detail": "The fundamental theorem of calculus links it to the derivative: differentiating an integral returns the original function. The engine evaluates definite integrals numerically (adaptive Simpson).",
+  "source": "Integral calculus",
+  "seeAlso": [
+   "derivative",
+   "area under the curve"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "limit",
+  "term": "limit",
+  "summary": "The value a function approaches as its input approaches a point, whether or not the function is defined there.",
+  "detail": "lim(x→0) sin x / x = 1 even though the expression is 0/0 at x = 0. Limits define both the derivative and the integral.",
+  "source": "Mathematical analysis",
+  "seeAlso": [
+   "derivative",
+   "continuity"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "factorial",
+  "term": "factorial",
+  "aliases": [
+   "!"
+  ],
+  "symbol": "n!",
+  "summary": "The product of all whole numbers from 1 to n; 0! is defined as 1.",
+  "detail": "Grows fast: 20! is about 2.43 × 10^18. The engine is exact up to 170!; beyond that the float result overflows.",
+  "formula": "fact(5)",
+  "source": "Combinatorics",
+  "seeAlso": [
+   "permutation",
+   "combination"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "fibonacci",
+  "term": "fibonacci sequence",
+  "aliases": [
+   "fibonacci numbers",
+   "fibonacci"
+  ],
+  "summary": "The sequence 0, 1, 1, 2, 3, 5, 8, … where each term is the sum of the two before it.",
+  "detail": "The ratio of consecutive terms approaches the golden ratio φ ≈ 1.618, and the sequence counts many natural patterns such as spirals in shells.",
+  "source": "Number theory",
+  "seeAlso": [
+   "golden ratio"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "prime",
+  "term": "prime number",
+  "aliases": [
+   "prime",
+   "primes"
+  ],
+  "summary": "A whole number greater than 1 whose only positive divisors are 1 and itself.",
+  "detail": "There are infinitely many primes (Euclid). Every whole number above 1 factors into primes in exactly one way — the fundamental theorem of arithmetic.",
+  "source": "Number theory",
+  "seeAlso": [
+   "composite number",
+   "factor"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "ratio",
+  "term": "ratio",
+  "summary": "A comparison of two quantities by division, written a : b or a/b.",
+  "detail": "Ratios scale: 2 : 3 is the same as 20 : 30. A proportion is a statement that two ratios are equal.",
+  "source": "Elementary arithmetic",
+  "seeAlso": [
+   "proportion",
+   "percentage"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "percentage",
+  "term": "percentage",
+  "aliases": [
+   "percent",
+   "%"
+  ],
+  "symbol": "%",
+  "summary": "A fraction expressed out of 100: 25% means 25/100 = 0.25.",
+  "detail": "In the engine the postfix operator % divides by 100, so 50% is 0.5 and 200 * 10% is 20.",
+  "source": "Elementary arithmetic",
+  "seeAlso": [
+   "percent change",
+   "ratio"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "mean",
+  "term": "mean",
+  "aliases": [
+   "arithmetic mean",
+   "average"
+  ],
+  "summary": "The sum of a set of values divided by how many there are.",
+  "detail": "Sensitive to outliers: one very large value pulls the mean far above the median.",
+  "formula": "sum(x) / n",
+  "source": "Descriptive statistics",
+  "seeAlso": [
+   "median",
+   "mode",
+   "standard deviation"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "median",
+  "term": "median",
+  "summary": "The middle value once the data are ordered; with an even count, the mean of the two middle values.",
+  "detail": "Unlike the mean, the median is barely affected by extreme values, which is why house prices and incomes are usually reported as medians.",
+  "source": "Descriptive statistics",
+  "seeAlso": [
+   "mean",
+   "quartile",
+   "interquartile range"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "standard-deviation",
+  "term": "standard deviation",
+  "aliases": [
+   "sd",
+   "sigma",
+   "σ"
+  ],
+  "symbol": "σ",
+  "summary": "A measure of how spread out values are around the mean, in the same units as the data.",
+  "detail": "The square root of the variance. For a normal distribution about 68% of values lie within one standard deviation of the mean and 95% within two.",
+  "formula": "sqrt(variance)",
+  "source": "Descriptive statistics",
+  "seeAlso": [
+   "variance",
+   "normal distribution",
+   "z score"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "variance",
+  "term": "variance",
+  "aliases": [
+   "σ²"
+  ],
+  "summary": "The average squared distance of values from their mean.",
+  "detail": "Squared units make it hard to read directly, which is why its square root — the standard deviation — is usually quoted. The sample version divides by n − 1.",
+  "source": "Descriptive statistics",
+  "seeAlso": [
+   "standard deviation"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "normal-distribution",
+  "term": "normal distribution",
+  "aliases": [
+   "gaussian",
+   "bell curve",
+   "gaussian distribution"
+  ],
+  "summary": "The symmetric bell-shaped distribution described by its mean μ and standard deviation σ.",
+  "detail": "The total probability inside ±1σ is about 0.6827, inside ±2σ about 0.9545, and inside ±3σ about 0.9973.",
+  "formula": "exp(-((x - mu)^2) / (2 * sigma^2))",
+  "source": "Probability theory",
+  "seeAlso": [
+   "z score",
+   "standard deviation",
+   "central limit theorem"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "radian",
+  "term": "radian",
+  "aliases": [
+   "rad",
+   "radians"
+  ],
+  "symbol": "rad",
+  "summary": "The angle subtended at a circle's centre by an arc equal in length to the radius; a full turn is 2π radians.",
+  "detail": "1 radian = 180/π ≈ 57.2958°. Radians make derivative formulas clean (d/dx sin x = cos x), which is why science works in them.",
+  "unit": "rad",
+  "source": "SI derived unit for plane angle",
+  "seeAlso": [
+   "degree",
+   "tau",
+   "pi"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "degree",
+  "term": "degree",
+  "aliases": [
+   "degrees",
+   "°",
+   "degree of angle"
+  ],
+  "symbol": "°",
+  "summary": "An angle unit equal to 1/360 of a full turn.",
+  "detail": "360 was chosen by Babylonian astronomers because it divides evenly by many numbers. One degree = π/180 radians ≈ 0.0174533 rad.",
+  "unit": "°",
+  "source": "Plane angle unit",
+  "seeAlso": [
+   "radian"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "matrix",
+  "term": "matrix",
+  "aliases": [
+   "matrices"
+  ],
+  "summary": "A rectangular array of numbers, used to represent linear transformations, systems of equations and data.",
+  "detail": "An m × n matrix has m rows and n columns. Multiplication is only defined when the inner dimensions match, and it is not commutative: AB ≠ BA in general.",
+  "source": "Linear algebra",
+  "seeAlso": [
+   "determinant",
+   "eigenvalue",
+   "identity matrix"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "determinant",
+  "term": "determinant",
+  "aliases": [
+   "det"
+  ],
+  "symbol": "det",
+  "summary": "A single number computed from a square matrix that tells you whether it scales volumes and whether it can be inverted.",
+  "detail": "Zero determinant means the matrix is singular — it collapses space onto a smaller dimension and has no inverse. For a 2×2 matrix, det = ad − bc.",
+  "formula": "a*d - b*c",
+  "source": "Linear algebra",
+  "seeAlso": [
+   "matrix",
+   "inverse matrix"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "eigenvalue",
+  "term": "eigenvalue",
+  "aliases": [
+   "eigenvalues",
+   "eigen value",
+   "characteristic value"
+  ],
+  "summary": "A scalar λ such that a matrix only stretches, never rotates, the eigenvector it acts on: Av = λv.",
+  "detail": "Eigenvalues drive vibration modes, principal-component analysis, Markov chain behaviour and stability analysis of dynamic systems.",
+  "formula": "det(A - lambda*I)",
+  "source": "Linear algebra",
+  "seeAlso": [
+   "eigenvector",
+   "matrix",
+   "determinant"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "logarithm",
+  "term": "logarithm",
+  "aliases": [
+   "log",
+   "ln",
+   "natural logarithm"
+  ],
+  "summary": "The power you must raise a base to in order to get a number: log₁₀(1000) = 3.",
+  "detail": "ln is the logarithm base e. In the engine log(x) is base 10 and log(x, b) is base b; ln(x) is base e.",
+  "formula": "log(1000)",
+  "source": "Elementary functions",
+  "seeAlso": [
+   "exponential function",
+   "e"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "exponential-function",
+  "term": "exponential function",
+  "aliases": [
+   "exponential",
+   "exp"
+  ],
+  "summary": "The function eˣ, which grows at a rate proportional to its own value.",
+  "detail": "Its derivative equals itself, so it describes unchecked growth (populations early on, compound interest) and radioactive decay when the exponent is negative.",
+  "formula": "exp(x)",
+  "source": "Elementary functions",
+  "seeAlso": [
+   "e",
+   "logarithm",
+   "compound interest"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "compound-interest",
+  "term": "compound interest",
+  "summary": "Interest calculated on the initial amount plus all previously earned interest, so growth accelerates.",
+  "detail": "A = P(1 + r/n)^(nt) for n compounds per year, or Pe^(rt) for continuous compounding.",
+  "formula": "P * (1 + r / n) ^ (n * t)",
+  "source": "Standard finance mathematics",
+  "seeAlso": [
+   "simple interest",
+   "effective annual rate",
+   "exponential function"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "simple-interest",
+  "term": "simple interest",
+  "summary": "Interest calculated only on the original principal: I = Prt.",
+  "formula": "P * r * t",
+  "source": "Standard finance mathematics",
+  "seeAlso": [
+   "compound interest"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "gradient",
+  "term": "gradient",
+  "aliases": [
+   "slope",
+   "rise over run"
+  ],
+  "summary": "The steepness of a line: the vertical change divided by the horizontal change.",
+  "detail": "For a curve the gradient at a point is the derivative there. A line with gradient 2 rises two units for every one across.",
+  "formula": "(y2 - y1) / (x2 - x1)",
+  "source": "Coordinate geometry",
+  "seeAlso": [
+   "derivative",
+   "line"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "mode",
+  "term": "mode",
+  "aliases": [
+   "modal value"
+  ],
+  "summary": "The value that appears most often in a data set.",
+  "detail": "A data set can have several modes or none. It is the only average that also works for categories such as favourite colours.",
+  "source": "Descriptive statistics",
+  "seeAlso": [
+   "mean",
+   "median"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "vector",
+  "term": "vector",
+  "summary": "A quantity with both size and direction, written as an ordered list of components.",
+  "detail": "The magnitude of (x, y, z) is √(x² + y² + z²). The dot product measures alignment and the cross product gives a perpendicular vector.",
+  "formula": "sqrt(x^2 + y^2 + z^2)",
+  "source": "Linear algebra / physics",
+  "seeAlso": [
+   "dot product",
+   "cross product",
+   "scalar"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "dot-product",
+  "term": "dot product",
+  "aliases": [
+   "scalar product",
+   "dot"
+  ],
+  "summary": "The sum of the products of matching components: (1,2,3)·(4,5,6) = 32. It equals |a||b|cos θ.",
+  "detail": "Zero dot product means the vectors are perpendicular; the dot product with a unit vector gives a projected length.",
+  "formula": "a1*b1 + a2*b2 + a3*b3",
+  "source": "Vector algebra",
+  "seeAlso": [
+   "cross product",
+   "vector",
+   "angle"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "cross-product",
+  "term": "cross product",
+  "aliases": [
+   "vector product"
+  ],
+  "summary": "A vector perpendicular to both inputs, with magnitude equal to the area of the parallelogram they span.",
+  "formula": "a x b",
+  "source": "Vector algebra",
+  "seeAlso": [
+   "dot product",
+   "vector"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "limit-of-sinx-over-x",
+  "term": "sin x over x limit",
+  "aliases": [
+   "sinx/x",
+   "sinc"
+  ],
+  "summary": "As x approaches 0, sin x / x approaches 1 — the foundation of small-angle approximations.",
+  "detail": "Used throughout physics: for small angles sin θ ≈ θ (in radians), which makes pendulums and lenses tractable.",
+  "formula": "sin(x) / x",
+  "source": "Mathematical analysis",
+  "seeAlso": [
+   "limit",
+   "radian"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "order-of-operations",
+  "term": "order of operations",
+  "aliases": [
+   "bidmas",
+   "bodmas",
+   "pemdas"
+  ],
+  "summary": "The agreed order for evaluating an expression: brackets, indices (powers and roots), then multiplication and division, then addition and subtraction.",
+  "detail": "OmniCalc follows this order, and applies implicit multiplication at the same level as division, so 1/2x is (1/2)·x.",
+  "source": "Standard arithmetic convention",
+  "seeAlso": [
+   "expression",
+   "brackets"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "significant-figures",
+  "term": "significant figures",
+  "aliases": [
+   "sig figs",
+   "significant digits"
+  ],
+  "summary": "The digits in a number that carry meaning about its precision.",
+  "detail": "Leading zeros never count; trailing zeros after a decimal point do. A result should not be quoted to more significant figures than its least precise input.",
+  "source": "Measurement science",
+  "seeAlso": [
+   "rounding",
+   "precision"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "rounding",
+  "term": "rounding",
+  "aliases": [
+   "round",
+   "rounding numbers"
+  ],
+  "summary": "Replacing a number with a nearby simpler one, usually to a given number of decimal places or significant figures.",
+  "detail": "Standard rounding looks at the next digit: 5 or more rounds up. 'Round half to even' (banker's rounding) avoids a systematic upward bias in large sums.",
+  "source": "Numerical methods",
+  "seeAlso": [
+   "significant figures",
+   "truncation"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "complex-number",
+  "term": "complex number",
+  "aliases": [
+   "complex numbers",
+   "imaginary number"
+  ],
+  "summary": "A number of the form a + bi, where i is the square root of −1.",
+  "detail": "Complex numbers make every polynomial solvable and describe oscillations, AC circuits, signal processing and quantum states.",
+  "formula": "3 + 4*i",
+  "source": "Complex analysis",
+  "seeAlso": [
+   "imaginary unit",
+   "argand diagram",
+   "euler's formula"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "imaginary-unit",
+  "term": "imaginary unit",
+  "aliases": [
+   "i",
+   "sqrt(-1)"
+  ],
+  "symbol": "i",
+  "summary": "The number i with i² = −1, which makes the square root of any negative number definable.",
+  "detail": "Powers of i cycle every four: i, −1, −i, 1.",
+  "value": 0,
+  "display": "i (i² = −1)",
+  "formula": "sqrt(-1)",
+  "source": "Complex analysis",
+  "seeAlso": [
+   "complex number"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "eulers-formula",
+  "term": "euler's formula",
+  "aliases": [
+   "eulers formula",
+   "e^ix"
+  ],
+  "summary": "e^(iθ) = cos θ + i sin θ, linking exponentials to trigonometry.",
+  "detail": "Setting θ = π gives Euler's identity e^(iπ) + 1 = 0, which ties together five fundamental constants.",
+  "formula": "cos(theta) + i * sin(theta)",
+  "source": "Complex analysis",
+  "seeAlso": [
+   "complex number",
+   "trigonometry"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "permutation",
+  "term": "permutation",
+  "aliases": [
+   "permutations",
+   "npr"
+  ],
+  "summary": "An arrangement where order matters: the number of ways to choose and order r items from n is n!/(n−r)!.",
+  "formula": "fact(n) / fact(n - r)",
+  "source": "Combinatorics",
+  "seeAlso": [
+   "combination",
+   "factorial",
+   "probability"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "combination",
+  "term": "combination",
+  "aliases": [
+   "combinations",
+   "ncr",
+   "choose"
+  ],
+  "summary": "A selection where order does not matter: nCr = n!/(r!(n−r)!).",
+  "detail": "There are 13 983 816 ways to choose 6 numbers from 49 — which is why lottery odds are so long.",
+  "formula": "fact(n) / (fact(r) * fact(n - r))",
+  "source": "Combinatorics",
+  "seeAlso": [
+   "permutation",
+   "factorial",
+   "probability"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "probability",
+  "term": "probability",
+  "aliases": [
+   "chance",
+   "likelihood"
+  ],
+  "summary": "A number between 0 and 1 saying how likely an event is; P = favourable outcomes / total outcomes for equally likely cases.",
+  "detail": "Probabilities of independent events multiply; of mutually exclusive events add. Zero means impossible, one means certain.",
+  "formula": "favourable / total",
+  "source": "Probability theory",
+  "seeAlso": [
+   "odds",
+   "combinatorics",
+   "normal distribution"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "odds",
+  "term": "odds",
+  "aliases": [
+   "odds ratio"
+  ],
+  "summary": "The ratio of the probability of an event to the probability of it not happening: p : (1 − p).",
+  "detail": "Odds of 3:1 mean p = 0.75. Bookmakers quote odds that include their margin, so they are not the true probabilities.",
+  "formula": "p / (1 - p)",
+  "source": "Probability theory",
+  "seeAlso": [
+   "probability"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "percentile",
+  "term": "percentile",
+  "aliases": [
+   "percentiles",
+   "centile"
+  ],
+  "summary": "The value below which a given percentage of the data falls; the 90th percentile is above 90% of values.",
+  "detail": "The median is the 50th percentile and Q1/Q3 are the 25th and 75th.",
+  "source": "Descriptive statistics",
+  "seeAlso": [
+   "quartile",
+   "median",
+   "interquartile range"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "quartile",
+  "term": "quartile",
+  "aliases": [
+   "quartiles",
+   "q1 q3"
+  ],
+  "summary": "The three values that split ordered data into four equal parts: Q1 (25%), Q2/median (50%), Q3 (75%).",
+  "source": "Descriptive statistics",
+  "seeAlso": [
+   "interquartile range",
+   "percentile"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "interquartile-range",
+  "term": "interquartile range",
+  "aliases": [
+   "iqr"
+  ],
+  "symbol": "IQR",
+  "summary": "Q3 − Q1: the spread of the middle half of the data, unaffected by outliers.",
+  "formula": "q3 - q1",
+  "source": "Descriptive statistics",
+  "seeAlso": [
+   "quartile",
+   "outlier",
+   "standard deviation"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "z-score",
+  "term": "z score",
+  "aliases": [
+   "z-score",
+   "standard score"
+  ],
+  "symbol": "z",
+  "summary": "How many standard deviations a value lies from the mean: z = (x − μ)/σ.",
+  "detail": "z = 1.96 marks the central 95% of a normal distribution, which is why 1.96 appears in confidence intervals.",
+  "formula": "(x - mu) / sigma",
+  "source": "Statistics",
+  "seeAlso": [
+   "normal distribution",
+   "standard deviation",
+   "confidence interval"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "p-value",
+  "term": "p value",
+  "aliases": [
+   "p-value",
+   "probability value"
+  ],
+  "symbol": "p",
+  "summary": "The probability of seeing data at least as extreme as observed, if the null hypothesis were true.",
+  "detail": "A small p value is evidence against the null hypothesis — not proof of the alternative, and not the probability that the null is true.",
+  "source": "Statistical inference",
+  "seeAlso": [
+   "z score",
+   "null hypothesis",
+   "significance"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "correlation",
+  "term": "correlation",
+  "aliases": [
+   "pearson correlation",
+   "r value"
+  ],
+  "symbol": "r",
+  "summary": "A number from −1 to 1 describing how closely two variables move together on a straight line.",
+  "detail": "Correlation is not causation: ice-cream sales correlate with drowning deaths because both rise in hot weather.",
+  "formula": "covariance(a, b) / (sd(a) * sd(b))",
+  "source": "Statistics",
+  "seeAlso": [
+   "regression",
+   "covariance",
+   "r squared"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "r-squared",
+  "term": "r squared",
+  "aliases": [
+   "r²",
+   "coefficient of determination"
+  ],
+  "symbol": "R²",
+  "summary": "The fraction of the variation in the outcome explained by a fitted model, from 0 to 1.",
+  "detail": "R² = 0.9 means 90% of the variation is explained. Adding more predictors always raises it, so adjusted R² is used for comparison.",
+  "source": "Statistics",
+  "seeAlso": [
+   "correlation",
+   "regression"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "regression",
+  "term": "regression",
+  "aliases": [
+   "linear regression",
+   "line of best fit"
+  ],
+  "summary": "Fitting a line (or curve) that best explains how one variable changes with another, usually by least squares.",
+  "detail": "Least squares minimises the sum of squared vertical distances from the points. The slope is the change in y per unit change in x.",
+  "formula": "m * x + c",
+  "source": "Statistics",
+  "seeAlso": [
+   "correlation",
+   "r squared",
+   "residual"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "asymptote",
+  "term": "asymptote",
+  "aliases": [
+   "asymptotes"
+  ],
+  "summary": "A line that a curve approaches ever more closely without reaching.",
+  "detail": "y = 1/x has asymptotes at x = 0 and y = 0. In the app, evaluating exactly on a vertical asymptote is reported as a domain error rather than a huge number.",
+  "source": "Mathematical analysis",
+  "seeAlso": [
+   "limit",
+   "discontinuity"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "function",
+  "term": "function",
+  "aliases": [
+   "functions"
+  ],
+  "summary": "A rule that assigns exactly one output to each input.",
+  "detail": "Written f(x). Plotting a function shows every input–output pair; a vertical line must never cut the graph twice.",
+  "source": "Mathematical analysis",
+  "seeAlso": [
+   "domain",
+   "range",
+   "variable"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "domain-range",
+  "term": "domain and range",
+  "aliases": [
+   "domain",
+   "range of a function"
+  ],
+  "summary": "The domain is the set of allowed inputs; the range is the set of outputs actually produced.",
+  "detail": "√x has domain x ≥ 0 and range y ≥ 0. OmniCalc reports values outside the domain as errors instead of returning a complex approximation.",
+  "source": "Mathematical analysis",
+  "seeAlso": [
+   "function",
+   "asymptote"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "variable",
+  "term": "variable",
+  "aliases": [
+   "variables",
+   "unknown"
+  ],
+  "summary": "A symbol standing for a value that can change, such as x in a formula.",
+  "detail": "An unknown is a variable whose value is to be found by solving; a parameter is fixed for the problem but can vary between problems.",
+  "source": "Algebra",
+  "seeAlso": [
+   "constant term",
+   "equation",
+   "function"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "inequality",
+  "term": "inequality",
+  "aliases": [
+   "inequalities",
+   "greater than",
+   "less than"
+  ],
+  "summary": "A statement that one quantity is larger or smaller than another, using <, ≤, > or ≥.",
+  "detail": "Multiplying or dividing an inequality by a negative number flips the direction of the sign.",
+  "source": "Algebra",
+  "seeAlso": [
+   "equation",
+   "interval"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "linear-equation",
+  "term": "linear equation",
+  "aliases": [
+   "straight line equation"
+  ],
+  "summary": "An equation whose graph is a straight line, such as y = mx + c.",
+  "detail": "m is the gradient (steepness) and c the y-intercept where it crosses the y-axis.",
+  "formula": "m * x + c",
+  "source": "Coordinate geometry",
+  "seeAlso": [
+   "gradient",
+   "simultaneous equations"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "simultaneous-equations",
+  "term": "simultaneous equations",
+  "aliases": [
+   "system of equations",
+   "linear system"
+  ],
+  "summary": "Two or more equations that must all hold at once, solved for the shared unknowns.",
+  "detail": "If there are as many independent equations as unknowns there is usually one solution; parallel lines give none, and the same line twice gives infinitely many.",
+  "source": "Linear algebra",
+  "seeAlso": [
+   "linear equation",
+   "matrix",
+   "determinant"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "parabola",
+  "term": "parabola",
+  "aliases": [
+   "quadratic curve"
+  ],
+  "summary": "The U-shaped curve of a quadratic function y = ax² + bx + c.",
+  "detail": "It opens upwards when a > 0 and downwards when a < 0. Its vertex is the minimum (or maximum), found at x = −b/2a.",
+  "formula": "a * x^2 + b * x + c",
+  "source": "Algebra",
+  "seeAlso": [
+   "quadratic formula",
+   "discriminant",
+   "vertex"
+  ],
+  "area": "Mathematics"
+ },
+ {
+  "id": "slope-intercept",
+  "term": "y-intercept",
+  "aliases": [
+   "intercept"
+  ],
+  "summary": "The point where a graph crosses the y-axis — the value of y when x is 0.",
+  "source": "Coordinate geometry",
+  "seeAlso": [
+   "linear equation",
+   "gradient"
+  ],
+  "area": "Mathematics"
+ }
+]

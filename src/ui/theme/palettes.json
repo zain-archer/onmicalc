@@ -1,0 +1,345 @@
+{
+  "version": 1,
+  "packs": [
+    {
+      "id": "classic",
+      "label": "Indigo",
+      "description": "The original OmniCalc look: deep navy at night, soft grey by day.",
+      "tags": [
+        "popular"
+      ],
+      "light": {
+        "bg": "#f5f6fb",
+        "bgElev": "#ffffff",
+        "bgInset": "#eef0f8",
+        "border": "#d8dced",
+        "text": "#131829",
+        "textDim": "#515b78",
+        "accent": "#4f46e5",
+        "ok": "#15803d",
+        "warn": "#92400e",
+        "danger": "#b91c1c",
+        "shadow": "0 8px 24px rgb(20 26 46 / 10%)"
+      },
+      "dark": {
+        "bg": "#0b1020",
+        "bgElev": "#141a2e",
+        "bgInset": "#0e1425",
+        "border": "#2b3555",
+        "text": "#eef1fa",
+        "textDim": "#b2bcd8",
+        "accent": "#818cf8",
+        "ok": "#4ade80",
+        "warn": "#fbbf24",
+        "danger": "#fb7185",
+        "shadow": "0 10px 30px rgb(0 0 0 / 35%)"
+      }
+    },
+    {
+      "id": "solarized",
+      "label": "Solarized",
+      "description": "Ethan Schoonover's low-contrast classic; easy on the eyes for long sessions.",
+      "tags": [
+        "popular"
+      ],
+      "light": {
+        "bg": "#fdf6e3",
+        "bgElev": "#fffbf0",
+        "bgInset": "#f4edda",
+        "border": "#dccfae",
+        "text": "#073642",
+        "textDim": "#546669",
+        "accent": "#1f6f9c",
+        "ok": "#5f7000",
+        "warn": "#8a6800",
+        "danger": "#c02b28",
+        "shadow": "0 8px 24px rgb(7 54 66 / 12%)"
+      },
+      "dark": {
+        "bg": "#002b36",
+        "bgElev": "#073642",
+        "bgInset": "#01252e",
+        "border": "#0f5464",
+        "text": "#eee8d5",
+        "textDim": "#a9b7b6",
+        "accent": "#4fb3e8",
+        "ok": "#9fb52f",
+        "warn": "#c99b1c",
+        "danger": "#f0655f",
+        "shadow": "0 10px 30px rgb(0 0 0 / 40%)"
+      }
+    },
+    {
+      "id": "dracula",
+      "label": "Dracula",
+      "description": "High-saturation night palette that keeps results and labels easy to tell apart.",
+      "tags": [
+        "popular"
+      ],
+      "light": {
+        "bg": "#fffbeb",
+        "bgElev": "#ffffff",
+        "bgInset": "#f4eedc",
+        "border": "#ded2b4",
+        "text": "#1f1f1f",
+        "textDim": "#5b5544",
+        "accent": "#5a3fc0",
+        "ok": "#14710a",
+        "warn": "#8f430f",
+        "danger": "#b62f21",
+        "shadow": "0 8px 24px rgb(31 31 31 / 12%)"
+      },
+      "dark": {
+        "bg": "#1e1f29",
+        "bgElev": "#282a36",
+        "bgInset": "#191a21",
+        "border": "#44475a",
+        "text": "#f8f8f2",
+        "textDim": "#c8cbe0",
+        "accent": "#bd93f9",
+        "ok": "#69f08a",
+        "warn": "#f1fa8c",
+        "danger": "#ff8080",
+        "shadow": "0 10px 30px rgb(0 0 0 / 45%)"
+      }
+    },
+    {
+      "id": "nord",
+      "label": "Nord",
+      "description": "Cool, calm blues from the Nord project. Popular with people who work late.",
+      "tags": [
+        "popular"
+      ],
+      "light": {
+        "bg": "#eceff4",
+        "bgElev": "#ffffff",
+        "bgInset": "#e3e8f0",
+        "border": "#c6cfdd",
+        "text": "#2e3440",
+        "textDim": "#49536a",
+        "accent": "#3b6ea5",
+        "ok": "#3f7d20",
+        "warn": "#8a6508",
+        "danger": "#a73e46",
+        "shadow": "0 8px 24px rgb(46 52 64 / 12%)"
+      },
+      "dark": {
+        "bg": "#2e3440",
+        "bgElev": "#3b4252",
+        "bgInset": "#272c37",
+        "border": "#4c566a",
+        "text": "#eceff4",
+        "textDim": "#c9d2df",
+        "accent": "#88c0d0",
+        "ok": "#a3be8c",
+        "warn": "#ebcb8b",
+        "danger": "#ef8b93",
+        "shadow": "0 10px 30px rgb(0 0 0 / 35%)"
+      }
+    },
+    {
+      "id": "github",
+      "label": "GitHub",
+      "description": "The familiar developer palette, light and dark exactly as the web app you know.",
+      "tags": [
+        "popular"
+      ],
+      "light": {
+        "bg": "#ffffff",
+        "bgElev": "#f6f8fa",
+        "bgInset": "#eef1f4",
+        "border": "#d0d7de",
+        "text": "#1f2328",
+        "textDim": "#57606a",
+        "accent": "#0969da",
+        "ok": "#1a7f37",
+        "warn": "#8a5a00",
+        "danger": "#cf222e",
+        "shadow": "0 8px 24px rgb(31 35 40 / 12%)"
+      },
+      "dark": {
+        "bg": "#0d1117",
+        "bgElev": "#161b22",
+        "bgInset": "#010409",
+        "border": "#3d444d",
+        "text": "#e6edf3",
+        "textDim": "#9aa4b0",
+        "accent": "#4493f8",
+        "ok": "#3fb950",
+        "warn": "#d29922",
+        "danger": "#f85149",
+        "shadow": "0 10px 30px rgb(0 0 0 / 45%)"
+      }
+    },
+    {
+      "id": "sepia",
+      "label": "Paper",
+      "description": "Warm reading paper by day, candlelit ink by night. Favourite for study sessions.",
+      "tags": [
+        "popular"
+      ],
+      "light": {
+        "bg": "#f7f1e3",
+        "bgElev": "#fffaf0",
+        "bgInset": "#eee5d1",
+        "border": "#dcd0b5",
+        "text": "#2b2118",
+        "textDim": "#5f5240",
+        "accent": "#8a5a17",
+        "ok": "#41682c",
+        "warn": "#7a5c0f",
+        "danger": "#9c3520",
+        "shadow": "0 8px 24px rgb(43 33 24 / 12%)"
+      },
+      "dark": {
+        "bg": "#201b14",
+        "bgElev": "#2b241a",
+        "bgInset": "#171310",
+        "border": "#463a29",
+        "text": "#f0e6d2",
+        "textDim": "#c3b291",
+        "accent": "#d9a45c",
+        "ok": "#9dc27a",
+        "warn": "#e0b45c",
+        "danger": "#f0917f",
+        "shadow": "0 10px 30px rgb(0 0 0 / 45%)"
+      }
+    },
+    {
+      "id": "contrast",
+      "label": "High contrast",
+      "description": "Maximum legibility: pure black or pure white with strong borders.",
+      "tags": [
+        "accessibility"
+      ],
+      "light": {
+        "bg": "#ffffff",
+        "bgElev": "#ffffff",
+        "bgInset": "#f2f2f2",
+        "border": "#5c5c5c",
+        "text": "#000000",
+        "textDim": "#333333",
+        "accent": "#0b3d91",
+        "ok": "#0a6b1f",
+        "warn": "#7a4b00",
+        "danger": "#a3001a",
+        "shadow": "0 6px 18px rgb(0 0 0 / 18%)"
+      },
+      "dark": {
+        "bg": "#000000",
+        "bgElev": "#111111",
+        "bgInset": "#080808",
+        "border": "#8a8a8a",
+        "text": "#ffffff",
+        "textDim": "#dcdcdc",
+        "accent": "#ffe066",
+        "ok": "#7ef79a",
+        "warn": "#ffd166",
+        "danger": "#ff9b9b",
+        "shadow": "0 0 0 rgb(0 0 0 / 0%)"
+      }
+    },
+    {
+      "id": "ocean",
+      "label": "Ocean",
+      "description": "Deep-sea teal with a bright cyan accent.",
+      "tags": [
+        "more"
+      ],
+      "light": {
+        "bg": "#f0f9fb",
+        "bgElev": "#ffffff",
+        "bgInset": "#e3f2f6",
+        "border": "#bfdae2",
+        "text": "#062b36",
+        "textDim": "#45666f",
+        "accent": "#0b6b86",
+        "ok": "#0f6f68",
+        "warn": "#8a5a00",
+        "danger": "#b0173c",
+        "shadow": "0 8px 24px rgb(6 43 54 / 12%)"
+      },
+      "dark": {
+        "bg": "#041f2b",
+        "bgElev": "#0a2d3c",
+        "bgInset": "#031a24",
+        "border": "#1b596b",
+        "text": "#e3f6fb",
+        "textDim": "#a6cdd8",
+        "accent": "#22d3ee",
+        "ok": "#34d399",
+        "warn": "#fbbf24",
+        "danger": "#fb7185",
+        "shadow": "0 10px 30px rgb(0 0 0 / 45%)"
+      }
+    },
+    {
+      "id": "sunset",
+      "label": "Sunset",
+      "description": "Warm plum and coral — a softer alternative to blue-based dark themes.",
+      "tags": [
+        "more"
+      ],
+      "light": {
+        "bg": "#fff7f2",
+        "bgElev": "#ffffff",
+        "bgInset": "#fcebdf",
+        "border": "#f0d3c3",
+        "text": "#2a1a14",
+        "textDim": "#6a4f44",
+        "accent": "#b03a12",
+        "ok": "#146b32",
+        "warn": "#8a5200",
+        "danger": "#a3161b",
+        "shadow": "0 8px 24px rgb(42 26 20 / 12%)"
+      },
+      "dark": {
+        "bg": "#1f1424",
+        "bgElev": "#2a1b31",
+        "bgInset": "#180f1c",
+        "border": "#4c3157",
+        "text": "#fdeae4",
+        "textDim": "#d3b3c3",
+        "accent": "#fb7185",
+        "ok": "#6ee7b7",
+        "warn": "#fbbf24",
+        "danger": "#fda4a4",
+        "shadow": "0 10px 30px rgb(0 0 0 / 45%)"
+      }
+    },
+    {
+      "id": "forest",
+      "label": "Forest",
+      "description": "Muted greens with a fresh accent, inspired by outdoor and field-work apps.",
+      "tags": [
+        "more"
+      ],
+      "light": {
+        "bg": "#f2f8f3",
+        "bgElev": "#ffffff",
+        "bgInset": "#e5f0e8",
+        "border": "#c4d9ca",
+        "text": "#10241a",
+        "textDim": "#48644f",
+        "accent": "#12703a",
+        "ok": "#12703a",
+        "warn": "#7d5500",
+        "danger": "#a3161b",
+        "shadow": "0 8px 24px rgb(16 36 26 / 12%)"
+      },
+      "dark": {
+        "bg": "#0c1a13",
+        "bgElev": "#12261c",
+        "bgInset": "#081410",
+        "border": "#265139",
+        "text": "#e6f5ec",
+        "textDim": "#aecdb9",
+        "accent": "#4ade80",
+        "ok": "#4ade80",
+        "warn": "#fbbf24",
+        "danger": "#fb7185",
+        "shadow": "0 10px 30px rgb(0 0 0 / 45%)"
+      }
+    }
+  ]
+}
