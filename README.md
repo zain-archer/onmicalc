@@ -48,6 +48,7 @@ Everything above ships the same build: one engine, one UI, no per-platform forks
 | [DEPLOYMENT.md](./DEPLOYMENT.md) | static hosting recipes, PWA verification, cache headers |
 | [docs/DESKTOP.md](./docs/DESKTOP.md) | Tauri/Electron packaging and mobile notes |
 | [CONTRIBUTING.md](./CONTRIBUTING.md) | workflow, code rules, how to add a tool |
+| [docs/PUBLISHING.md](./docs/PUBLISHING.md) | five-minute publishing guide for every platform |
 | [CHANGELOG.md](./CHANGELOG.md) | release history |
 | [SECURITY.md](./SECURITY.md) | threat model, hardening measures, how to report a vulnerability |
 | [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) | community expectations |

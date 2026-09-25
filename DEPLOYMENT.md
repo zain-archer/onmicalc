@@ -5,6 +5,9 @@ configure, so any static host works — including a USB stick or an `nginx` cont
 
 ## 0. One-command paths
 
+In a hurry? [docs/PUBLISHING.md](./docs/PUBLISHING.md) is the two-command-per-platform version of
+this document.
+
 ```bash
 npm run verify                       # mandatory gate: typecheck, 511 tests, production build
 npx serve dist                       # or: npm run preview
