@@ -31,6 +31,7 @@ const PHASES = [
   { n: 26, title: 'Deployment', done: true },
   { n: 27, title: 'Desktop packaging', done: true },
   { n: 28, title: 'Release docs', done: true },
+  { n: 29, title: 'Ask OmniCalc (plain language)', done: true },
 ];
 
 export function AboutPanel() {
@@ -46,6 +47,7 @@ export function AboutPanel() {
           no paid APIs. Every calculation runs on your device.
         </p>
         <ul className="ticks">
+          <li>Ask in plain words — “how many miles is 42 km”</li>
           <li>100% offline capable</li>
           <li>No data ever leaves the device</li>
           <li>Open source ({APP_LICENSE})</li>
@@ -87,7 +89,7 @@ export function AboutPanel() {
           <li><code>CHANGELOG.md</code> — release history</li>
         </ul>
         <p className="muted">
-          Version {APP_VERSION} · {APP_LICENSE} licensed · 511 automated tests · no network requests
+          Version {APP_VERSION} · {APP_LICENSE} licensed · 645 automated tests · no network requests
           at runtime.
         </p>
       </section>

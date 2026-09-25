@@ -1,10 +1,27 @@
 # OmniCalc — Project Status
 
-_Last updated: 2026-09-25 (Phases 0–28 complete — production release 1.0.0)_
+_Last updated: 2026-09-25 (Phases 0–28 complete, release 1.0.0 · Phase 29 Ask OmniCalc layer, release 1.1.0)_
 
 ## Current phase
 
-**Phase 28 — Release docs** (complete). All 29 phases are implemented and the project has shipped its first production release (**1.0.0**).
+**Phase 29 — Plain-language entry ("Ask OmniCalc")** (complete). All 29 original phases are implemented and shipped (**1.0.0**); **1.1.0** adds the intent layer so the app can be used without knowing which tool to open.
+
+## Phase 29 — Plain-language entry layer (1.1.0)
+
+The app now opens on a single question — *"What do you want to do?"* — and answers it.
+
+| Piece | Where | What it does |
+| --- | --- | --- |
+| Capability registry | `src/intents/types.ts` | 27 capabilities described as data: id, title, promise, group, keywords, examples, inputs, optional sentence templates and a `run()` that calls existing engine functions. The UI holds no maths. |
+| Sentence templates | `src/intents/patterns.ts` | `{slot}` templates → anchored regex with typed slots (number, unit, list, expression, text, angle); introducers are consumed exactly once, filler phrases are stripped, values are parsed loosely. |
+| Unit vocabulary | `src/intents/units.ts` | Built from the existing converter's `CATEGORIES`, so every unit name/alias the app already knows is understood in sentences; cross-category conversions explain themselves. |
+| Planner / scorer | `src/intents/solve.ts` | Ranks capabilities by keyword specificity + example similarity + template match + unit/arithmetic hints; two `=` becomes a system of equations; returns `Plan` or a `PlanFailure` with suggestions. |
+| Capability packs | `src/intents/capabilities/*.ts` | Everyday maths & percentages · units · algebra & systems · graphing & calculus · statistics, regression & probability · matrices & vectors · physics, Ohm's law, capacitors & geometry · money, interest & dates. |
+| Ask panel | `src/ui/panels/AskPanel.tsx` | Default tool (`#/ask`): live "I will …" feedback, understanding line, headline + result blocks (stats/table/list/note), copy, send-to-calculator, live history entries, hand-fill fields, and a grouped "Everything you can ask" browser. |
+| Palette handoff | `src/ui/shell/CommandPalette.tsx`, `src/ui/bus.ts` | `Ctrl/⌘+K` accepts a full request and offers "Ask OmniCalc: …" for whatever was typed. |
+| Tests | `src/intents/intents.test.ts`, `src/ui/panels/AskPanel.test.tsx` | 61 routing checks, 42 end-to-end answer checks, structural invariants, pattern/unit behaviour, 12 panel tests. |
+
+Verified end to end (examples from the suite): `20 percent of 250` → 50 · `price 240 with 25 percent discount` → 180 · `72 fahrenheit in celsius` → 22.22222222 °C · `solve 3x + 5 = 20` → x = 5 · `x^2 - 5x + 6 = 0` → x = 2, x = 3 · `integrate x^2 from 0 to 3` → 9 · `limit of sin(x)/x as x approaches 0` → 1 · `determinant of 1 2; 3 4` → −2 · `voltage with current 2 and resistance 50` → 100 V · `probability z < 1.96` → 0.9750021 · `days between 2024-01-01 and 2026-09-25` → 998 days.
 
 ## Completed
 
@@ -123,7 +140,7 @@ value.
 
 ## In progress
 
-Nothing — 1.0.0 is released and the project is in maintenance mode.
+Nothing — 1.1.0 (Ask OmniCalc) is released and the project is in maintenance mode.
 
 ## Remaining
 
@@ -145,24 +162,27 @@ would be new phases beyond it, each following the same discipline:
 | Engine and math domains (core, math, constants, conversions, history, settings) | 21 | 294 | passing |
 | Applied calculators (engineering, finance) | 2 | 27 | passing |
 | Graphing | 1 | 15 | passing |
-| UI panels, shell, palette, theme and shortcuts | 15 | 88 | passing |
+| UI panels, shell, palette, theme and shortcuts | 16 | 100 | passing |
+| Intent layer (routing, answers, patterns, units) | 1 | 117 | passing |
 | PWA (status, install, updates) | 3 | 8 | passing |
 | Storage, backup and export | 2 | 12 | passing |
 | Integration (every tool renders, cross-panel flows) | 1 | 24 | passing |
 | Performance and safety guardrails | 2 | 14 | passing |
 | Constants → engine integration | 1 | 14 | passing |
 | Accessibility sweep (per-tool semantics) | 1 | 21 | passing |
-| **Total** | **49** | **511** | **all passing** |
+| **Total** | **51** | **645** | **all passing** |
 
 `npx tsc -b --force` is clean. `npm run verify` (typecheck → tests → build) is the release gate and
 is green.
 
 ## Build status
 
-`npm run build` succeeds — initial entry chunk 312.42 kB (98.24 kB gzip) plus 20.9 kB CSS (4.8 kB
-gzip), with 17 on-demand panel chunks between 3.9 kB and 14.5 kB. The service worker precaches all
-29 emitted assets (including `robots.txt` and `sitemap.xml`) under a content-hash cache name. The
-output is pure static files: no server, no rewrites, no environment variables.
+`npm run build` succeeds — initial entry chunk 313.79 kB (98.82 kB gzip) plus 22.95 kB CSS (5.13 kB
+gzip), with 18 on-demand chunks between 2.3 kB and 89.4 kB (the Ask panel chunk carries the intent
+layer and every capability pack; it is fetched only when that tool is opened). The service worker
+precaches all 38 emitted assets (including `robots.txt` and `sitemap.xml`) under a content-hash cache
+name (`omnica-0bb12a5677e7`). The output is pure static files: no server, no rewrites, no environment
+variables.
 
 ## Deployment status
 

@@ -7,6 +7,7 @@ import {
   type Command,
   type CommandHandlers,
 } from '@/ui/commands';
+import { setAsk } from '@/ui/bus';
 
 export interface CommandPaletteProps {
   open: boolean;
@@ -22,7 +23,29 @@ export function CommandPalette({ open, onClose, handlers }: CommandPaletteProps)
   const dialogRef = useFocusTrap<HTMLDivElement>(open);
 
   const commands = useMemo(() => createCommands(handlers), [handlers]);
-  const results = useMemo(() => filterCommands(commands, query), [commands, query]);
+
+  /**
+   * Whatever is typed is also a request, not just a command search: the last row
+   * offers to answer it in the Ask panel, so a question always has a home.
+   */
+  const results = useMemo(() => {
+    const matches = filterCommands(commands, query);
+    const typed = query.trim();
+    if (typed.length < 3) return matches;
+    const ask: Command = {
+      id: 'ask.request',
+      label: `Ask OmniCalc: “${typed}”`,
+      group: 'Ask OmniCalc',
+      hint: 'Answer this in plain words',
+      keywords: [],
+      kind: 'action',
+      run: () => {
+        setAsk(typed);
+        handlers.navigate('ask');
+      },
+    };
+    return [...matches, ask];
+  }, [commands, handlers, query]);
 
   useEffect(() => {
     if (!open) {

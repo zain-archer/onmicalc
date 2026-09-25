@@ -105,10 +105,10 @@ describe('tool registry invariants', () => {
     expect(new Set(TOOLS.map((tool) => tool.label)).size).toBe(TOOLS.length);
   });
 
-  it('keeps every tool inside the 0–28 phase plan with a summary', () => {
+  it('keeps every tool inside the phase plan with a summary', () => {
     for (const tool of TOOLS) {
       expect(tool.phase).toBeGreaterThanOrEqual(0);
-      expect(tool.phase).toBeLessThanOrEqual(28);
+      expect(tool.phase).toBeLessThanOrEqual(29);
       expect(tool.summary.length).toBeGreaterThan(10);
       expect(tool.icon.length).toBeGreaterThan(5);
     }
@@ -121,11 +121,12 @@ describe('tool registry invariants', () => {
   });
 
   it('only marks a tool ready once its phase is implemented', () => {
-    // Phase 28 is the release/docs phase, which can be ready at any time.
+    // Every phase up to and including the natural-language entry layer (29)
+    // has shipped, so nothing may still be sitting in the planned state.
+    const LAST_IMPLEMENTED_PHASE = 29;
     for (const tool of TOOLS) {
-      if (tool.phase >= 19 && tool.phase !== 28) {
-        expect(tool.status, `${tool.id} should not claim to be ready yet`).toBe('planned');
-      }
+      expect(tool.phase).toBeLessThanOrEqual(LAST_IMPLEMENTED_PHASE);
+      expect(tool.status, `${tool.id} is ready before its phase shipped`).toBe('ready');
     }
   });
 });

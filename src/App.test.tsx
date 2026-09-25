@@ -5,12 +5,20 @@ import App from './App';
 import { TOOLS } from '@/ui/tools';
 
 describe('app shell', () => {
-  it('opens the calculator by default', () => {
+  it('opens the plain-language Ask panel by default', async () => {
     window.location.hash = '';
+    render(<App />);
+    expect(screen.getByRole('heading', { level: 1, name: 'Ask OmniCalc' })).toBeTruthy();
+    // The panel itself is loaded on demand, so wait for it to arrive.
+    expect(await screen.findByLabelText('Your request')).toBeTruthy();
+    expect(screen.getAllByRole('navigation').length).toBeGreaterThan(0);
+  });
+
+  it('still reaches the keypad in one click', () => {
+    window.location.hash = '#/calculator';
     render(<App />);
     expect(screen.getByRole('heading', { level: 1, name: 'Calculator' })).toBeTruthy();
     expect(screen.getByLabelText('Expression')).toBeTruthy();
-    expect(screen.getAllByRole('navigation').length).toBeGreaterThan(0);
     // The angle mode is always visible.
     expect(screen.getByRole('group', { name: 'Angle mode' })).toBeTruthy();
   });

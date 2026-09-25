@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { CommandPalette } from './CommandPalette';
 import type { CommandHandlers } from '@/ui/commands';
+import { askStore } from '@/ui/bus';
 
 const makeHandlers = (): CommandHandlers => ({
   navigate: vi.fn(),
@@ -24,8 +25,22 @@ describe('command palette', () => {
     fireEvent.change(input, { target: { value: 'plot' } });
     expect(screen.getByText('Graphing')).toBeTruthy();
     expect(screen.queryByText('Finance & Everyday')).toBeNull();
-    fireEvent.change(input, { target: { value: 'zzzz' } });
+    fireEvent.change(input, { target: { value: 'zz' } });
     expect(screen.getByText(/No command matches/)).toBeTruthy();
+  });
+
+  it('offers to answer a typed request in the Ask panel', () => {
+    const handlers = makeHandlers();
+    const onClose = vi.fn();
+    render(<CommandPalette open onClose={onClose} handlers={handlers} />);
+    const input = screen.getByLabelText('Search commands');
+    fireEvent.change(input, { target: { value: 'convert 5 km to miles' } });
+    const row = screen.getByText(/Ask OmniCalc: “convert 5 km to miles”/);
+    fireEvent.keyDown(input, { key: 'Enter' });
+    fireEvent.mouseDown(row);
+    expect(handlers.navigate).toHaveBeenCalledWith('ask');
+    expect(askStore.get().text).toBe('convert 5 km to miles');
+    expect(onClose).toHaveBeenCalled();
   });
 
   it('runs the highlighted command on Enter', () => {

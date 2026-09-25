@@ -29,6 +29,7 @@ const panel = (loader: () => Promise<Record<string, unknown>>, name: string) =>
     return { default: module[name] as ComponentType };
   });
 
+const AskPanel = panel(() => import('@/ui/panels/AskPanel'), 'AskPanel');
 const ConstantsPanel = panel(() => import('@/ui/panels/ConstantsPanel'), 'ConstantsPanel');
 const ConversionsPanel = panel(() => import('@/ui/panels/ConversionsPanel'), 'ConversionsPanel');
 const FractionsPanel = panel(() => import('@/ui/panels/FractionsPanel'), 'FractionsPanel');
@@ -46,6 +47,7 @@ const FinancePanel = panel(() => import('@/ui/panels/FinancePanel'), 'FinancePan
 
 /** Panels are registered here as each phase lands. */
 const PANELS: Record<string, ComponentType> = {
+  ask: AskPanel,
   calculator: CalculatorPanel,
   fractions: FractionsPanel,
   complex: ComplexPanel,

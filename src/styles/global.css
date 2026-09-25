@@ -810,3 +810,51 @@ kbd {
 .muted {
   color: var(--text-dim);
 }
+
+/* ---------------------------- Ask OmniCalc ---------------------------- */
+
+.ask__form h2 { margin: 0 0 6px; }
+.ask__form p { margin: 0 0 4px; }
+.ask__input { font-size: 16px; padding: 12px 14px; }
+.ask__label {
+  color: var(--text-dim);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.ask__actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 4px; }
+.ask__starters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
+.ask__understood { color: var(--text-dim); font-size: 13px; margin: 0 0 4px; }
+.ask__headline {
+  font-family: var(--mono);
+  font-size: clamp(20px, 2.4vw, 28px);
+  margin: 0 0 10px;
+  overflow-wrap: anywhere;
+}
+.ask__blocks { display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
+.ask-block__title { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dim); margin: 0 0 6px; }
+.ask-text, .ask-math { margin: 0; overflow-wrap: anywhere; }
+.ask-math { display: block; font-family: var(--mono); background: var(--bg-inset); padding: 10px 12px; border-radius: var(--radius-sm); }
+.ask-stats { margin: 0; display: flex; flex-direction: column; }
+.ask-stats__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+.ask-stats__row:last-child { border-bottom: 0; }
+.ask-stats__row dt { color: var(--text-dim); }
+.ask-stats__row dd { margin: 0; font-family: var(--mono); text-align: right; overflow-wrap: anywhere; }
+.ask-stats__row.is-emphasis dd { color: var(--accent); font-size: 1.08em; }
+.ask-list { margin: 0; padding-left: 18px; color: var(--text-dim); }
+.ask-table-wrap { overflow-x: auto; }
+.ask-table { border-collapse: collapse; font-family: var(--mono); font-size: 13px; min-width: 260px; }
+.ask-table th, .ask-table td { padding: 5px 10px; border-bottom: 1px solid var(--border); text-align: right; }
+.ask-table th:first-child, .ask-table td:first-child { text-align: left; }
+.ask-table thead th { color: var(--text-dim); font-weight: 600; }
+.ask__details summary { cursor: pointer; color: var(--text-dim); }
+.ask__details[open] summary { color: var(--text); margin-bottom: 8px; }
+.ask__groups { display: flex; flex-direction: column; gap: 12px; }
+.ask__groups section { border-top: 1px solid var(--border); padding-top: 10px; }
+.ask__groups section:first-child { border-top: 0; padding-top: 0; }

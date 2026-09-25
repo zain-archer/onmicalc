@@ -3,12 +3,12 @@
 [![CI](https://github.com/omnica/omnica/actions/workflows/ci.yml/badge.svg)](https://github.com/omnica/omnica/actions/workflows/ci.yml)
 [![Deploy](https://github.com/omnica/omnica/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/omnica/omnica/actions/workflows/deploy-pages.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-informational.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.1.0-informational.svg)](./CHANGELOG.md)
 
 A **free**, offline-first scientific, engineering and graphing calculator for the web, desktop and
 mobile. No accounts, no ads, no paid APIs, no premium tiers — every calculation runs on your device.
 
-> Status: **production release 1.0.0** — all 29 phases (0–28) implemented, 511 automated tests
+> Status: **release 1.1.0** — all 29 phases (0–28) plus the natural-language **Ask OmniCalc** layer, 645 automated tests
 > passing, static build verified offline, and deployment/packaging tooling included for every major
 > platform. See [PROJECT_STATUS.md](./PROJECT_STATUS.md) for the phase-by-phase detail.
 
@@ -68,7 +68,7 @@ Everything above ships the same build: one engine, one UI, no per-platform forks
 ```bash
 npm ci
 npm run dev        # http://localhost:5173
-npm run verify     # typecheck + 511 tests + production build (the gate for every change)
+npm run verify     # typecheck + 645 tests + production build (the gate for every change)
 npm run build      # type-check + production bundle + service worker
 npm run preview    # serve the production build
 ```
@@ -97,6 +97,7 @@ src/
 │   ├── precision/ # formatting, rounding, significant figures
 │   └── errors/    # CalcError taxonomy used by every layer
 ├── math/          # math domains built on the engine (arithmetic, trig, stats, matrices, ...)
+├── intents/       # plain-language layer: capabilities, sentence templates, scorer
 ├── conversions/   # data-driven unit conversion engine + definitions
 ├── engineering/   # electrical / physics / geometry calculators
 ├── finance/       # interest, loans, everyday money tools
@@ -121,7 +122,7 @@ Rules the codebase enforces (all covered by automated guard tests):
 | Gate | Command | What it covers |
 | --- | --- | --- |
 | Typecheck | `npm run typecheck` | strict TS across app, tests and build scripts |
-| Tests | `npm test` | 511 tests: engine, every math domain, every panel, a11y sweep, integration, perf and safety guardrails |
+| Tests | `npm test` | 645 tests: engine, every math domain, every panel, a11y sweep, integration, perf and safety guardrails |
 | Build | `npm run build` | production bundle + generated service worker |
 | All three | `npm run verify` | the single release gate (also run by CI on Node 20 and 22) |
 

@@ -4,6 +4,34 @@ All notable changes to OmniCalc are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [semantic versioning](https://semver.org/).
 
+## [1.1.0] — 2026-09-25
+
+Ask OmniCalc: type what you want in your own words and the app works out which tool to use, pulls
+the numbers out of your sentence and answers — no menus, no formula syntax to remember.
+
+### Added — natural-language entry layer (`src/intents/`)
+
+- **"Ask OmniCalc" is the new default screen.** One text box, live "I will …" feedback, plain-language
+  understanding line, formatted answer with tables/lists/notes, a copy button and
+  "Send to calculator". Nothing about maths lives in the UI: the panel renders result blocks.
+- **27 capabilities across 10 groups** covering everyday maths and percentages, units, equations and
+  systems, graphing and calculus (derivative, integral, limit, Taylor), statistics and regression,
+  probability, matrices and vectors, physics/engineering and geometry, money and dates.
+- **Sentence templates with typed slots** (`src/intents/patterns.ts`) extract numbers, units, lists and
+  function bodies from ordinary phrasing; introducers are matched once, so "15 percent of 200" and
+  "% of" do not collide with "30% off".
+- **Scoring, not first-match** (`src/intents/solve.ts`): keyword specificity + example similarity +
+  the capability's own templates + domain hints, with two `=` routed to the simultaneous-equation
+  solver and bare sums like `2^10` routed to the calculator.
+- **Honest failures.** Unmatched requests return ranked suggestions, and capabilities explain exactly
+  what is missing ("I need the capacitance in farads and the voltage") instead of guessing.
+- **Form fallback.** Any capability can also be completed by typing values into generated fields —
+  and typed values win over the sentence.
+- **Command palette handoff.** Ctrl/⌘+K accepts a full request and answers it: the palette always
+  offers "Ask OmniCalc: …" for what you typed.
+- **61 routing checks, 42 end-to-end answer checks and 12 panel tests**, plus a unit vocabulary derived
+  automatically from the existing converter (so every unit already in the app is understood by name).
+
 ## [1.0.0] — 2026-09-25
 
 First production release: every planned phase (0–28) is implemented, the app is deployable to any

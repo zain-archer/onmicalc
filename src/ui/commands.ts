@@ -21,7 +21,7 @@ export interface CommandHandlers {
 export interface Command {
   id: string;
   label: string;
-  group: 'Tools' | 'Appearance' | 'Angle mode' | 'Calculator' | 'Data' | 'Help';
+  group: 'Tools' | 'Appearance' | 'Angle mode' | 'Calculator' | 'Data' | 'Help' | 'Ask OmniCalc';
   hint?: string;
   keywords: string[];
   kind: CommandKind;
@@ -29,6 +29,7 @@ export interface Command {
 }
 
 const TOOL_KEYWORDS: Record<string, string[]> = {
+  ask: ['ask', 'plain english', 'natural language', 'what do you want', 'intent', 'help me', 'do this'],
   calculator: ['keypad', 'calculate', 'expression', 'basic', 'scientific'],
   fractions: ['rational', 'mixed', 'numerator', 'denominator'],
   complex: ['imaginary', 'polar', 'i'],

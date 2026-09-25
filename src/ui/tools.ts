@@ -29,6 +29,15 @@ export const TOOL_GROUPS: readonly ToolGroup[] = [
 
 export const TOOLS: readonly ToolDef[] = [
   {
+    id: 'ask',
+    label: 'Ask OmniCalc',
+    group: 'Calculate',
+    icon: 'M4 4h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-7l-5 4v-4H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Zm3 4h10v2H7V8Zm0 4h6v2H7v-2Z',
+    status: 'ready',
+    phase: 29,
+    summary: 'Type what you want in your own words — OmniCalc picks the right tool and fills it in.',
+  },
+  {
     id: 'calculator',
     label: 'Calculator',
     group: 'Calculate',

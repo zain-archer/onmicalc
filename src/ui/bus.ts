@@ -20,6 +20,22 @@ export function appendToDraft(snippet: string): void {
   setDraft(`${current}${needsSpace ? ' ' : ''}${snippet}`);
 }
 
+/**
+ * A plain-language request handed to the Ask panel — used by the command
+ * palette ("Ask OmniCalc: convert 5 km to miles") and by deep links.
+ */
+export interface AskState {
+  text: string;
+  /** Bumped on every handoff so the panel knows to run the new request. */
+  token: number;
+}
+
+export const askStore = createStore<AskState>('omnica.ask.v1', { text: '', token: 0 });
+
+export function setAsk(text: string): void {
+  askStore.set({ text, token: askStore.get().token + 1 });
+}
+
 /** Last successful answer, exposed to the engine as the `ans` variable. */
 export const answerStore = createStore<{ value: number; display: string }>('omnica.answer.v1', {
   value: 0,
