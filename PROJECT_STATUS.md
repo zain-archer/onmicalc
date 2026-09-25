@@ -1,10 +1,24 @@
 # OmniCalc — Project Status
 
-_Last updated: 2026-09-25 (Phases 0–28 complete, release 1.0.0 · Phase 29 Ask OmniCalc layer, 1.1.0–1.2.0 · 1.3.0 themes, adaptive layout, knowledge base, file intake and store packaging)_
+_Last updated: 2026-09-25 (Phase 29 complete: 1.0.0 → 1.3.0 · 2.0.0 in progress: engine upgrade tiers)_
 
 ## Current phase
 
-**Phase 29 — Plain-language entry ("Ask OmniCalc")** (complete). All 29 original phases are implemented and shipped (**1.0.0**); **1.1.0** adds the intent layer so the app can be used without knowing which tool to open, **1.2.0** makes that layer typo-tolerant, and **1.3.0** adds selectable themes, a layout that adapts to every device, a sourced knowledge base ("what is pi"), offline reading of PDF/Office/text files, and packaging for every app store.
+**2.0.0 — engine upgrade (in progress).** Phase 29 and everything before it is complete: 57 test
+files and 819 checks up to 1.3.0, now **59 files / 840 checks**, with `npm run typecheck` clean after
+every tier. Tiers land one at a time, each with its own module set, tests and a commit:
+
+| Tier | Area | Where | Status |
+| --- | --- | --- | --- |
+| 1 | Symbolic CAS: integration, limits, series, polynomial algebra, inequalities, nonlinear systems | `src/math/cas/*` | ✅ 59 tests (`e3b5df9`) |
+| 3 | Number theory, combinatorics, sequences, special functions, numerical methods | `src/math/{numbertheory,combinatorics,sequences,special,numerical}/` | ✅ 33 tests (`a635de1`) |
+| 2 | 3D surfaces, vector fields with streamlines, implicit curves, contours, heat maps | `src/graphing/{threeD,fields,implicit}.ts`, `src/ui/panels/Graph3DPanel.tsx` | ✅ 19 tests (engine + panel) |
+
+Everything in these tiers is reachable from the UI: *Graphing* stays the 2D plotter and the new
+*3D & Fields* tool (`#/graph3d`) covers surfaces, vector fields, contours and heat maps, reusing the
+same expression parser, settings and accessible primitives as the rest of the app.
+
+## Phase 29 — Plain-language entry ("Ask OmniCalc") (complete) All 29 original phases are implemented and shipped (**1.0.0**); **1.1.0** adds the intent layer so the app can be used without knowing which tool to open, **1.2.0** makes that layer typo-tolerant, and **1.3.0** adds selectable themes, a layout that adapts to every device, a sourced knowledge base ("what is pi"), offline reading of PDF/Office/text files, and packaging for every app store.
 
 ## 1.3.0 — Themes, adaptive layout, understanding everything, app stores
 
@@ -36,6 +50,35 @@ The app now opens on a single question — *"What do you want to do?"* — and a
 | Typo tolerance | `src/intents/fuzzy.ts`, `src/intents/vocabulary.ts`, `src/intents/wordlists.ts` | Damerau–Levenshtein correction with a length-scaled budget read against a vocabulary built from the app's own keywords, templates, units, functions and constants; ambiguous words become alternative readings that the scorer chooses between; numbers, expressions and ordinary English are never touched, and every change is reported. |
 | Cheat sheet | `docs/ASK.md` | Every request you can type, grouped by area, plus how the scorer decides and how to add a capability. |
 | Tests | `src/intents/intents.test.ts`, `src/ui/panels/AskPanel.test.tsx` | 61 routing checks, 42 end-to-end answer checks, structural invariants, pattern/unit behaviour, 12 panel tests. |
+
+## 2.0.0 — Engine upgrade tiers
+
+### Tier 1 — Computer algebra (`src/math/cas/`, committed `e3b5df9`)
+
+Symbolic integration (table + linearity + parts + substitution search with verification), definite
+integrals, limits with one-sided values and an `exists` flag instead of a made-up number, Taylor and
+Maclaurin series, polynomial division/GCD/Sturm real roots, partial fractions, inequalities and
+nonlinear systems — 59 checks that all compare against known-correct results or a numeric check.
+
+### Tier 3 — Advanced mathematics (`src/math/numbertheory`, `combinatorics`, `sequences`, `special`, `numerical`)
+
+BigInt number theory (gcd/lcm/extended gcd, modular arithmetic, deterministic Miller–Rabin,
+Pollard rho factorisation, divisors, totient, Möbius, CRT, integer roots), exact combinatorial
+counts that return their digits as text when they exceed double precision, sequence generation and
+pattern recognition, special functions (gamma family, erf, Legendre/Chebyshev/Hermite/Laguerre,
+Bessel J/Y, complete elliptic integrals by AGM, zeta for s > 1) and numerical analysis
+(root finding by four methods, optimisation with a polish step, interpolation, least squares,
+numerical derivatives, Simpson quadrature with an error estimate, Euler/midpoint/RK4 ODE solvers).
+
+### Tier 2 — 3D and field graphing (`src/graphing/threeD.ts`, `fields.ts`, `implicit.ts`, `Graph3DPanel`)
+
+Platform-independent geometry only (no canvas/WebGL): surface sampling with `null` gaps instead of
+invented values, yaw/pitch rotation with optional perspective projection, painter-ordered wireframes
+and Lambert-shaded quads, space curves; vector fields with raw/length/direction scaling, Newton-
+refined stagnation points, numerical divergence and curl, RK4 streamlines with closure detection;
+marching-squares implicit curves, automatic "nice" contour levels, five colour ramps and heat-map
+cells. The panel adds drag-to-rotate, resolution/level controls and a readout, and reports bad
+expressions instead of drawing them.
 
 Verified end to end (examples from the suite): `20 percent of 250` → 50 · `price 240 with 25 percent discount` → 180 · `72 fahrenheit in celsius` → 22.22222222 °C · `solve 3x + 5 = 20` → x = 5 · `x^2 - 5x + 6 = 0` → x = 2, x = 3 · `integrate x^2 from 0 to 3` → 9 · `limit of sin(x)/x as x approaches 0` → 1 · `determinant of 1 2; 3 4` → −2 · `voltage with current 2 and resistance 50` → 100 V · `probability z < 1.96` → 0.9750021 · `days between 2024-01-01 and 2026-09-25` → 998 days.
 

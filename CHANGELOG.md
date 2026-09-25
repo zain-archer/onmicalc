@@ -4,6 +4,67 @@ All notable changes to OmniCalc are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [semantic versioning](https://semver.org/).
 
+## [Unreleased] — 2.0.0 (in progress)
+
+The engine upgrade: exact symbolic work, advanced mathematics and 3D/field graphing, landing tier by
+tier. Each tier keeps the existing 819 checks green and adds its own.
+
+### Added — symbolic computer algebra (`src/math/cas/`)
+
+- **Symbolic integration** — a table of standard forms plus linearity, integration by parts and a
+  substitution search, every answer verified by differentiating it back before it is shown.
+  `integrate x^2`, `integrate sqrt(x)`, `integrate sin(2x)`, `integrate ln(x)` and definite
+  integrals with the constant of integration left out.
+- **Limits** — `limit of sin(x)/x as x approaches 0` → 1, one-sided limits, `exists: false` with the
+  two one-sided values when a two-sided limit does not exist, and an explicit note when the answer
+  comes from a series expansion or a numeric side probe.
+- **Series** — Taylor and Maclaurin expansions with the coefficients and the general term.
+- **Polynomial algebra** — division, GCD/LCM, monic parts, rational roots, multiplicity, square-free
+  decomposition, discriminants and Sturm real-root counts.
+- **Partial fractions, inequalities and nonlinear systems** — with the solving steps shown.
+
+### Added — advanced mathematics (`src/math/numbertheory`, `combinatorics`, `sequences`, `special`, `numerical`)
+
+- **Number theory on BigInt** — gcd/lcm/extended gcd, modular powers and inverses, deterministic
+  Miller–Rabin (witnesses to 37 make it exact in range), Pollard rho factorisation with `isPrime`
+  cross-checks, divisors and divisor sums, Euler's totient, the Möbius function, the Chinese
+  remainder theorem for non-coprime moduli (reporting when there is no solution) and integer roots.
+- **Combinatorics** — factorials, binomials, permutations, combinations with repetition,
+  multinomials, derangements, Catalan, Stirling (first and second kind) and Bell numbers; results
+  that exceed double precision are returned as exact digit strings rather than a rounded float.
+- **Sequences** — nth terms and partial sums of arithmetic and geometric sequences, Fibonacci,
+  recursion evaluation (`a(n) = 3a(n−1)`) and pattern recognition that says "unknown" rather than
+  fitting a curve to three points.
+- **Special functions** — Γ, log Γ, B, the regularised incomplete gamma and beta, erf/erfc,
+  Legendre, Chebyshev, Hermite and Laguerre polynomials, Bessel J and Y, complete elliptic
+  integrals K and E by AGM, and ζ(s) for s > 1 (and it refuses below that instead of guessing).
+- **Numerical analysis** — bisection, Newton, secant and regula falsi root finding; golden-section
+  and Newton optimisation with a polish step; gradient descent; linear, Lagrange and Newton
+  interpolation; least squares; numerical first and second derivatives; Simpson quadrature with an
+  error estimate; and Euler, midpoint and RK4 ODE solvers with iteration histories.
+
+### Added — 3D and field graphing (`src/graphing/threeD.ts`, `fields.ts`, `implicit.ts`)
+
+- **New "3D & Fields" tool** (`#/graph3d`) — surfaces `z = f(x, y)` drawn as depth-sorted wireframes
+  or shaded quads, rotated by dragging or by typing the angles, with axis guides and a readout.
+- **Vector fields** — `F₁(x, y)`, `F₂(x, y)` arrows with raw, length-scaled or direction-only
+  scaling, RK4 streamlines that stop when they close, stagnation points refined by Newton, and the
+  divergence and curl at the centre of the view.
+- **Contours and heat maps** — marching-squares implicit curves and contour lines at automatic
+  human-friendly levels, five colour palettes, and heat-map cells that skip undefined samples.
+- Pure geometry, no canvas or WebGL: the same data can be exported, tested or rendered natively.
+
+### Fixed
+
+- Γ now raises an error at 0 and the negative integers (poles) instead of returning a huge number.
+- Bessel J uses a correctly normalised Miller downward recurrence, so `J₀(1)` and friends are now
+  accurate to full precision at small arguments.
+- The AGM series for the complete elliptic integral E had a sign error; `E(0.5)` now matches the
+  quadrature value 1.3506438810476755.
+- Sequence pattern recognition no longer calls any three numbers "polynomial".
+- Newton optimisation polishes its answer with a golden-section pass, so flat (multiple) stationary
+  points converge as far as double precision allows instead of stalling early.
+
 ## [1.3.0] — 2026-09-25
 
 Four things in one release: the app now fits every screen, ships ten colour palettes, explains what

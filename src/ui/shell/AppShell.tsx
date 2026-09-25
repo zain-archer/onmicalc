@@ -39,6 +39,7 @@ const EquationPanel = panel(() => import('@/ui/panels/EquationPanel'), 'Equation
 const StatisticsPanel = panel(() => import('@/ui/panels/StatisticsPanel'), 'StatisticsPanel');
 const ProbabilityPanel = panel(() => import('@/ui/panels/ProbabilityPanel'), 'ProbabilityPanel');
 const GraphPanel = panel(() => import('@/ui/panels/GraphPanel'), 'GraphPanel');
+const Graph3DPanel = panel(() => import('@/ui/panels/Graph3DPanel'), 'Graph3DPanel');
 const CalculusPanel = panel(() => import('@/ui/panels/CalculusPanel'), 'CalculusPanel');
 const NumberSystemsPanel = panel(() => import('@/ui/panels/NumberSystemsPanel'), 'NumberSystemsPanel');
 const ProgrammerPanel = panel(() => import('@/ui/panels/ProgrammerPanel'), 'ProgrammerPanel');
@@ -52,6 +53,7 @@ const PANELS: Record<string, ComponentType> = {
   fractions: FractionsPanel,
   complex: ComplexPanel,
   graph: GraphPanel,
+  graph3d: Graph3DPanel,
   calculus: CalculusPanel,
   matrix: MatrixPanel,
   equation: EquationPanel,

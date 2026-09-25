@@ -74,6 +74,15 @@ export const TOOLS: readonly ToolDef[] = [
     summary: 'Plot multiple functions with zoom, roots and intersections.',
   },
   {
+    id: 'graph3d',
+    label: '3D & Fields',
+    group: 'Analyse',
+    icon: 'M12 3 3 7.5v9L12 21l9-4.5v-9L12 3Zm0 0v18m9-13.5-9 4.5m-9-4.5 9 4.5',
+    status: 'ready',
+    phase: 30,
+    summary: '3D surfaces, vector fields with streamlines, contour lines and heat maps.',
+  },
+  {
     id: 'matrix',
     label: 'Matrices & Vectors',
     group: 'Analyse',

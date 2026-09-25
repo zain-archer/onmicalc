@@ -22,21 +22,32 @@ function compile(source: string, extraVariables: Record<string, number> = {}): S
 
 /** Builds f(x) from an expression; returns null when the expression is invalid. */
 export function compileFunction(source: string, variable = 'x'): ScalarFunction | null {
-  const parsed = evaluateExpression(source, { variables: { [variable]: 0 } });
+  const multi = compileFunctionOf(source, [variable]);
+  if (!multi) return null;
+  return (x: number) => multi({ [variable]: x });
+}
+
+export type MultiFunction = (values: Record<string, number>) => number;
+
+/**
+ * Builds a function of several named variables, e.g. compileFunctionOf('x^2 + y^2', ['x', 'y']).
+ * Undefined points evaluate to NaN instead of throwing, which is what plotting needs.
+ */
+export function compileFunctionOf(source: string, variables: string[]): MultiFunction | null {
+  const seed: Record<string, number> = {};
+  for (const name of variables) seed[name] = 0;
+  const parsed = evaluateExpression(source, { variables: seed });
   if (!parsed.ok && parsed.error.code === 'SYNTAX') return null;
+  let ast;
   try {
-    const ast = parse(source, { functions: new Set(getDefaultRegistry().primaryNames()) });
-    return (x: number) => {
-      const ctx = createContext({ variables: { [variable]: x } });
-      try {
-        return evaluateNode(ast, ctx);
-      } catch {
-        return Number.NaN;
-      }
-    };
+    ast = parse(source, { functions: new Set(getDefaultRegistry().primaryNames()) });
   } catch {
     return null;
   }
+  return (values: Record<string, number>) => {
+    const ctx = createContext({ variables: { ...seed, ...values } });
+    return evaluateNode(ast, ctx);
+  };
 }
 
 function safeEvaluate(f: ScalarFunction, x: number): number {
