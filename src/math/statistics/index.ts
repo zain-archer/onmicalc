@@ -229,3 +229,7 @@ export function parseDataset(input: string): number[] | null {
   }
   return values;
 }
+
+export * from './descriptive';
+export * from './regression';
+export * from './inference';

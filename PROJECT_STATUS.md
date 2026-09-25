@@ -13,10 +13,37 @@ every tier. Tiers land one at a time, each with its own module set, tests and a 
 | 1 | Symbolic CAS: integration, limits, series, polynomial algebra, inequalities, nonlinear systems | `src/math/cas/*` | ✅ 59 tests (`e3b5df9`) |
 | 3 | Number theory, combinatorics, sequences, special functions, numerical methods | `src/math/{numbertheory,combinatorics,sequences,special,numerical}/` | ✅ 33 tests (`a635de1`) |
 | 2 | 3D surfaces, vector fields with streamlines, implicit curves, contours, heat maps | `src/graphing/{threeD,fields,implicit}.ts`, `src/ui/panels/Graph3DPanel.tsx` | ✅ 19 tests (engine + panel) |
+| 5 | 19-distribution registry with pdf/CDF/quantile, reproducible sampling | `src/math/probability/{normal,distributions}.ts`, `ProbabilityPanel` | ✅ 19 tests |
+| 4 | Descriptive shape/spread, rank + association statistics, curve fitting, hypothesis tests and intervals | `src/math/statistics/{descriptive,regression,inference}.ts`, `StatisticsTools.tsx` | ✅ 31 tests |
 
 Everything in these tiers is reachable from the UI: *Graphing* stays the 2D plotter and the new
 *3D & Fields* tool (`#/graph3d`) covers surfaces, vector fields, contours and heat maps, reusing the
 same expression parser, settings and accessible primitives as the rest of the app.
+
+### Tier 5 — Probability distributions (`src/math/probability/distributions.ts`)
+
+One registry of nineteen distributions (normal, log-normal, exponential, uniform, Weibull, Laplace,
+Cauchy, Student t, χ², F, gamma, beta, binomial, Bernoulli, discrete uniform, Poisson, geometric,
+negative binomial, hypergeometric). Each entry carries its own density, CDF, quantile, mean,
+variance, support, parameter rules and a "when to use it" note, so the panel, the intent layer and
+the tests all read the same data. Continuous quantiles are found by bisection on the exact CDF
+(robust at every parameter, exact to machine precision), discrete quantiles return the smallest
+integer whose CDF reaches p, and sampling uses inverse-transform with a deterministic
+mulberry32 seed — the same seed always gives the same sample. Values are checked against SciPy.
+
+### Tier 4 — Statistics, regression and inference
+
+Descriptive statistics beyond the basic summary (geometric/harmonic/weighted means, mean absolute
+deviation, coefficient of variation, skewness and kurtosis with the Fisher–Pearson corrections,
+five-number summary, IQR and z-score outliers, ranks, Spearman correlation, covariance and
+correlation matrices, frequency tables, histograms, moving averages); curve fitting (polynomial,
+multiple, exponential, power and logarithmic, all solved through the matrix module's own reduced row
+echelon form and reported with R², adjusted R² and the standard error of the estimate); and
+inference (one-sample t and z tests, Welch and pooled two-sample t tests, paired t, chi-square
+goodness of fit and independence, F test for variances, one-proportion z test, t- and Wilson
+confidence intervals, sample-size planning and a significance test for a correlation) — every test
+reporting its statistic, degrees of freedom, exact p-value, a plain-language conclusion, the
+assumptions it needs and where relevant an interval. Reference values come from SciPy 1.17.
 
 ## Phase 29 — Plain-language entry ("Ask OmniCalc") (complete) All 29 original phases are implemented and shipped (**1.0.0**); **1.1.0** adds the intent layer so the app can be used without knowing which tool to open, **1.2.0** makes that layer typo-tolerant, and **1.3.0** adds selectable themes, a layout that adapts to every device, a sourced knowledge base ("what is pi"), offline reading of PDF/Office/text files, and packaging for every app store.
 

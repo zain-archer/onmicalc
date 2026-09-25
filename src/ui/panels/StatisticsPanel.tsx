@@ -12,12 +12,16 @@ import { errorMessage } from '@/core/errors';
 import { formatNumber } from '@/core/precision/format';
 import { useSettings } from '@/settings/useSettings';
 import { Notice, OutputList, TextField } from '@/ui/components/primitives';
+import { FitTool, InferenceTool, ShapeTool } from './StatisticsTools';
 
 export function StatisticsPanel() {
   return (
     <div className="stack">
       <SummaryTool />
+      <ShapeTool />
       <RegressionTool />
+      <FitTool />
+      <InferenceTool />
     </div>
   );
 }

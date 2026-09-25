@@ -65,6 +65,42 @@ tier. Each tier keeps the existing 819 checks green and adds its own.
 - Newton optimisation polishes its answer with a golden-section pass, so flat (multiple) stationary
   points converge as far as double precision allows instead of stalling early.
 
+### Added — probability distributions (`src/math/probability/distributions.ts`)
+
+- **Nineteen distributions in one registry** — normal, log-normal, exponential, continuous uniform,
+  Weibull, Laplace, Cauchy, Student t, chi-square, F, gamma, beta, binomial, Bernoulli, discrete
+  uniform, Poisson, geometric, negative binomial and hypergeometric — each with its density or mass,
+  cumulative value, quantile, mean, variance, support, parameter limits and a note on when to use it.
+- **Quantiles that hold up everywhere**: closed forms where they exist (normal, exponential, Weibull,
+  Laplace, Cauchy, log-normal), bisection on the exact CDF otherwise, and a smallest-integer search
+  for discrete distributions.
+- **Reproducible simulation** — inverse-transform sampling from a seeded mulberry32 generator, so a
+  seed always produces the same sample; the panel reports the sample mean, standard deviation and
+  standard error next to the theoretical values.
+- **Checked against SciPy 1.17** for 28 density, CDF and quantile values, plus round-trip and
+  density-vs-CDF cross-checks for every distribution.
+- The probability panel is now built from the registry: it lists all nineteen distributions, builds
+  the parameter fields from each distribution's own description, and reports the shape summary.
+
+### Added — statistics, regression and inference
+
+- **Shape and spread** — geometric, harmonic and weighted means, mean absolute deviation, coefficient
+  of variation, standard error of the mean, skewness and kurtosis (with the Fisher–Pearson sample
+  corrections that statistical software uses), five-number summary, IQR and z-score outliers, ranks,
+  Spearman and Pearson association, covariance and correlation matrices, frequency tables,
+  histograms, moving averages.
+- **Curve fitting** — polynomial (any degree), multiple, exponential `a·e^(bx)`, power `a·x^b` and
+  logarithmic `a + b·ln x` fits, solved with the matrix module's reduced row echelon form and
+  reported with coefficients, R², adjusted R², the standard error of the estimate and a prediction.
+- **Hypothesis tests** — one-sample t and z, Welch and pooled two-sample t, paired t, chi-square
+  goodness of fit and independence, F test for two variances, one-proportion z, t-based mean
+  intervals, Wilson proportion intervals, sample-size planning and a correlation significance test.
+  Every result carries the statistic, its degrees of freedom, an exact p-value, a plain-language
+  conclusion, the assumptions it needs and an interval where one applies.
+- **New tools in the Statistics panel**: *Shape & spread*, *Curve fitting* and *Hypothesis tests*,
+  each validating its input and explaining what went wrong rather than showing NaN.
+- Reference values for all of the above come from SciPy 1.17; 31 new checks.
+
 ## [1.3.0] — 2026-09-25
 
 Four things in one release: the app now fits every screen, ships ten colour palettes, explains what

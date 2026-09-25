@@ -1,132 +1,135 @@
 import { useMemo, useState } from 'react';
-import * as p from '@/math/probability';
+import {
+  createRandom,
+  describeDistribution,
+  DISTRIBUTIONS,
+  requireDistribution,
+  sampleDistribution,
+  sampleStats,
+} from '@/math/probability';
 import { errorMessage } from '@/core/errors';
 import { formatNumber } from '@/core/precision/format';
 import { useSettings } from '@/settings/useSettings';
-import { Notice, NumberField, OutputList, Tabs } from '@/ui/components/primitives';
+import { NumberField, Notice, OutputList, SelectField, type OutputRow } from '@/ui/components/primitives';
 
-const DISTRIBUTIONS = [
-  { id: 'normal', label: 'Normal' },
-  { id: 'binomial', label: 'Binomial' },
-  { id: 'poisson', label: 'Poisson' },
-  { id: 'uniform', label: 'Uniform' },
-  { id: 'exponential', label: 'Exponential' },
-  { id: 'studentt', label: 'Student t' },
-] as const;
-
-type DistributionId = (typeof DISTRIBUTIONS)[number]['id'];
-
+/**
+ * One panel for every distribution in the registry: the parameter fields are
+ * built from the distribution's own description, so adding a distribution in
+ * the maths layer makes it available here with no extra UI code.
+ */
 export function ProbabilityPanel() {
   const settings = useSettings();
-  const [id, setId] = useState<DistributionId>('normal');
-  const [x, setX] = useState<number | ''>(0);
-  const [a, setA] = useState<number | ''>(0);
-  const [b, setB] = useState<number | ''>(1);
+  const [id, setId] = useState('normal');
+  const [values, setValues] = useState<Record<string, number>>(() => defaultsFor('normal'));
+  const [x, setX] = useState(0);
+  const [simulationSize, setSimulationSize] = useState(1000);
+  const [seed, setSeed] = useState(12345);
 
   const precision = settings.precision;
+  const nf = (value: number) => formatNumber(value, { precision });
+
+  const distribution = requireDistribution(id);
+  const parameters = distribution.parameters.map((parameter) => values[parameter.name] ?? parameter.default);
+
+  const choose = (nextId: string) => {
+    setId(nextId);
+    setValues(defaultsFor(nextId));
+  };
 
   const outcome = useMemo(() => {
-    if (x === '' || a === '' || b === '') {
-      return { ok: false as const, message: 'Fill in every parameter.' };
-    }
     try {
-      const rows: { label: string; value: string; emphasize?: boolean }[] = [];
-      const nf = (value: number) => formatNumber(value, { precision });
-
-      if (id === 'normal') {
-        const mean = Number(a);
-        const sd = Number(b);
-        rows.push(
-          { label: 'Mean μ', value: nf(mean) },
-          { label: 'Standard deviation σ', value: nf(sd) },
-          { label: 'Probability density f(x)', value: nf(p.normalPdf(Number(x), mean, sd)) },
-          { label: 'P(X ≤ x)', value: nf(p.normalCdf(Number(x), mean, sd)), emphasize: true },
-          { label: 'P(X ≥ x)', value: nf(1 - p.normalCdf(Number(x), mean, sd)) },
-        );
-        const moments = p.normalMoments(mean, sd);
-        rows.push({ label: 'Variance', value: nf(moments.variance) });
-      } else if (id === 'binomial') {
-        const n = Math.round(Number(a));
-        const probability = Number(b);
-        rows.push(
-          { label: 'Trials n', value: String(n) },
-          { label: 'Success probability p', value: nf(probability) },
-          { label: 'P(X = k)', value: nf(p.binomialPmf(Number(x), n, probability)) },
-          { label: 'P(X ≤ k)', value: nf(p.binomialCdf(Number(x), n, probability)), emphasize: true },
-          { label: 'P(X > k)', value: nf(1 - p.binomialCdf(Number(x), n, probability)) },
-        );
-        const moments = p.binomialMoments(n, probability);
-        rows.push(
-          { label: 'Mean', value: nf(moments.mean) },
-          { label: 'Variance', value: nf(moments.variance) },
-          { label: 'Standard deviation', value: nf(moments.sd) },
-        );
-      } else if (id === 'poisson') {
-        const lambda = Number(a);
-        rows.push(
-          { label: 'Rate λ', value: nf(lambda) },
-          { label: 'P(X = k)', value: nf(p.poissonPmf(Number(x), lambda)) },
-          { label: 'P(X ≤ k)', value: nf(p.poissonCdf(Number(x), lambda)), emphasize: true },
-          { label: 'P(X > k)', value: nf(1 - p.poissonCdf(Number(x), lambda)) },
-        );
-        const moments = p.poissonMoments(lambda);
-        rows.push({ label: 'Mean = variance', value: nf(moments.mean) });
-      } else if (id === 'uniform') {
-        const low = Number(a);
-        const high = Number(b);
-        rows.push(
-          { label: `Lower bound`, value: nf(low) },
-          { label: `Upper bound`, value: nf(high) },
-          { label: 'Density f(x)', value: nf(p.uniformPdf(Number(x), low, high)) },
-          { label: 'P(X ≤ x)', value: nf(p.uniformCdf(Number(x), low, high)), emphasize: true },
-        );
-        const moments = p.uniformMoments(low, high);
-        rows.push({ label: 'Mean', value: nf(moments.mean) }, { label: 'Variance', value: nf(moments.variance) });
-      } else if (id === 'exponential') {
-        const rate = Number(a);
-        rows.push(
-          { label: 'Rate λ', value: nf(rate) },
-          { label: 'Density f(x)', value: nf(p.exponentialPdf(Number(x), rate)) },
-          { label: 'P(X ≤ x)', value: nf(p.exponentialCdf(Number(x), rate)), emphasize: true },
-          { label: 'P(X > x)', value: nf(1 - p.exponentialCdf(Number(x), rate)) },
-        );
-        const moments = p.exponentialMoments(rate);
-        rows.push({ label: 'Mean = standard deviation', value: nf(moments.mean) });
-      } else {
-        const df = Number(a);
-        rows.push(
-          { label: 'Degrees of freedom', value: nf(df) },
-          { label: 'Density f(t)', value: nf(p.tPdf(Number(x), df)) },
-          { label: 'P(T ≤ t)', value: nf(p.tCdf(Number(x), df)), emphasize: true },
-          { label: 'Two-sided p-value', value: nf(2 * (1 - p.tCdf(Math.abs(Number(x)), df))) },
-        );
-      }
-
+      const profile = describeDistribution(id, parameters);
+      const density = distribution.pdf(x, parameters);
+      const lower = distribution.cdf(x, parameters);
+      const rows: OutputRow[] = [
+        {
+          label: distribution.discrete ? 'P(X = x)' : 'Probability density f(x)',
+          value: nf(density),
+        },
+        { label: 'P(X ≤ x)', value: nf(lower), emphasize: true },
+        { label: 'P(X ≥ x)', value: nf(Math.max(0, 1 - lower + (distribution.discrete ? density : 0))) },
+        { label: 'P(X = x)', value: nf(distribution.discrete ? density : 0) },
+        {
+          label: 'Support',
+          value: `${formatBound(profile.support.min, nf)} … ${formatBound(profile.support.max, nf)}`,
+        },
+        { label: 'Mean', value: Number.isFinite(profile.mean) ? nf(profile.mean) : 'Does not exist' },
+        {
+          label: 'Variance',
+          value: Number.isFinite(profile.variance) ? nf(profile.variance) : 'Does not exist',
+        },
+        { label: 'Standard deviation', value: Number.isFinite(profile.sd) ? nf(profile.sd) : 'Does not exist' },
+        { label: 'Median', value: Number.isFinite(profile.median) ? nf(profile.median) : '—' },
+        { label: 'Quartiles Q1 / Q3', value: `${nf(profile.quartiles.q1)} / ${nf(profile.quartiles.q3)}` },
+        { label: 'When to use it', value: profile.use },
+      ];
+      if (profile.note) rows.push({ label: 'Note', value: profile.note });
       return { ok: true as const, rows };
     } catch (err) {
       return { ok: false as const, message: errorMessage(err) };
     }
-  }, [id, x, a, b, precision]);
+  }, [distribution, id, parameters, x, nf]);
 
-  const labels = parameterLabels(id);
+  const simulation = useMemo(() => {
+    try {
+      const draws = sampleDistribution(id, parameters, simulationSize, seed);
+      const stats = sampleStats(draws);
+      return {
+        ok: true as const,
+        rows: [
+          { label: 'Draws', value: String(stats.count) },
+          { label: 'Sample mean', value: nf(stats.mean) },
+          { label: 'Sample standard deviation', value: nf(stats.sd) },
+          { label: 'Standard error of the mean', value: nf(stats.standardError) },
+          { label: 'Smallest draw', value: nf(Math.min(...draws)) },
+          { label: 'Largest draw', value: nf(Math.max(...draws)) },
+        ],
+      };
+    } catch (err) {
+      return { ok: false as const, message: errorMessage(err) };
+    }
+  }, [id, parameters, simulationSize, seed, nf]);
 
   return (
     <div className="stack">
       <section className="card">
-        <Tabs
-          tabs={DISTRIBUTIONS.map((entry) => ({ id: entry.id, label: entry.label }))}
-          value={id}
-          onChange={(next) => setId(next as DistributionId)}
-          label="Distribution"
-        />
         <div className="grid grid--form">
-          <NumberField label={labels.aLabel} value={a} onChange={setA} step={0.1} hint={labels.aHint} />
-          <NumberField label={labels.bLabel} value={b} onChange={setB} step={0.1} hint={labels.bHint} />
-          <NumberField label={labels.xLabel} value={x} onChange={setX} step={0.1} hint={labels.xHint} />
+          <SelectField
+            label="Distribution"
+            value={id}
+            onChange={choose}
+            options={DISTRIBUTIONS.map((entry) => ({ value: entry.id, label: entry.name }))}
+          />
+          {distribution.parameters.map((parameter) => (
+            <NumberField
+              key={parameter.name}
+              label={`${parameter.name} — ${parameter.description}`}
+              value={values[parameter.name] ?? parameter.default}
+              onChange={(next) =>
+                setValues((current) => ({ ...current, [parameter.name]: next === '' ? parameter.default : next }))
+              }
+              step={parameter.integer ? 1 : 0.1}
+              min={parameter.min}
+              max={parameter.max}
+              hint={
+                parameter.min !== undefined || parameter.max !== undefined
+                  ? `Allowed range: ${parameter.min ?? '−∞'} … ${parameter.max ?? '∞'}${parameter.integer ? ', whole numbers' : ''}`
+                  : undefined
+              }
+            />
+          ))}
+          <NumberField
+            label="Value x"
+            value={x}
+            onChange={(next) => setX(next === '' ? 0 : next)}
+            step={0.1}
+            hint="Density, cumulative probability and quantile all use this value."
+          />
         </div>
         <Notice>
-          Cumulative probabilities use the regularised incomplete beta and gamma functions and match
-          published statistical tables to at least 8 decimal places.
+          Densities and cumulative probabilities come from the same Lanczos gamma, incomplete beta and
+          incomplete gamma routines used everywhere else in the app, and are checked against published
+          tables in the test suite.
         </Notice>
       </section>
 
@@ -134,30 +137,49 @@ export function ProbabilityPanel() {
         <h2>Result</h2>
         {outcome.ok ? <OutputList rows={outcome.rows} /> : <Notice kind="error">{outcome.message}</Notice>}
       </section>
+
+      <section className="card">
+        <h2>Simulation</h2>
+        <div className="grid grid--form">
+          <NumberField
+            label="Draws"
+            value={simulationSize}
+            onChange={(next) => setSimulationSize(next === '' ? 100 : Math.max(1, Math.min(20000, Math.round(next))))}
+            min={1}
+            max={20000}
+            hint="A larger sample follows the theoretical mean and variance more closely."
+          />
+          <NumberField
+            label="Random seed"
+            value={seed}
+            onChange={(next) => setSeed(next === '' ? 0 : Math.round(next))}
+            hint="The same seed always produces exactly the same sample, so results are reproducible."
+          />
+        </div>
+        {simulation.ok ? (
+          <OutputList rows={simulation.rows} title="Sample statistics" />
+        ) : (
+          <Notice kind="error">{simulation.message}</Notice>
+        )}
+        <button
+          type="button"
+          className="btn btn--small"
+          onClick={() => setSeed(createRandom(seed)() * 2 ** 31)}
+        >
+          New sample
+        </button>
+      </section>
     </div>
   );
 }
 
-function parameterLabels(id: DistributionId): {
-  aLabel: string;
-  aHint?: string;
-  bLabel: string;
-  bHint?: string;
-  xLabel: string;
-  xHint?: string;
-} {
-  switch (id) {
-    case 'normal':
-      return { aLabel: 'Mean μ', bLabel: 'Standard deviation σ', bHint: 'Must be positive', xLabel: 'Value x' };
-    case 'binomial':
-      return { aLabel: 'Trials n', aHint: 'Whole number', bLabel: 'Probability p', bHint: '0 – 1', xLabel: 'Successes k' };
-    case 'poisson':
-      return { aLabel: 'Rate λ', bLabel: 'Not used', xLabel: 'Events k' };
-    case 'uniform':
-      return { aLabel: 'Lower bound a', bLabel: 'Upper bound b', xLabel: 'Value x' };
-    case 'exponential':
-      return { aLabel: 'Rate λ', bLabel: 'Not used', xLabel: 'Value x' };
-    default:
-      return { aLabel: 'Degrees of freedom', bLabel: 'Not used', xLabel: 't value' };
-  }
+function defaultsFor(id: string): Record<string, number> {
+  const distribution = DISTRIBUTIONS.find((entry) => entry.id === id) ?? DISTRIBUTIONS[0]!;
+  return Object.fromEntries(distribution.parameters.map((parameter) => [parameter.name, parameter.default]));
+}
+
+function formatBound(value: number, nf: (value: number) => string): string {
+  if (value === Number.NEGATIVE_INFINITY) return '−∞';
+  if (value === Number.POSITIVE_INFINITY) return '∞';
+  return nf(value);
 }
