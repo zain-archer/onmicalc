@@ -4,6 +4,44 @@ All notable changes to OmniCalc are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [semantic versioning](https://semver.org/).
 
+## [1.2.0] — 2026-09-25
+
+Typos no longer send Ask OmniCalc down the wrong path: mistyped words are read as the word you meant,
+and every assumption is shown rather than hidden.
+
+### Added — typo tolerance (`src/intents/fuzzy.ts`)
+
+- **Damerau–Levenshtein correction with a length-scaled budget** (one typo for 4–7 letters, two for 8+),
+  so swaps (`convret`), dropped letters (`solv`), doubled letters (`intergrate`) and wrong letters
+  (`fahrenhite`) all resolve — including adjacent-transposition typos, which plain edit distance misses.
+- **A vocabulary read out of the app's own data** (`src/intents/vocabulary.ts`): capability keywords,
+  titles, example sentences, sentence-template literals, introducers and slot names, plus every unit
+  name, engine function name and physical-constant alias. A new capability therefore extends typo
+  tolerance with no extra work.
+- **Ambiguity is resolved by meaning, not by guessing.** Words that are equally close are ranked so an
+  instruction word wins over prose ("precent" → "percent", not "present"), and genuinely ambiguous
+  readings are all scored — the plan that makes sense of the whole sentence is the one that runs.
+- **Nothing else is touched.** Only alphabetic words of four or more letters are ever rewritten;
+  numbers, expressions, symbols and spacing are byte-identical. Common English and the app's filler
+  words are protected, so "I want to know" can never become "watt" or "now".
+- **Mistyped units are understood too:** the unit lookup falls back to the closest unit name, so
+  "250 g in ouces" and "kilomters" still convert.
+- **The assumption is visible.** The Ask panel adds a *Typos* line ("I read “convret” as “convert” and
+  “miels” as “miles”"), the live hint says what it assumed while you type, and an unmatched request
+  repeats the corrections next to the suggestions. History keeps your own words, uncorrected.
+
+### Changed
+
+- `plan()` returns `corrections` alongside the plan, and ranks multiple readings of the same sentence.
+- The Ask panel reports the corrected wording in its preview line, so the user can disagree before
+  reading the answer.
+
+### Tests
+
+- `src/intents/fuzzy.test.ts` (41 checks): distance and budget behaviour, candidate choice, ambiguity
+  handling, byte-exact preservation of numbers and clean sentences, protection of ordinary English,
+  24 mistyped end-to-end requests, and a typing-speed budget for 200 corrections.
+
 ## [1.1.0] — 2026-09-25
 
 Ask OmniCalc: type what you want in your own words and the app works out which tool to use, pulls

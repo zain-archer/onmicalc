@@ -89,7 +89,7 @@ export function AboutPanel() {
           <li><code>CHANGELOG.md</code> — release history</li>
         </ul>
         <p className="muted">
-          Version {APP_VERSION} · {APP_LICENSE} licensed · 645 automated tests · no network requests
+          Version {APP_VERSION} · {APP_LICENSE} licensed · 688 automated tests · no network requests
           at runtime.
         </p>
       </section>

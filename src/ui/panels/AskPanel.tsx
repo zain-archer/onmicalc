@@ -25,6 +25,14 @@ const STARTERS = [
   'days between 2024-01-01 and 2026-09-25',
 ];
 
+/** "read 'convret' as 'convert' and 'miels' as 'miles'". */
+function describeCorrections(corrections: { from: string; to: string }[]): string {
+  const parts = corrections.slice(0, 3).map((entry) => `“${entry.from}” as “${entry.to}”`);
+  if (parts.length === 0) return '';
+  const last = parts.pop()!;
+  return parts.length === 0 ? last : `${parts.join(', ')} and ${last}`;
+}
+
 function firstNumber(text: string): number | null {
   const match = /-?\d+(?:\.\d+)?(?:e[+-]?\d+)?/i.exec(text.replace(/,/g, ''));
   if (!match) return null;
@@ -215,7 +223,10 @@ export function AskPanel() {
         <p className="field__hint" id="ask-help">
           {preview
             ? `I will ${preview.capability.title.toLowerCase()} — ${preview.capability.promise}`
-            : 'Describe the result you want; I will pick the right tool and fill it in.'}
+            : 'Describe the result you want; I will pick the right tool and fill it in.'}{' '}
+          {preview && preview.corrections.length > 0
+            ? `(assuming you meant ${describeCorrections(preview.corrections)})`
+            : ''}
         </p>
         <div className="ask__actions">
           <button className="btn btn--primary" type="submit">
@@ -249,6 +260,12 @@ export function AskPanel() {
           {failure.reason === 'empty'
             ? 'Type what you would like to work out.'
             : 'I could not tell which tool you meant. Try rephrasing, or pick one below.'}
+          {failure.corrections.length > 0 ? (
+            <span data-testid="ask-corrections">
+              {' '}
+              I read {describeCorrections(failure.corrections)} — was that right?
+            </span>
+          ) : null}
         </Notice>
       ) : null}
 
@@ -281,6 +298,13 @@ export function AskPanel() {
               <p className="ask__understood" data-testid="ask-understood">
                 <span className="ask__label">Understood</span> {answer.understood}
               </p>
+              {settled.plan.corrections.length > 0 ? (
+                <p className="ask__corrected" data-testid="ask-corrections">
+                  <span className="ask__label">Typos</span> I read{' '}
+                  {describeCorrections(settled.plan.corrections)} — open “Enter the values instead” or retype it if
+                  that was not what you meant.
+                </p>
+              ) : null}
               <p className="ask__headline" data-testid="ask-headline">
                 {answer.headline}
               </p>

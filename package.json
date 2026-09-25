@@ -1,7 +1,7 @@
 {
   "name": "omnica",
   "private": true,
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "OmniCalc - free, offline-first scientific, engineering and graphing calculator.",
   "type": "module",
   "license": "MIT",

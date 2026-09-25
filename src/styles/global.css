@@ -858,3 +858,10 @@ kbd {
 .ask__groups { display: flex; flex-direction: column; gap: 12px; }
 .ask__groups section { border-top: 1px solid var(--border); padding-top: 10px; }
 .ask__groups section:first-child { border-top: 0; padding-top: 0; }
+
+.ask__corrected {
+  color: var(--text-dim);
+  font-size: 13px;
+  margin: 0 0 8px;
+}
+.ask__corrected .ask__label { color: var(--warn); margin-right: 6px; }

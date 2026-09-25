@@ -1,3 +1,4 @@
+import { closestWord } from './fuzzy';
 import { CATEGORIES, categoryById } from '@/conversions/definitions';
 import { convert, findUnit } from '@/conversions/engine';
 
@@ -99,6 +100,15 @@ export function unitWords(): string[] {
  * example "t" for tonne and tesla), pass a hint category to disambiguate.
  */
 export function lookupUnit(word: string, hint?: string): UnitHit | undefined {
+  const direct = lookupExactly(word, hint);
+  if (direct) return direct;
+  // A mistyped unit ("kilomter", "fahrenhite") is still worth understanding.
+  const guess = closestWord(normalise(word), unitWords());
+  if (guess && guess !== normalise(word)) return lookupExactly(guess, hint);
+  return undefined;
+}
+
+function lookupExactly(word: string, hint?: string): UnitHit | undefined {
   const forms = singulars(normalise(word));
   const candidates: UnitHit[] = [];
   for (const form of forms) {

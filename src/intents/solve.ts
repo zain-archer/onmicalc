@@ -2,6 +2,9 @@ import { CATEGORY_ORDER, type Capability, type SolveContext, type SolveOutcome }
 import { matchAny, parseLooseNumber, stripFiller, type PatternSpec } from './patterns';
 import { everyCapability, capabilityById } from './capabilities';
 import { hasUnitWords } from './units';
+import { correctReadings, damerauDistance, typoBudget, type Correction } from './fuzzy';
+import { EVERYDAY_FILLER } from './wordlists';
+import { intentVocabulary, preferredWords, protectedWords } from './vocabulary';
 
 /**
  * Sentence → plan.
@@ -24,26 +27,29 @@ export interface Plan {
   captures: Record<string, number>;
   /** Text pulled out of the sentence (units, function bodies…). */
   text: Record<string, string>;
-  /** The cleaned-up request. */
+  /** The cleaned-up, typo-corrected request that the capability actually sees. */
   cleaned: string;
+  /**
+   * Words that were not recognised and were read as the closest known word
+   * ("convret" → "convert"). Empty when the request was typed cleanly, so the
+   * UI can say exactly what it assumed instead of guessing silently.
+   */
+  corrections: Correction[];
 }
 
 export interface PlanFailure {
   capability: null;
   reason: 'empty' | 'unknown';
   cleaned: string;
+  /** Typo corrections applied before matching (see `Plan.corrections`). */
+  corrections: Correction[];
   /** Best alternatives, for "did you mean…". */
   suggestions: Capability[];
 }
 
 export type PlanResult = Plan | PlanFailure;
 
-const FILLER = new Set([
-  'a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'can', 'do', 'does', 'for', 'from', 'give', 'how',
-  'i', 'in', 'is', 'it', 'me', 'my', 'of', 'on', 'or', 'please', 'show', 'so', 'tell', 'that', 'the',
-  'then', 'there', 'this', 'to', 'up', 'us', 'was', 'what', 'when', 'which', 'who', 'why', 'will',
-  'with', 'you', 'your',
-]);
+const FILLER = EVERYDAY_FILLER;
 
 function tokens(input: string): string[] {
   return input
@@ -72,9 +78,39 @@ export function keywordScore(raw: string, keyword: string): number {
   const body = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
   // A key that starts with a symbol ("% of") only needs its trailing boundary.
   const prefix = /^[a-z0-9]/i.test(key) ? '(?:^|[^a-z0-9])' : '';
-  if (!new RegExp(`${prefix}${body}(?:$|[^a-z0-9])`, 'i').test(sentence)) return 0;
+  if (new RegExp(`${prefix}${body}(?:$|[^a-z0-9])`, 'i').test(sentence)) {
+    return key.includes(' ') ? 40 + key.split(' ').length * 6 : 24 + Math.min(14, key.length * 1.6);
+  }
 
-  return key.includes(' ') ? 40 + key.split(' ').length * 6 : 24 + Math.min(14, key.length * 1.6);
+  // Nothing matched exactly — try the same comparison with a typo budget, so
+  // "sovle"/"intergrate" still find their capability. Fuzzy hits score lower.
+  const keyWords = key.split(/\s+/);
+  const sentenceWords = sentence.trim().split(/[^a-z0-9%°]+/).filter(Boolean);
+  for (let start = 0; start + keyWords.length <= sentenceWords.length; start += 1) {
+    let distance = 0;
+    let matched = true;
+    for (let offset = 0; offset < keyWords.length; offset += 1) {
+      const wanted = keyWords[offset]!;
+      if (!/[a-z]/.test(wanted)) {
+        matched = sentenceWords[start + offset] === wanted;
+      } else {
+        const budget = typoBudget(wanted.length);
+        if (budget === 0) {
+          matched = wanted === sentenceWords[start + offset];
+        } else {
+          const near = damerauDistance(sentenceWords[start + offset]!, wanted, budget);
+          if (near > budget) matched = false;
+          else distance += near;
+        }
+      }
+      if (!matched) break;
+    }
+    if (matched) {
+      const base = key.includes(' ') ? 34 + keyWords.length * 6 : 20 + Math.min(14, key.length * 1.6);
+      return Math.max(12, base - distance * 6);
+    }
+  }
+  return 0;
 }
 
 /** How well a capability's own examples resemble what the user said. */
@@ -152,8 +188,22 @@ function extractFromPatterns(
 }
 
 export function plan(request: string, options: PlanOptions = {}): PlanResult {
-  const cleaned = stripFiller(request);
-  if (!cleaned) return { capability: null, reason: 'empty', cleaned, suggestions: [] };
+  const trimmed = stripFiller(request);
+  if (!trimmed) return { capability: null, reason: 'empty', cleaned: trimmed, corrections: [], suggestions: [] };
+
+  // Fix likely typos before anything else looks at the words, so scoring,
+  // template matching and the capabilities' own extraction all see clean text.
+  // Ambiguous words ("precent" → percent or present) produce more than one
+  // reading, and the one that makes most sense of the whole sentence wins.
+  const readings = correctReadings(trimmed, intentVocabulary(), protectedWords(), preferredWords());
+  const rankedReadings = readings.map((reading) => ({
+    reading,
+    ranked: scoreCapabilities(reading.text),
+  }));
+  const winner = rankedReadings.reduce((best, entry) =>
+    (entry.ranked[0]?.score ?? 0) > (best.ranked[0]?.score ?? 0) ? entry : best,
+  );
+  const { text: cleaned, corrections } = winner.reading;
 
   if (options.capabilityId) {
     const forced = capabilityById(options.capabilityId);
@@ -165,6 +215,7 @@ export function plan(request: string, options: PlanOptions = {}): PlanResult {
         captures: extracted.numbers,
         text: extracted.text,
         cleaned,
+        corrections,
       };
     }
   }
@@ -175,17 +226,25 @@ export function plan(request: string, options: PlanOptions = {}): PlanResult {
     const system = capabilityById('solveSystem');
     if (system) {
       const extracted = extractFromPatterns(cleaned, system.patterns);
-      return { capability: system, confidence: 0.9, captures: extracted.numbers, text: extracted.text, cleaned };
+      return {
+        capability: system,
+        confidence: 0.9,
+        captures: extracted.numbers,
+        text: extracted.text,
+        cleaned,
+        corrections,
+      };
     }
   }
 
-  const ranked = scoreCapabilities(cleaned);
+  const ranked = winner.ranked;
   const best = ranked[0];
   if (!best || best.score <= 0) {
     return {
       capability: null,
       reason: 'unknown',
       cleaned,
+      corrections,
       suggestions: ranked.slice(0, 6).map((entry) => entry.capability),
     };
   }
@@ -198,6 +257,7 @@ export function plan(request: string, options: PlanOptions = {}): PlanResult {
     captures: extracted.numbers,
     text: extracted.text,
     cleaned,
+    corrections,
   };
 }
 

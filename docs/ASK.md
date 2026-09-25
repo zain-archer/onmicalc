@@ -28,9 +28,35 @@ The app opens on **Ask OmniCalc** (`#/ask`). Type a sentence in ordinary words, 
 | Money | `compound interest on 1000 at 5 percent for 10 years` · `loan of 200000 at 6 percent for 30 years` · `roi on 1000 growing to 1600 in 5 years` |
 | Dates & time | `days between 2024-01-01 and 2026-09-25` · `how old am I if born 1995-04-12` · `time between 09:00 and 17:30` |
 
+## Typos are fine
+
+You do not have to spell anything correctly — words are matched against everything the app knows
+(capability keywords, sentence templates, unit names, function names, constants) with an edit-distance
+budget that grows with word length:
+
+| Typed | Understood as | Why it works |
+| --- | --- | --- |
+| `convret 5 km to miels` | convert 5 km → miles | one swapped pair each |
+| `solv 3x + 5 = 20` | solve the equation | one missing letter |
+| `intergrate x^2 from 0 to 3` | integrate | one extra letter |
+| `72 fahrenhite in celsius` | 22.22222222 °C | two typos in a long word |
+| `how many ouces is 250 g` | 8.818490487 oz | unit name fixed by the same engine |
+| `what is 20 precent of 250` | 50 | two equally close words — the reading that makes sense wins |
+| `aveage of 1, 2, 3` | summarise the data | … |
+
+The panel never hides the guess: a **Typos** line under the answer reads *“I read “convret” as
+“convert” and “miels” as “miles””*, and the live hint shows the assumption before you press Solve. If
+your wording was right and a value was wrong, open **Enter the values instead**.
+
+What is *never* touched: numbers, symbols, expressions (so `2.5e3 * (4 + 7) / 12.5` is byte-identical),
+words of three letters or fewer, words the app already knows, and ordinary English (a protection list,
+so “I want to know” can never become “watt” or “now”). History stores your own words, uncorrected.
+
 ## How it decides
 
-1. **Clean up the phrasing** — greetings, “please”, “could you” and trailing politeness are stripped.
+1. **Clean up the phrasing** — greetings, “please”, “could you” and trailing politeness are stripped,
+   then likely typos are corrected against the app's own vocabulary. If a correction is ambiguous, the
+   sentence is read more than once and the reading that scores best wins.
 2. **Score every capability** — keyword specificity, similarity to that capability's own example
    sentences, whether one of its sentence templates matches exactly, and domain hints (a unit word
    favours the converter, a bare sum favours the calculator). Two `=` in one request is a system of
@@ -53,5 +79,6 @@ The app opens on **Ask OmniCalc** (`#/ask`). Type a sentence in ordinary words, 
 
 Add a `Capability` object in `src/intents/capabilities/*.ts` (id, title, promise, group, keywords,
 examples, inputs, optional `patterns`, and a `run()` that returns result blocks), then export it from
-`capabilities/index.ts`. Tests in `src/intents/intents.test.ts` automatically require every capability
+`capabilities/index.ts`. Typo tolerance, the “everything you can ask” list and the routing tests all
+pick it up automatically. Tests in `src/intents/intents.test.ts` automatically require every capability
 to be well-formed, to route from its own examples, and to answer its documented sentences.

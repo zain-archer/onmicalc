@@ -7,6 +7,9 @@ import { settingsStore } from '@/settings/store';
 
 const headline = () => screen.getByTestId('ask-headline').textContent ?? '';
 
+/** What the panel told the rest of the app (history and the draft box). */
+const entriesSummary = () => historyStore.get().entries.map((entry) => entry.expression).join(' | ');
+
 beforeEach(() => {
   clearHistory();
   draftStore.reset();
@@ -113,6 +116,23 @@ describe('Ask OmniCalc panel', () => {
     expect((screen.getByLabelText('Your request') as HTMLInputElement).value).toBe(
       'days between 2024-01-01 and 2026-09-25',
     );
+  });
+
+  it('understands a request with typos and says what it assumed', () => {
+    render(<AskPanel />);
+    ask('convret 5 km to miels');
+    expect(headline()).toMatch(/3\.106855961/);
+    const corrections = screen.getByTestId('ask-corrections').textContent ?? '';
+    expect(corrections).toMatch(/“convret” as “convert”/);
+    expect(corrections).toMatch(/“miels” as “miles”/);
+    // History keeps the user's own words, so they can recognise the entry later.
+    expect(entriesSummary()).toMatch(/convret 5 km to miels/);
+  });
+
+  it('says nothing about typos when there were none', () => {
+    render(<AskPanel />);
+    ask('convert 5 km to miles');
+    expect(screen.queryByTestId('ask-corrections')).toBeNull();
   });
 
   it('clears the form', () => {

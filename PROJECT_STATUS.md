@@ -1,12 +1,12 @@
 # OmniCalc — Project Status
 
-_Last updated: 2026-09-25 (Phases 0–28 complete, release 1.0.0 · Phase 29 Ask OmniCalc layer, release 1.1.0)_
+_Last updated: 2026-09-25 (Phases 0–28 complete, release 1.0.0 · Phase 29 Ask OmniCalc layer, releases 1.1.0 and 1.2.0)_
 
 ## Current phase
 
-**Phase 29 — Plain-language entry ("Ask OmniCalc")** (complete). All 29 original phases are implemented and shipped (**1.0.0**); **1.1.0** adds the intent layer so the app can be used without knowing which tool to open.
+**Phase 29 — Plain-language entry ("Ask OmniCalc")** (complete). All 29 original phases are implemented and shipped (**1.0.0**); **1.1.0** adds the intent layer so the app can be used without knowing which tool to open, and **1.2.0** makes that layer typo-tolerant.
 
-## Phase 29 — Plain-language entry layer (1.1.0)
+## Phase 29 — Plain-language entry layer (1.1.0 → 1.2.0)
 
 The app now opens on a single question — *"What do you want to do?"* — and answers it.
 
@@ -19,6 +19,7 @@ The app now opens on a single question — *"What do you want to do?"* — and a
 | Capability packs | `src/intents/capabilities/*.ts` | Everyday maths & percentages · units · algebra & systems · graphing & calculus · statistics, regression & probability · matrices & vectors · physics, Ohm's law, capacitors & geometry · money, interest & dates. |
 | Ask panel | `src/ui/panels/AskPanel.tsx` | Default tool (`#/ask`): live "I will …" feedback, understanding line, headline + result blocks (stats/table/list/note), copy, send-to-calculator, live history entries, hand-fill fields, and a grouped "Everything you can ask" browser. |
 | Palette handoff | `src/ui/shell/CommandPalette.tsx`, `src/ui/bus.ts` | `Ctrl/⌘+K` accepts a full request and offers "Ask OmniCalc: …" for whatever was typed. |
+| Typo tolerance | `src/intents/fuzzy.ts`, `src/intents/vocabulary.ts`, `src/intents/wordlists.ts` | Damerau–Levenshtein correction with a length-scaled budget read against a vocabulary built from the app's own keywords, templates, units, functions and constants; ambiguous words become alternative readings that the scorer chooses between; numbers, expressions and ordinary English are never touched, and every change is reported. |
 | Cheat sheet | `docs/ASK.md` | Every request you can type, grouped by area, plus how the scorer decides and how to add a capability. |
 | Tests | `src/intents/intents.test.ts`, `src/ui/panels/AskPanel.test.tsx` | 61 routing checks, 42 end-to-end answer checks, structural invariants, pattern/unit behaviour, 12 panel tests. |
 
@@ -163,15 +164,16 @@ would be new phases beyond it, each following the same discipline:
 | Engine and math domains (core, math, constants, conversions, history, settings) | 21 | 294 | passing |
 | Applied calculators (engineering, finance) | 2 | 27 | passing |
 | Graphing | 1 | 15 | passing |
-| UI panels, shell, palette, theme and shortcuts | 16 | 100 | passing |
+| UI panels, shell, palette, theme and shortcuts | 16 | 102 | passing |
 | Intent layer (routing, answers, patterns, units) | 1 | 117 | passing |
+| Typo tolerance (distance, readings, mistyped requests) | 1 | 41 | passing |
 | PWA (status, install, updates) | 3 | 8 | passing |
 | Storage, backup and export | 2 | 12 | passing |
 | Integration (every tool renders, cross-panel flows) | 1 | 24 | passing |
 | Performance and safety guardrails | 2 | 14 | passing |
 | Constants → engine integration | 1 | 14 | passing |
 | Accessibility sweep (per-tool semantics) | 1 | 21 | passing |
-| **Total** | **51** | **645** | **all passing** |
+| **Total** | **52** | **688** | **all passing** |
 
 `npx tsc -b --force` is clean. `npm run verify` (typecheck → tests → build) is the release gate and
 is green.
