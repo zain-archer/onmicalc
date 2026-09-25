@@ -1,0 +1,20 @@
+[package]
+name = "omnica"
+version = "1.0.0"
+description = "Free, offline-first scientific calculator"
+edition = "2021"
+license = "MIT"
+rust-version = "1.77"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

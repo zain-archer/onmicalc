@@ -1,0 +1,80 @@
+name: Bug report
+description: A calculation is wrong, a tool crashes, or something looks broken
+title: '[Bug] '
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping make OmniCalc trustworthy. Wrong results are the most important bugs we
+        have, so please be precise.
+  - type: textarea
+    id: expression
+    attributes:
+      label: Exact input
+      description: The expression, matrix, dataset or backup that triggers the problem.
+      placeholder: 'e.g. sin(30) + log(100, 10)'
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result (and why)
+      description: If you can, cite a textbook, a reference calculator or a derivation.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+      placeholder: 'e.g. 1.5 instead of 3, or an error message'
+    validations:
+      required: true
+  - type: dropdown
+    id: tool
+    attributes:
+      label: Which tool?
+      options:
+        - Calculator
+        - Fractions
+        - Complex numbers
+        - Graphing
+        - Calculus
+        - Equation solver
+        - Matrices & vectors
+        - Statistics
+        - Probability
+        - Unit converter
+        - Constants
+        - Number systems
+        - Programmer
+        - Engineering
+        - Finance & everyday
+        - History & memory
+        - Settings / backup
+        - Appearance / layout
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser and version, operating system, and whether the app was installed as a PWA.
+      placeholder: 'Firefox 130 on Windows 11, installed PWA'
+    validations:
+      required: true
+  - type: dropdown
+    id: settings
+    attributes:
+      label: Angle mode / number format
+      options: ['DEG (default)', 'RAD', 'GRAD', 'Not applicable']
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I reloaded the page and the problem persists
+        - label: I checked that the same input works in Settings → Restore defaults

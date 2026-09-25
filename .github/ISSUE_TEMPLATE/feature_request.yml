@@ -1,0 +1,29 @@
+name: Feature request
+description: Suggest a tool, a calculation method or a usability improvement
+title: '[Feature] '
+labels: ['enhancement']
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: Describe the task, not the solution, if you can.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would help?
+    validations:
+      required: true
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: Project constraints (please confirm)
+      options:
+        - label: The request needs no account, server or paid API
+          required: true
+        - label: The request works offline
+          required: true
+        - label: I understand accuracy matters more than feature count here
+          required: true

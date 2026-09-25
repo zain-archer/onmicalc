@@ -1,0 +1,5 @@
+# OmniCalc is a static, offline-capable app. Crawling is welcome.
+User-agent: *
+Allow: /
+
+Sitemap: ./sitemap.xml

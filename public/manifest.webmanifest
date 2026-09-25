@@ -1,0 +1,86 @@
+{
+  "name": "OmniCalc \u2014 Free Scientific Calculator",
+  "short_name": "OmniCalc",
+  "description": "Free offline-first scientific, engineering and graphing calculator. No accounts, no ads, no premium tiers.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0b1020",
+  "theme_color": "#0b1020",
+  "categories": [
+    "utilities",
+    "education",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "id": "./",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui"
+  ],
+  "shortcuts": [
+    {
+      "name": "Calculator",
+      "short_name": "Calc",
+      "description": "Basic and scientific keypad",
+      "url": "./#/calculator"
+    },
+    {
+      "name": "Graphing",
+      "short_name": "Graph",
+      "description": "Plot and analyse functions",
+      "url": "./#/graph"
+    },
+    {
+      "name": "Unit converter",
+      "short_name": "Units",
+      "description": "Convert between units",
+      "url": "./#/conversions"
+    },
+    {
+      "name": "History & memory",
+      "short_name": "History",
+      "description": "Past calculations and memory slots",
+      "url": "./#/history"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "OmniCalc scientific calculator"
+    }
+  ]
+}

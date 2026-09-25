@@ -1,0 +1,42 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "OmniCalc",
+  "version": "1.0.0",
+  "identifier": "app.omnica.calculator",
+  "build": {
+    "frontendDist": "../dist",
+    "beforeBuildCommand": "npm run build",
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:5173"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "OmniCalc",
+        "width": 1180,
+        "height": 820,
+        "minWidth": 360,
+        "minHeight": 520,
+        "resizable": true,
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'",
+      "freezePrototype": true
+    },
+    "withGlobalTauri": false
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/icon-192.png",
+      "icons/icon-512.png"
+    ],
+    "category": "Utility",
+    "shortDescription": "Free offline scientific, engineering and graphing calculator",
+    "longDescription": "OmniCalc is a completely free, offline-first scientific calculator with graphing, calculus, statistics, matrices, unit conversion, engineering and finance tools. No account, no ads, no paid features, no network access.",
+    "copyright": "MIT licensed"
+  }
+}

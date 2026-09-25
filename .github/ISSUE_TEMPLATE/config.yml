@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Question or usage help
+    url: https://github.com/omnica/omnica/discussions
+    about: Ask how a tool behaves, or how to deploy OmniCalc for your class or team.
+  - name: Security report
+    url: https://github.com/omnica/omnica/security/advisories/new
+    about: Please report vulnerabilities privately — see SECURITY.md.

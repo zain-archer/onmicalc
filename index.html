@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>OmniCalc — Free Scientific Calculator</title>
+    <meta name="description" content="OmniCalc is a free, offline-first scientific, engineering and graphing calculator. No accounts, no ads, no premium features." />
+    <meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f5f6fb" media="(prefers-color-scheme: light)" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="OmniCalc" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="OmniCalc" />
+    <meta name="author" content="OmniCalc contributors" />
+    <meta name="robots" content="index, follow" />
+    <!-- Add an absolute <link rel="canonical"> once you know your deployment URL (see DEPLOYMENT.md). -->
+
+    <!-- Social preview. Deliberately no external trackers: only plain meta tags. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="OmniCalc" />
+    <meta property="og:title" content="OmniCalc — free scientific, engineering and graphing calculator" />
+    <meta property="og:description" content="Offline-first calculator with graphing, calculus, statistics, matrices, unit conversion, engineering and finance tools. No accounts, no ads, no tracking." />
+    <meta property="og:image" content="./icons/icon-512.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="OmniCalc — free scientific calculator" />
+    <meta name="twitter:description" content="Free, offline, private: scientific, engineering, graphing, statistics and finance calculators in one installable web app." />
+    <meta name="twitter:image" content="./icons/icon-512.png" />
+    <link rel="alternate icon" href="./favicon.svg" type="image/svg+xml" />
+    <meta name="color-scheme" content="dark light" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <script>
+      // Apply persisted theme before first paint (no flash).
+      (function () {
+        try {
+          var raw = localStorage.getItem('omnica.settings.v1');
+          var t = raw ? (JSON.parse(raw).theme || 'system') : 'system';
+          var dark = t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+          var accent = raw ? JSON.parse(raw).accent : null;
+          if (accent) document.documentElement.style.setProperty('--accent', accent);
+        } catch (e) { /* ignore: defaults apply */ }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>OmniCalc needs JavaScript enabled to run calculations.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
