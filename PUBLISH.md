@@ -51,13 +51,15 @@ certificate and the macOS build with an Apple Developer ID before you distribute
 ## 4. Google Play (Android)
 
 ```bash
-npm run store:assetlinks               # writes the Digital Asset Links file for your domain
+npm run store:assetlinks -- <SHA-256 fingerprint from Play Console>   # → public/.well-known/assetlinks.json
+npm run build && <deploy>              # so the file is live on your HTTPS origin
 npm run store:twa:init                 # Bubblewrap reads store/android/twa-manifest.json
 npm run store:twa:build                # → app-release-bundle.aab (upload to Play Console)
 ```
 
-- Replace `REPLACE-WITH-YOUR-DOMAIN` in `store/android/twa-manifest.json` with the HTTPS origin from
-  step 1, and host `public/.well-known/assetlinks.json` on that origin, otherwise Android shows a URL bar.
+- In `store/android/twa-manifest.json`, replace `REPLACE-WITH-YOUR-DEPLOYED-HOST.example.com` with the
+  HTTPS origin from step 1. Without the asset-links file Android shows a URL bar above the app;
+  with it the app opens full screen.
 - Play Console: create the app, upload the `.aab`, paste the listing from `docs/STORE_LISTING.md`,
   fill the Data safety form with “no data collected” (true — no telemetry, no accounts, no network
   calls), then publish to internal testing first.
