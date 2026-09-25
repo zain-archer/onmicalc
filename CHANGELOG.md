@@ -9,6 +9,24 @@ All notable changes to OmniCalc are documented here. The format follows
 The engine upgrade: exact symbolic work, advanced mathematics and 3D/field graphing, landing tier by
 tier. Each tier keeps the existing 819 checks green and adds its own.
 
+### Added — physics library and solver (`src/math/physics/`)
+
+- **75 relations** across nine categories, each stored as data with its symbols, units and a residual
+  expression parsed by the app's own safe parser (`f - m*a` for `F = m·a`) — no hand rearrangement,
+  no `eval`.
+- **Solve for any symbol**: `solvePhysics(formula, knownValues, symbol)` brackets and refines the root
+  of the residual, then **substitutes the answer back** and refuses anything whose residual exceeds
+  1e-8 of the relation's own scale, so a wrong answer is never shown.
+- **Physical sense checking**: masses, distances and absolute temperatures must be positive, times
+  and kinetic energies may not be negative, and the reason is stated in the error.
+- **Quadratic relations** report the second algebraic solution with a note ("the non-negative one is
+  reported"), and relations that cannot be satisfied are explained rather than approximated — a
+  photon below the work function returns *no electrons*, not a negative energy.
+- **Units and constants** on every quantity, pre-filled from the same CODATA table as the constants
+  panel; symbols are accepted as written (`R1` or `R₁`).
+- New **Physics** tool (`#/physics`) with search by name, symbol or unit, a category filter, the
+  substitution check, the working and *Use in calculator*.
+
 ### Added — symbolic computer algebra (`src/math/cas/`)
 
 - **Symbolic integration** — a table of standard forms plus linearity, integration by parts and a

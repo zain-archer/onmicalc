@@ -45,6 +45,7 @@ const NumberSystemsPanel = panel(() => import('@/ui/panels/NumberSystemsPanel'),
 const ProgrammerPanel = panel(() => import('@/ui/panels/ProgrammerPanel'), 'ProgrammerPanel');
 const EngineeringPanel = panel(() => import('@/ui/panels/EngineeringPanel'), 'EngineeringPanel');
 const FinancePanel = panel(() => import('@/ui/panels/FinancePanel'), 'FinancePanel');
+const PhysicsPanel = panel(() => import('@/ui/panels/PhysicsPanel'), 'PhysicsPanel');
 
 /** Panels are registered here as each phase lands. */
 const PANELS: Record<string, ComponentType> = {
@@ -66,6 +67,7 @@ const PANELS: Record<string, ComponentType> = {
   numbersystems: NumberSystemsPanel,
   programmer: ProgrammerPanel,
   engineering: EngineeringPanel,
+  physics: PhysicsPanel,
   finance: FinancePanel,
   about: AboutPanel,
 };

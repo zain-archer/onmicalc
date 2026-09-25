@@ -101,6 +101,15 @@ export const TOOLS: readonly ToolDef[] = [
     summary: 'Descriptive statistics, regression and distributions.',
   },
   {
+    id: 'physics',
+    label: 'Physics',
+    group: 'Analyse',
+    icon: 'M12 3v3m0 12v3M3 12h3m12 0h3m-3.6-6.4-2.1 2.1M8.7 15.3l-2.1 2.1m0-11 2.1 2.1m8.4 8.4-2.1-2.1M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z',
+    status: 'ready',
+    phase: 31,
+    summary: 'Seventy-six physics relations: fill in what you know and the missing symbol is solved and checked.',
+  },
+  {
     id: 'equation',
     label: 'Equation Solver',
     group: 'Analyse',

@@ -5,7 +5,7 @@ _Last updated: 2026-09-25 (Phase 29 complete: 1.0.0 → 1.3.0 · 2.0.0 in progre
 ## Current phase
 
 **2.0.0 — engine upgrade (in progress).** Phase 29 and everything before it is complete: 57 test
-files and 819 checks up to 1.3.0, now **59 files / 840 checks**, with `npm run typecheck` clean after
+files and 819 checks up to 1.3.0, now **65 files / 906 checks**, with `npm run typecheck` clean after
 every tier. Tiers land one at a time, each with its own module set, tests and a commit:
 
 | Tier | Area | Where | Status |
@@ -15,10 +15,29 @@ every tier. Tiers land one at a time, each with its own module set, tests and a 
 | 2 | 3D surfaces, vector fields with streamlines, implicit curves, contours, heat maps | `src/graphing/{threeD,fields,implicit}.ts`, `src/ui/panels/Graph3DPanel.tsx` | ✅ 19 tests (engine + panel) |
 | 5 | 19-distribution registry with pdf/CDF/quantile, reproducible sampling | `src/math/probability/{normal,distributions}.ts`, `ProbabilityPanel` | ✅ 19 tests |
 | 4 | Descriptive shape/spread, rank + association statistics, curve fitting, hypothesis tests and intervals | `src/math/statistics/{descriptive,regression,inference}.ts`, `StatisticsTools.tsx` | ✅ 31 tests |
+| 6 | 75-relation physics library with a residual solver that solves for any symbol and verifies its answer | `src/math/physics/{formulas,index}.ts`, `PhysicsPanel.tsx` | ✅ 20 tests (14 engine + 6 panel) |
 
 Everything in these tiers is reachable from the UI: *Graphing* stays the 2D plotter and the new
 *3D & Fields* tool (`#/graph3d`) covers surfaces, vector fields, contours and heat maps, reusing the
 same expression parser, settings and accessible primitives as the rest of the app.
+
+### Tier 6 — Physics (`src/math/physics/`)
+
+Seventy-five relations across nine categories (mechanics, gravitation, waves & sound, thermal,
+electricity, magnetism, optics, fluids, modern physics). Every relation is stored as data with its
+symbols, names and units, and as a **residual** — `F = m·a` is held as `f - m*a`, which the app's own
+parser compiles, so nothing is ever evaluated as code and no hand rearrangement can be wrong.
+
+The solver (`solvePhysics`) takes a formula, the values you know, and the symbol you want. It builds
+a candidate grid from a geometric mean of the known values (relations mix `h = 6.6e-34` with
+`f = 1e15`, where an arithmetic scale would put every trial far from the answer), brackets sign
+changes, refines with bisection and a secant polish, and then **substitutes the answer back into the
+relation** — an answer whose residual exceeds 1e-8 of the relation's own scale is refused rather than
+shown. `positive`/`nonNegative` rules reject non-physical values before and after solving, the
+non-negative root is preferred when a relation is quadratic (the other root is reported as an
+alternative with the reason), constants are pre-filled from the same CODATA values the constants
+panel uses, and symbols are accepted in either form (`R1` or `R₁`). The *Physics* tool lists,
+searches and solves all of it, with the check, the unit, the working and *Use in calculator*.
 
 ### Tier 5 — Probability distributions (`src/math/probability/distributions.ts`)
 

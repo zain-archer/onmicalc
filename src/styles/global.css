@@ -1016,3 +1016,20 @@ input[type='checkbox'], input[type='radio'] { width: 20px; height: 20px; }
   margin: 6px 0 10px;
 }
 .ask__file textarea { font-family: var(--mono); }
+
+/* ---------- Physics library ---------- */
+.formula-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 40vh;
+  overflow-y: auto;
+}
+.formula-list .btn.is-active {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  border-color: var(--accent);
+  color: var(--text);
+}
