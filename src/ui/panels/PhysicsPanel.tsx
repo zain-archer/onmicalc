@@ -177,7 +177,7 @@ function FormulaTool({ formula }: { formula: PhysicsFormula }) {
                 value: nf(solution!.residual),
               },
               ...solution!.alternatives.map((alternative) => ({
-                label: 'Other algebraic solution',
+                label: `Other algebraic solution (${unknown.display ?? unknown.symbol} = ${nf(alternative.value)})`,
                 value: nf(alternative.value),
                 unit: solution!.unit === '—' ? undefined : solution!.unit,
               })),

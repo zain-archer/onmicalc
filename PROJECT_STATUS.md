@@ -5,7 +5,7 @@ _Last updated: 2026-09-25 (Phase 29 complete: 1.0.0 → 1.3.0 · 2.0.0 in progre
 ## Current phase
 
 **2.0.0 — engine upgrade (in progress).** Phase 29 and everything before it is complete: 57 test
-files and 819 checks up to 1.3.0, now **65 files / 906 checks**, with `npm run typecheck` clean after
+files and 819 checks up to 1.3.0, now **68 files / 980 checks**, with `npm run typecheck` clean after
 every tier. Tiers land one at a time, each with its own module set, tests and a commit:
 
 | Tier | Area | Where | Status |
@@ -16,10 +16,33 @@ every tier. Tiers land one at a time, each with its own module set, tests and a 
 | 5 | 19-distribution registry with pdf/CDF/quantile, reproducible sampling | `src/math/probability/{normal,distributions}.ts`, `ProbabilityPanel` | ✅ 19 tests |
 | 4 | Descriptive shape/spread, rank + association statistics, curve fitting, hypothesis tests and intervals | `src/math/statistics/{descriptive,regression,inference}.ts`, `StatisticsTools.tsx` | ✅ 31 tests |
 | 6 | 75-relation physics library with a residual solver that solves for any symbol and verifies its answer | `src/math/physics/{formulas,index}.ts`, `PhysicsPanel.tsx` | ✅ 20 tests (14 engine + 6 panel) |
+| 7 | Periodic table, formula parser, molar mass and composition, solutions/pH, limiting reactants | `src/math/chemistry/{elements,formula,index}.ts`, `ChemistryPanel.tsx` | ✅ 24 tests (16 engine + 8 panel) |
+| — | Interaction sweep: every button of every tool is pressed, plus all routes and shell controls | `src/ui/interaction.test.tsx` | ✅ 48 tests |
 
 Everything in these tiers is reachable from the UI: *Graphing* stays the 2D plotter and the new
 *3D & Fields* tool (`#/graph3d`) covers surfaces, vector fields, contours and heat maps, reusing the
 same expression parser, settings and accessible primitives as the rest of the app.
+
+### Hardening found by the interaction sweep (`src/ui/interaction.test.tsx`)
+
+Pressing every button of every tool under a React error trap surfaced three genuine defects, all
+fixed: two rows in one output list could share a label, which made React reuse the wrong key
+(`OutputList` now keys on label + position); the programmer keypad reached `mod 0` and `÷ 0` without
+catching the `CalcError`, which is now shown as an inline notice instead of an uncaught handler error;
+and `downloadText` assumed `URL.createObjectURL` exists, so it now reports to the user when a browser
+refuses to start a download. The sweep also pins the routing table: every tool's hash renders its
+own heading, an unknown hash still lands on a usable panel, and every tool offers controls or
+explains itself.
+
+### Tier 7 — Chemistry (`src/math/chemistry/`)
+
+The full periodic table (118 elements with atomic mass, category, group, period and block, and an
+explicit `synthetic` flag wherever the mass is only the most stable isotope's mass number), a
+hand-written recursive-descent **formula parser** — brackets, `[Fe(CN)6]`, repeated elements and
+hydrates (`CuSO4·5H2O`) — and the chemistry that follows: molar mass and percent composition, the
+empirical formula from mass percentages (Hill order, with a warning when the percentages do not add
+up), mass ↔ moles ↔ particles, concentration, dilution (`c₁V₁ = c₂V₂`), pH/pOH for strong acids and
+bases, percentage yield and error, and the limiting reactant with the excess of every other reactant.
 
 ### Tier 6 — Physics (`src/math/physics/`)
 

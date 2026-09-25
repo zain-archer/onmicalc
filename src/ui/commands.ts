@@ -45,6 +45,7 @@ const TOOL_KEYWORDS: Record<string, string[]> = {
   programmer: ['bits', 'integer', 'register', 'shift'],
   engineering: ['ohm', 'resistor', 'physics', 'geometry'],
   physics: ['formula', 'suvat', 'projectile', 'gravity', 'force', 'energy', 'momentum', 'optics', 'thermodynamics'],
+  chemistry: ['molar mass', 'atom', 'element', 'periodic table', 'mole', 'ph', 'solution', 'molarity', 'stoichiometry'],
   finance: ['loan', 'interest', 'emi', 'tip', 'date'],
   history: ['memory', 'past', 'favourites'],
   settings: ['theme', 'precision', 'angle', 'storage'],

@@ -50,6 +50,7 @@ export function ProgrammerPanel() {
   const [bitOperand, setBitOperand] = useState('0');
   const [signed, setSigned] = useState(false);
   const [wrapped, setWrapped] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const base = (isBase(Number(baseText)) ? Number(baseText) : 10) as Base;
 
   const value = useMemo(() => {
@@ -73,13 +74,27 @@ export function ProgrammerPanel() {
     setInput((current) => (current === '0' ? key : current + key.toLowerCase()));
   };
 
-  const applyOp = (op: IntegerOp) => {
-    if (pendingOp && accumulator !== null) {
-      const outcome = integerOperation(pendingOp, accumulator, value.toString(), width);
+  const runOperation = (op: IntegerOp, left: string, right: string): void => {
+    // Integer arithmetic can legitimately fail (÷ 0, mod 0, invalid digits).
+    // That is a message for the user, never a crash inside an event handler.
+    try {
+      const outcome = integerOperation(op, left, right, width);
+      setError(null);
       setWrapped(outcome.overflowed);
       setAccumulator(outcome.signed);
       setInput(formatBigIntInBase(BigInt(outcome.signed), base, base === 16));
       setPendingOp(null);
+    } catch (err) {
+      setError(errorMessage(err));
+      setPendingOp(null);
+      setAccumulator(null);
+      setWrapped(false);
+    }
+  };
+
+  const applyOp = (op: IntegerOp) => {
+    if (pendingOp && accumulator !== null) {
+      runOperation(pendingOp, accumulator, value.toString());
       return;
     }
     if (op === 'power' && accumulator === null) {
@@ -96,16 +111,17 @@ export function ProgrammerPanel() {
 
   const equals = () => {
     if (!pendingOp) return;
-    const outcome = integerOperation(pendingOp, accumulator ?? '0', value.toString(), width);
-    setWrapped(outcome.overflowed);
-    setAccumulator(null);
-    setPendingOp(null);
-    setInput(formatBigIntInBase(BigInt(outcome.signed), base, base === 16));
+    runOperation(pendingOp, accumulator ?? '0', value.toString());
   };
 
   const applyBitwiseOp = () => {
-    const result = applyBitwiseBig(bitOp, value.toString(), bitOperand.trim() || '0', width);
-    setInput(formatBigIntInBase(BigInt(result.signedDecimal), base, base === 16));
+    try {
+      const result = applyBitwiseBig(bitOp, value.toString(), bitOperand.trim() || '0', width);
+      setError(null);
+      setInput(formatBigIntInBase(BigInt(result.signedDecimal), base, base === 16));
+    } catch (err) {
+      setError(errorMessage(err));
+    }
   };
 
   const rows = useMemo(() => {
@@ -226,6 +242,7 @@ export function ProgrammerPanel() {
               }
             />
             <BitStrip binary={display.binary} width={width} />
+            {error ? <Notice kind="error">{error}</Notice> : null}
             {wrapped ? (
               <Notice kind="error">
                 The exact result did not fit in {width} bits, so it wrapped modulo 2^{width} exactly like a

@@ -46,6 +46,7 @@ const ProgrammerPanel = panel(() => import('@/ui/panels/ProgrammerPanel'), 'Prog
 const EngineeringPanel = panel(() => import('@/ui/panels/EngineeringPanel'), 'EngineeringPanel');
 const FinancePanel = panel(() => import('@/ui/panels/FinancePanel'), 'FinancePanel');
 const PhysicsPanel = panel(() => import('@/ui/panels/PhysicsPanel'), 'PhysicsPanel');
+const ChemistryPanel = panel(() => import('@/ui/panels/ChemistryPanel'), 'ChemistryPanel');
 
 /** Panels are registered here as each phase lands. */
 const PANELS: Record<string, ComponentType> = {
@@ -68,6 +69,7 @@ const PANELS: Record<string, ComponentType> = {
   programmer: ProgrammerPanel,
   engineering: EngineeringPanel,
   physics: PhysicsPanel,
+  chemistry: ChemistryPanel,
   finance: FinancePanel,
   about: AboutPanel,
 };
@@ -100,8 +102,11 @@ export function AppShell() {
       },
       openShortcuts: () => setShortcutsOpen(true),
       exportData: () => {
-        downloadText(backupFileName(), serializeBackup(buildBackup()), 'application/json');
-        notify('Backup downloaded to your device.', 'ok');
+        const started = downloadText(backupFileName(), serializeBackup(buildBackup()), 'application/json');
+        notify(
+          started ? 'Backup downloaded to your device.' : 'This browser blocked the download — copy the data from Settings instead.',
+          started ? 'ok' : 'error',
+        );
       },
       importData: () => {
         void pickFile().then(async (file) => {

@@ -192,8 +192,10 @@ export function OutputList({ rows, title }: { rows: readonly OutputRow[]; title?
     <div className="output">
       {title ? <h3 className="output__title">{title}</h3> : null}
       <dl className="output__list">
-        {rows.map((row) => (
-          <div key={row.label} className={`output__row${row.emphasize ? ' is-emphasized' : ''}`}>
+        {rows.map((row, index) => (
+          // Two rows can legitimately share a label (two roots, two solutions),
+          // so the position is part of the key.
+          <div key={`${row.label}#${index}`} className={`output__row${row.emphasize ? ' is-emphasized' : ''}`}>
             <dt>{row.label}</dt>
             <dd>
               <span className="output__value">{row.value}</span>

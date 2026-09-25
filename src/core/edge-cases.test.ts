@@ -108,7 +108,7 @@ describe('tool registry invariants', () => {
   it('keeps every tool inside the phase plan with a summary', () => {
     for (const tool of TOOLS) {
       expect(tool.phase).toBeGreaterThanOrEqual(0);
-      expect(tool.phase).toBeLessThanOrEqual(31);
+      expect(tool.phase).toBeLessThanOrEqual(32);
       expect(tool.summary.length).toBeGreaterThan(10);
       expect(tool.icon.length).toBeGreaterThan(5);
     }
@@ -122,9 +122,9 @@ describe('tool registry invariants', () => {
 
   it('only marks a tool ready once its phase is implemented', () => {
     // Everything shipped so far — including the 3D/field graphing phase (30)
-    // and the physics library (31) — is ready, so nothing may still be sitting
-    // in the planned state.
-    const LAST_IMPLEMENTED_PHASE = 31;
+    // the physics library (31) and chemistry (32) — is ready, so nothing may
+    // still be sitting in the planned state.
+    const LAST_IMPLEMENTED_PHASE = 32;
     for (const tool of TOOLS) {
       expect(tool.phase).toBeLessThanOrEqual(LAST_IMPLEMENTED_PHASE);
       expect(tool.status, `${tool.id} is ready before its phase shipped`).toBe('ready');

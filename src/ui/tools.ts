@@ -110,6 +110,15 @@ export const TOOLS: readonly ToolDef[] = [
     summary: 'Seventy-six physics relations: fill in what you know and the missing symbol is solved and checked.',
   },
   {
+    id: 'chemistry',
+    label: 'Chemistry',
+    group: 'Analyse',
+    icon: 'M9 3v6.5L4.6 17A2 2 0 0 0 6.3 20h11.4a2 2 0 0 0 1.7-3L15 9.5V3M8 3h8M7.5 14h9',
+    status: 'ready',
+    phase: 32,
+    summary: 'Periodic table, molar mass and composition, solutions, pH and limiting reactants.',
+  },
+  {
     id: 'equation',
     label: 'Equation Solver',
     group: 'Analyse',

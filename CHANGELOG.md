@@ -9,6 +9,27 @@ All notable changes to OmniCalc are documented here. The format follows
 The engine upgrade: exact symbolic work, advanced mathematics and 3D/field graphing, landing tier by
 tier. Each tier keeps the existing 819 checks green and adds its own.
 
+### Added — chemistry (`src/math/chemistry/`)
+
+- **Periodic table**: all 118 elements with atomic mass, category, group, period and block, flagged
+  wherever the mass is a mass number rather than a standard atomic weight.
+- **Formula parser** written as a recursive descent (brackets, nested brackets, repeated elements and
+  hydrates such as `CuSO4·5H2O`), with errors that point at the character that went wrong.
+- **Molar mass, percent composition and the empirical formula** from mass percentages (Hill order,
+  with a warning when the percentages do not add up to 100 %).
+- **Amounts and solutions**: mass ↔ moles ↔ particles, concentration, dilution `c₁V₁ = c₂V₂`,
+  pH/pOH for strong acids and bases, percentage yield and percentage error.
+- **Limiting reactant** with the extent of reaction and how much of every other reactant is left over.
+- New **Chemistry** tool (`#/chemistry`) with tabs for formulas, elements, solutions and reactions.
+
+### Fixed (found by the new interaction sweep)
+
+- Two rows in one output list could share a label, so React reused the wrong key; `OutputList` keys
+  on label plus position now. Keyboards are unaffected but solution and root lists could drop rows.
+- The programmer keypad reached `mod 0` and `÷ 0` uncaught; the error is now an inline notice.
+- `downloadText` assumed `URL.createObjectURL` exists and threw in browsers that block it; it now
+  reports the failure to the user instead of silently failing.
+
 ### Added — physics library and solver (`src/math/physics/`)
 
 - **75 relations** across nine categories, each stored as data with its symbols, units and a residual

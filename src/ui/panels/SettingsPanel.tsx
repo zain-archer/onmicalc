@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { notify } from '@/ui/notify';
 import { useSettings } from '@/settings/useSettings';
 import { settingsStore } from '@/settings/store';
 import { DEFAULT_SETTINGS, type NumberFormat, type ThemeMode } from '@/settings/types';
@@ -258,14 +259,20 @@ export function SettingsPanel() {
           <button
             type="button"
             className="btn btn--small"
-            onClick={() => downloadText(backupFileName(), serializeBackup(buildBackup()), 'application/json')}
+            onClick={() => {
+              const started = downloadText(backupFileName(), serializeBackup(buildBackup()), 'application/json');
+              if (!started) notify('This browser blocked the download, so the backup was not saved.', 'error');
+            }}
           >
             Export everything (.json)
           </button>
           <button
             type="button"
             className="btn btn--small"
-            onClick={() => downloadText('omnica-history.csv', historyToCsv(historyStore.get().entries), 'text/csv')}
+            onClick={() => {
+              const started = downloadText('omnica-history.csv', historyToCsv(historyStore.get().entries), 'text/csv');
+              if (!started) notify('This browser blocked the download, so the CSV was not saved.', 'error');
+            }}
           >
             Export history (.csv)
           </button>

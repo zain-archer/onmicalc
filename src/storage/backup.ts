@@ -201,17 +201,29 @@ export function backupFileName(now = new Date()): string {
 
 /* -------------------------- browser plumbing -------------------------- */
 
-export function downloadText(fileName: string, text: string, mime = 'application/json'): void {
-  if (typeof document === 'undefined') return;
-  const blob = new Blob([text], { type: `${mime};charset=utf-8` });
-  const url = URL.createObjectURL(blob);
+export function downloadText(fileName: string, text: string, mime = 'application/json'): boolean {
+  if (typeof document === 'undefined') return false;
+  if (typeof URL?.createObjectURL !== 'function') {
+    // Nothing sensible to click: a data URI would navigate instead of download
+    // on strict browsers, so the caller is told instead of pretending.
+    return false;
+  }
+  let url: string;
+  try {
+    const blob = new Blob([text], { type: `${mime};charset=utf-8` });
+    url = URL.createObjectURL(blob);
+  } catch {
+    return false;
+  }
   const link = document.createElement('a');
   link.href = url;
   link.download = fileName;
+  link.rel = 'noopener';
   document.body.appendChild(link);
   link.click();
   link.remove();
-  URL.revokeObjectURL(url);
+  if (typeof URL.revokeObjectURL === 'function') URL.revokeObjectURL(url);
+  return true;
 }
 
 export function readTextFile(file: File): Promise<string> {
