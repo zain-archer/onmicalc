@@ -15,8 +15,6 @@ export interface Settings {
   numberFormat: NumberFormat;
   fractionMode: FractionMode;
   thousandsSeparator: boolean;
-  /** Keep history entries after a reload. */
-  persistHistory: boolean;
   reducedMotion: boolean;
   /** Extra border/text contrast for low-vision use. */
   contrast: 'normal' | 'high';
@@ -25,13 +23,13 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = {
   theme: 'system',
   palette: 'classic',
-  accent: '#6366f1',
+  // Empty means “use the selected palette’s own accent colour”.
+  accent: '',
   angleMode: 'DEG',
   precision: 12,
   numberFormat: 'auto',
   fractionMode: 'auto',
   thousandsSeparator: true,
-  persistHistory: true,
   reducedMotion: false,
   contrast: 'normal',
 };

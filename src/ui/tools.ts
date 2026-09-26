@@ -219,12 +219,12 @@ export const TOOLS: readonly ToolDef[] = [
   },
   {
     id: 'about',
-    label: 'About & Roadmap',
+    label: 'About',
     group: 'System',
     icon: 'M12 8h.01M11 12h1v5h1M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z',
     status: 'ready',
     phase: 28,
-    summary: 'Project status, build information and privacy statement.',
+    summary: 'What OmniCalc is and how it protects your data.',
   },
 ];
 

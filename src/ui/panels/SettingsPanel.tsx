@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { notify } from '@/ui/notify';
 import { useSettings } from '@/settings/useSettings';
 import { settingsStore } from '@/settings/store';
-import { DEFAULT_SETTINGS, type NumberFormat, type ThemeMode } from '@/settings/types';
+import { type NumberFormat, type ThemeMode } from '@/settings/types';
 import { clearHistory } from '@/history/store';
 import { memoryStore, memoryStoreValue } from '@/history/memory';
 import { ANGLE_MODES } from '@/core/numbers/angle';
-import { SelectField, Notice } from '@/ui/components/primitives';
+import { SelectField, Notice, TextField } from '@/ui/components/primitives';
 import { ACCENT_PRESETS, CONTRAST_OPTIONS, THEME_OPTIONS, type ContrastMode } from '@/ui/theme/presets';
-import { PALETTE_PACKS, paletteById, paletteSwatchStyle } from '@/ui/theme/palettes';
+import { PALETTE_PACKS, paletteById } from '@/ui/theme/palettes';
 import {
   applyBackup,
   backupFileName,
@@ -20,7 +20,6 @@ import {
   serializeBackup,
 } from '@/storage/backup';
 import { historyStore } from '@/history/store';
-import { TextField } from '@/ui/components/primitives';
 
 export function SettingsPanel() {
   const settings = useSettings();
@@ -43,6 +42,8 @@ export function SettingsPanel() {
     });
   };
 
+  const currentPalette = paletteById(settings.palette ?? 'classic');
+
   return (
     <div className="stack">
       <section className="card">
@@ -54,9 +55,27 @@ export function SettingsPanel() {
             onChange={(value) => settingsStore.set({ theme: value as ThemeMode })}
             options={THEME_OPTIONS}
           />
-          <div className="field">
-            <span className="field__label">Accent colour</span>
-            <div className="swatches" role="group" aria-label="Accent colour">
+          <SelectField
+            label="Colour palette"
+            value={settings.palette ?? 'classic'}
+            onChange={(value) => settingsStore.set({ palette: value, accent: '' })}
+            options={PALETTE_PACKS.map((pack) => ({ value: pack.id, label: pack.label }))}
+            hint={currentPalette.description}
+          />
+        </div>
+        <div className="field settings__accent">
+          <span className="field__label">Accent colour</span>
+          <div className="accent-controls">
+            <button
+              type="button"
+              className={`btn btn--small${settings.accent ? '' : ' is-active'}`}
+              onClick={() => settingsStore.set({ accent: '' })}
+              aria-label="Use the palette's own accent colour"
+              aria-pressed={!settings.accent}
+            >
+              Palette default
+            </button>
+            <div className="swatches" role="group" aria-label="Accent colour presets">
               {ACCENT_PRESETS.map((preset) => (
                 <button
                   key={preset.id}
@@ -68,18 +87,10 @@ export function SettingsPanel() {
                   onClick={() => settingsStore.set({ accent: preset.value })}
                 />
               ))}
-              <button
-                type="button"
-                className="btn btn--small"
-                onClick={() => settingsStore.set({ accent: '' })}
-                aria-label="Use the palette's own accent colour"
-              >
-                Palette accent
-              </button>
               <label className="swatch swatch--custom" title="Custom accent colour">
                 <input
                   type="color"
-                  value={settings.accent || paletteById(settings.palette ?? 'classic').light.accent}
+                  value={settings.accent || currentPalette.light.accent}
                   onChange={(event) => settingsStore.set({ accent: event.target.value })}
                   aria-label="Custom accent colour"
                 />
@@ -87,61 +98,14 @@ export function SettingsPanel() {
             </div>
           </div>
         </div>
-      </section>
-
-      <section className="card">
-        <h2>
-          Theme gallery <span className="pill">{PALETTE_PACKS.length} palettes · 2 each</span>
-        </h2>
-        <p className="muted">
-          Each palette comes in a light and a dark version, so the “Light or dark” choice above doubles what you
-          see here. Palettes are part of the app: no downloads, no accounts, and your choice is remembered offline.
-        </p>
-        <ul className="themes" role="list">
-          {PALETTE_PACKS.map((pack) => {
-            const active = (settings.palette ?? 'classic') === pack.id;
-            return (
-              <li key={pack.id}>
-                <button
-                  type="button"
-                  className={`theme-card${active ? ' is-active' : ''}`}
-                  aria-pressed={active}
-                  aria-label={`${pack.label} palette${active ? ' (current)' : ''}`}
-                  onClick={() => settingsStore.set({ palette: pack.id, accent: '' })}
-                >
-                  <span className="theme-card__preview" aria-hidden="true">
-                    <span className="theme-card__preview-pane" style={paletteSwatchStyle(pack.id, 'dark', true)}>
-                      <span className="theme-card__bar" />
-                      <span className="theme-card__bar theme-card__bar--short" />
-                      <span className="theme-card__dot" />
-                    </span>
-                    <span className="theme-card__preview-pane" style={paletteSwatchStyle(pack.id, 'light', false)}>
-                      <span className="theme-card__bar" />
-                      <span className="theme-card__bar theme-card__bar--short" />
-                      <span className="theme-card__dot" />
-                    </span>
-                  </span>
-                  <span className="theme-card__text">
-                    <strong>
-                      {pack.label}
-                      {pack.tags.includes('accessibility') ? <span className="badge">high contrast</span> : null}
-                      {pack.tags.includes('popular') ? <span className="badge">popular</span> : null}
-                    </strong>
-                    <span className="theme-card__desc">{pack.description}</span>
-                  </span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
         <p className="field__hint" data-testid="theme-current">
-          Showing <strong>{paletteById(settings.palette ?? 'classic').label}</strong>
-          {settings.accent ? ` with the custom accent ${settings.accent}` : ' with its own accent colour'}.
+          Using <strong>{currentPalette.label}</strong>
+          {settings.accent ? ` with custom accent ${settings.accent}` : ' with its default accent'}.
         </p>
       </section>
 
       <section className="card">
-        <h2>Calculation</h2>
+        <h2>Calculation &amp; accessibility</h2>
         <div className="grid grid--form">
           <SelectField
             label="Angle mode"
@@ -190,14 +154,6 @@ export function SettingsPanel() {
             />
             <span>Group thousands (1,234,567)</span>
           </label>
-          <label className="field field--check">
-            <input
-              type="checkbox"
-              checked={settings.persistHistory}
-              onChange={(event) => settingsStore.set({ persistHistory: event.target.checked })}
-            />
-            <span>Keep history on this device</span>
-          </label>
           <SelectField
             label="Contrast"
             value={settings.contrast}
@@ -216,12 +172,9 @@ export function SettingsPanel() {
       </section>
 
       <section className="card">
-        <h2>Data</h2>
-        <p>
-          Everything is stored locally. Nothing is uploaded, and there is no account, tracking script or
-          network request in the app.
-        </p>
-        <div className="row">
+        <h2>Data &amp; privacy</h2>
+        <p>History, memory and preferences stay on this device. Nothing is uploaded.</p>
+        <div className="row settings__actions">
           <button
             type="button"
             className="btn btn--small"
@@ -236,91 +189,87 @@ export function SettingsPanel() {
           <button type="button" className="btn btn--small" onClick={() => settingsStore.reset()}>
             Reset settings to defaults
           </button>
-          <button
-            type="button"
-            className="btn btn--small"
-            onClick={() => settingsStore.replace(DEFAULT_SETTINGS)}
-          >
-            Restore default theme and precision
-          </button>
         </div>
-        <Notice>
-          Storage is versioned; clearing browser data removes history, memory and preferences.
-        </Notice>
       </section>
 
       <section className="card">
-        <h2>Backup &amp; export</h2>
-        <p>
-          Backups are plain JSON files written by your browser — no server is involved and nothing is
-          uploaded. Import validates and cleans every field before it is applied.
-        </p>
-        <div className="row">
-          <button
-            type="button"
-            className="btn btn--small"
-            onClick={() => {
-              const started = downloadText(backupFileName(), serializeBackup(buildBackup()), 'application/json');
-              if (!started) notify('This browser blocked the download, so the backup was not saved.', 'error');
-            }}
-          >
-            Export everything (.json)
-          </button>
-          <button
-            type="button"
-            className="btn btn--small"
-            onClick={() => {
-              const started = downloadText('omnica-history.csv', historyToCsv(historyStore.get().entries), 'text/csv');
-              if (!started) notify('This browser blocked the download, so the CSV was not saved.', 'error');
-            }}
-          >
-            Export history (.csv)
-          </button>
-        </div>
-        <div className="grid grid--form">
-          <SelectField
-            label="Import mode"
-            value={importMode}
-            onChange={(value) => setImportMode(value as 'replace' | 'merge')}
-            options={[
-              { value: 'replace', label: 'Replace my data' },
-              { value: 'merge', label: 'Merge history into my data' },
-            ]}
-          />
-          <TextField
-            label="Backup file"
-            value={fileName}
-            onChange={() => undefined}
-            hint="Choose a previously exported .json file"
-            type="file"
-            onFile={async (file) => {
-              setFileName(file.name);
-              runImport(await readTextFile(file), file.name);
-            }}
-          />
-        </div>
-        <details className="details">
-          <summary>Or paste a backup file’s contents</summary>
-          <TextField
-            label="Backup JSON"
-            value={pasted}
-            onChange={setPasted}
-            multiline
-            rows={6}
-            placeholder='{"format":"omnica.backup", ...}'
-          />
-          <button
-            type="button"
-            className="btn btn--small"
-            onClick={() => runImport(pasted, 'the pasted text')}
-            disabled={pasted.trim().length === 0}
-          >
-            Import pasted backup
-          </button>
+        <details className="settings-disclosure">
+          <summary>
+            <span>
+              <strong>Backup &amp; export</strong>
+              <span className="settings-disclosure__hint">Move your data between devices</span>
+            </span>
+          </summary>
+          <div className="settings-disclosure__body">
+            <p>Export a local JSON backup or a CSV copy of your history. No server is involved.</p>
+            <div className="row">
+              <button
+                type="button"
+                className="btn btn--small"
+                onClick={() => {
+                  const started = downloadText(backupFileName(), serializeBackup(buildBackup()), 'application/json');
+                  if (!started) notify('This browser blocked the download, so the backup was not saved.', 'error');
+                }}
+              >
+                Export everything (.json)
+              </button>
+              <button
+                type="button"
+                className="btn btn--small"
+                onClick={() => {
+                  const started = downloadText('omnica-history.csv', historyToCsv(historyStore.get().entries), 'text/csv');
+                  if (!started) notify('This browser blocked the download, so the CSV was not saved.', 'error');
+                }}
+              >
+                Export history (.csv)
+              </button>
+            </div>
+            <div className="grid grid--form">
+              <SelectField
+                label="Import mode"
+                value={importMode}
+                onChange={(value) => setImportMode(value as 'replace' | 'merge')}
+                options={[
+                  { value: 'replace', label: 'Replace my data' },
+                  { value: 'merge', label: 'Merge history into my data' },
+                ]}
+              />
+              <TextField
+                label="Backup file"
+                value={fileName}
+                onChange={() => undefined}
+                hint="Choose a previously exported .json file"
+                type="file"
+                onFile={async (file) => {
+                  setFileName(file.name);
+                  runImport(await readTextFile(file), file.name);
+                }}
+              />
+            </div>
+            <details className="details">
+              <summary>Or paste a backup file’s contents</summary>
+              <TextField
+                label="Backup JSON"
+                value={pasted}
+                onChange={setPasted}
+                multiline
+                rows={6}
+                placeholder='{"format":"omnica.backup", ...}'
+              />
+              <button
+                type="button"
+                className="btn btn--small"
+                onClick={() => runImport(pasted, 'the pasted text')}
+                disabled={pasted.trim().length === 0}
+              >
+                Import pasted backup
+              </button>
+            </details>
+            {importMessage ? (
+              <Notice kind={importMessage.kind === 'error' ? 'error' : undefined}>{importMessage.text}</Notice>
+            ) : null}
+          </div>
         </details>
-        {importMessage ? (
-          <Notice kind={importMessage.kind === 'error' ? 'error' : undefined}>{importMessage.text}</Notice>
-        ) : null}
       </section>
     </div>
   );

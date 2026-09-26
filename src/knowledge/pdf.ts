@@ -77,7 +77,7 @@ function trySyncInflate(data: Uint8Array): Uint8Array | null {
       if (length === 0) return;
       const value = nextCode[length]!;
       nextCode[length] = value + 1;
-      table.set(`${length}:${(value >>> 0).toString(2).padStart(length, '0')}`, symbol);
+      table.set(`${length}:${value.toString(2).padStart(length, '0')}`, symbol);
     });
     return table;
   };
@@ -264,7 +264,9 @@ export function extractPdfText(bytes: Uint8Array): PdfTextResult {
     totalStreams += 1;
     const header = raw.slice(Math.max(0, match.index - 400), match.index);
     const body = raw.slice(start, end);
-    const data = Uint8Array.from(body, (character) => character.charCodeAt(0) & 0xff);
+    // Keep compressed bytes from the original buffer. TextDecoder's latin1 label
+    // follows Windows-1252 for C1 bytes, which would corrupt a DEFLATE stream.
+    const data = bytes.subarray(start, end);
     let content: string | null = null;
     if (/\/Filter\s*\/FlateDecode/.test(header)) {
       const inflated = inflate(data);

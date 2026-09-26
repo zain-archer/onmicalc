@@ -92,7 +92,6 @@ function cleanSettings(value: unknown): Settings {
   }
   settings.precision = Math.min(15, Math.max(2, Math.round(cleanNumber(value.precision, base.precision))));
   settings.thousandsSeparator = typeof value.thousandsSeparator === 'boolean' ? value.thousandsSeparator : base.thousandsSeparator;
-  settings.persistHistory = typeof value.persistHistory === 'boolean' ? value.persistHistory : base.persistHistory;
   settings.reducedMotion = typeof value.reducedMotion === 'boolean' ? value.reducedMotion : base.reducedMotion;
   settings.contrast = value.contrast === 'high' ? 'high' : 'normal';
   return settings;

@@ -9,19 +9,20 @@ beforeEach(() => {
 });
 
 describe('settings panel', () => {
-  it('picks a palette from the theme gallery', () => {
+  it('picks a palette from the compact appearance controls', () => {
     render(<SettingsPanel />);
-    fireEvent.click(screen.getByRole('button', { name: /Dracula palette/i }));
+    fireEvent.change(screen.getByRole('combobox', { name: /^Colour palette/ }), { target: { value: 'dracula' } });
     expect(settingsStore.get().palette).toBe('dracula');
     expect(screen.getByTestId('theme-current').textContent).toMatch(/Dracula/);
   });
 
-  it('offers a widely liked set of palettes and a high-contrast option', () => {
+  it('keeps the palette list and accessibility choice available without a gallery', () => {
     render(<SettingsPanel />);
+    const palette = screen.getByRole('combobox', { name: /^Colour palette/ }) as HTMLSelectElement;
     for (const label of ['Indigo', 'Solarized', 'Dracula', 'Nord', 'GitHub', 'Paper']) {
-      expect(screen.getByRole('button', { name: new RegExp(`${label} palette`, 'i') })).toBeTruthy();
+      expect([...palette.options].some((option) => option.textContent === label)).toBe(true);
     }
-    expect(screen.getAllByText('high contrast').length).toBeGreaterThan(0);
+    expect(screen.getByRole('option', { name: 'High contrast (WCAG AAA)' })).toBeTruthy();
   });
 
   it('changes the accent colour from the preset palette', () => {
@@ -51,7 +52,7 @@ describe('settings panel', () => {
   it('restores defaults', () => {
     settingsStore.set({ precision: 4, accent: '#123456' });
     render(<SettingsPanel />);
-    fireEvent.click(screen.getByRole('button', { name: /Restore/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Reset settings/i }));
     expect(settingsStore.get()).toEqual(DEFAULT_SETTINGS);
   });
 });

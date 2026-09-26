@@ -1,4 +1,4 @@
-import { READY_TOOLS, TOOLS } from '@/ui/tools';
+import { READY_TOOLS } from '@/ui/tools';
 import { Icon } from './Icon';
 
 interface NavProps {
@@ -41,9 +41,7 @@ export function Sidebar({ route, onNavigate }: NavProps) {
         </span>
       </div>
       <nav className="nav nav--sidebar">{navItems(route, onNavigate, 'sidebar')}</nav>
-      <p className="sidebar__foot">
-        {READY_TOOLS.length} of {TOOLS.length} tools available. Built in phases — see About.
-      </p>
+      <p className="sidebar__foot">{READY_TOOLS.length} tools available.</p>
     </aside>
   );
 }
