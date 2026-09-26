@@ -15,8 +15,6 @@ export interface Settings {
   numberFormat: NumberFormat;
   fractionMode: FractionMode;
   thousandsSeparator: boolean;
-  /** Keep history entries after a reload. */
-  persistHistory: boolean;
   reducedMotion: boolean;
   /** Extra border/text contrast for low-vision use. */
   contrast: 'normal' | 'high';
@@ -31,7 +29,6 @@ export const DEFAULT_SETTINGS: Settings = {
   numberFormat: 'auto',
   fractionMode: 'auto',
   thousandsSeparator: true,
-  persistHistory: true,
   reducedMotion: false,
   contrast: 'normal',
 };

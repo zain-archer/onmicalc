@@ -436,6 +436,14 @@ button { font: inherit; color: inherit; }
 .details { margin: 14px 0 0; }
 .details summary { cursor: pointer; font-size: 13.5px; color: var(--text-dim); }
 .details summary:hover { color: var(--text); }
+.settings__accent { margin-top: 14px; }
+.settings__actions { margin-top: 12px; }
+.settings-disclosure summary { cursor: pointer; list-style: none; }
+.settings-disclosure summary::-webkit-details-marker { display: none; }
+.settings-disclosure summary > span { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.settings-disclosure summary strong { font-size: 16px; }
+.settings-disclosure__hint { color: var(--text-dim); font-size: 13px; }
+.settings-disclosure__body { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; }
 
 /* ---------- Graphing ---------- */
 .functions { list-style: none; margin: 0 0 12px; padding: 0; display: flex; flex-direction: column; gap: 6px; }
@@ -866,40 +874,6 @@ kbd {
 }
 .ask__corrected .ask__label { color: var(--warn); margin-right: 6px; }
 
-/* ---------- Theme gallery ---------- */
-.themes { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
-.theme-card {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-  height: 100%;
-  text-align: left;
-  background: var(--bg-inset);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 12px;
-  cursor: pointer;
-}
-.theme-card:hover { border-color: var(--accent); }
-.theme-card.is-active { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent); }
-.theme-card__preview { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-.theme-card__preview-pane {
-  height: 58px;
-  border: 1px solid;
-  border-radius: 8px;
-  padding: 8px 9px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-.theme-card__bar { display: block; height: 6px; border-radius: 3px; background: var(--swatch-dim); width: 100%; }
-.theme-card__bar--short { width: 58%; }
-.theme-card__dot { display: block; width: 16px; height: 16px; border-radius: 50%; background: var(--swatch-accent); margin-top: auto; }
-.theme-card__text { display: flex; flex-direction: column; gap: 4px; }
-.theme-card__text strong { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 14px; }
-.theme-card__desc { color: var(--text-dim); font-size: 12px; }
-
 /* ============================== Auto-layout ==============================
  * One layout that adapts to every device: fluid type and spacing, container
  * queries so panels reflow from their own width (not just the window), safe
@@ -949,7 +923,6 @@ input[type='checkbox'], input[type='radio'] { width: 20px; height: 20px; }
 @container (max-width: 520px) {
   .grid--form { grid-template-columns: minmax(0, 1fr); }
   .ask__actions .btn, .ask__actions .chip { flex: 1 1 auto; }
-  .theme-card__preview-pane { height: 48px; }
 }
 
 @container (min-width: 760px) {
