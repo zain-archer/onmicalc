@@ -607,7 +607,7 @@ function assertRegexSafe(pattern: string): void {
   // catastrophic backtracking in JavaScript's backtracking engine. Refuse the
   // risky shape instead of letting a local tester freeze the page.
   if (/\([^()]*[+*?{][^()]*\)[+*?{]/.test(pattern)
-    || /\(?:[^()]*\|[^()]*\)[+*?{]/.test(pattern)
+    || /\([^()]*\|[^()]*\)[+*?{]/.test(pattern)
     || /(?:\{\d{4,}(?:,\d*)?\}|\{\d+,\d{4,}\})/.test(pattern)) {
     throw inputError('This pattern contains a risky repetition and was blocked to prevent a runaway regex.');
   }

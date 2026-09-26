@@ -106,6 +106,7 @@ describe('programmer toolbox', () => {
     expect(testRegex('(?<word>\\w+)', 'gi', 'hello world').matches[0]?.namedGroups.word).toBe('hello');
     expect(groupHexBytes('12345678', 2)).toBe('12 34 | 56 78');
     expect(() => testRegex('(a+)+$', '', 'aaaaaaaaaaaaaaaa!')).toThrow(/risky repetition/);
+    expect(() => testRegex('(a|aa)+$', '', 'aaaaaaaaaaaaaaaa!')).toThrow(/risky repetition/);
   });
 
   it('evaluates safe programmer expressions', () => {
