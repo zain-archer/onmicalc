@@ -151,3 +151,5 @@ and favourites are stored locally on your device and can be exported or erased a
 ## License
 
 MIT — see [LICENSE](./LICENSE).
+#   o n m i c a l c  
+ 
