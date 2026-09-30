@@ -7,6 +7,7 @@ interface Props {
 
 interface State {
   error: unknown;
+  stack?: string;
 }
 
 /**
@@ -21,8 +22,8 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   override componentDidCatch(error: unknown, info: ErrorInfo): void {
-    // Kept intentionally: this is the only place a fatal render error is logged.
     console.error('OmniCalc render error', error, info.componentStack);
+    this.setState(prev => ({ ...prev, stack: info.componentStack || undefined }));
   }
 
   private readonly reload = () => {
@@ -30,17 +31,23 @@ export class ErrorBoundary extends Component<Props, State> {
   };
 
   private readonly reset = () => {
-    this.setState({ error: null });
+    this.setState({ error: null, stack: undefined });
   };
 
   override render(): ReactNode {
-    const { error } = this.state;
+    const { error, stack } = this.state;
     if (!error) return this.props.children;
     return (
-      <div className="fatal" role="alert">
+      <div className="fatal" role="alert" style={{ padding: 24, maxWidth: 640, margin: '10vh auto' }}>
         <h1>Something went wrong</h1>
         <p className="fatal__message">{errorMessage(error)}</p>
-        <div className="fatal__actions">
+        {stack ? (
+          <details style={{ marginTop: 12, fontSize: 11, whiteSpace: 'pre-wrap', background: 'var(--bg-inset)', padding: 8, borderRadius: 8 }}>
+            <summary>Component stack (for debugging)</summary>
+            {stack}
+          </details>
+        ) : null}
+        <div className="fatal__actions" style={{ marginTop: 16, display: 'flex', gap: 8 }}>
           <button type="button" className="btn btn--primary" onClick={this.reset}>
             Try again
           </button>
@@ -48,7 +55,7 @@ export class ErrorBoundary extends Component<Props, State> {
             Reload app
           </button>
         </div>
-        <p className="fatal__hint">
+        <p className="fatal__hint" style={{ marginTop: 12 }}>
           Your history and settings are stored on this device and are not affected.
         </p>
       </div>

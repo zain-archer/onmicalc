@@ -1,6 +1,6 @@
 import { NAV_GROUPS, READY_TOOLS, getTool, resolveNavGroup } from '@/ui/tools';
 import { Icon } from './Icon';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface NavProps {
   route: string;
@@ -9,7 +9,13 @@ interface NavProps {
 
 function GroupNav({ route, onNavigate, variant }: NavProps & { variant: 'sidebar' | 'bottom' }) {
   const currentGroup = resolveNavGroup(route);
-  const [expanded, setExpanded] = useState<string | null>(currentGroup?.id || 'calculate');
+  const [expanded, setExpanded] = useState<string | null>(() => currentGroup?.id || 'calculate');
+
+  useEffect(() => {
+    if (currentGroup?.id) {
+      setExpanded(prev => prev || currentGroup.id);
+    }
+  }, [currentGroup?.id]);
 
   if (variant === 'bottom') {
     const primary = [

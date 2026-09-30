@@ -5,6 +5,7 @@ import { settingsStore } from '@/settings/store';
 export function Onboarding() {
   const settings = useSettings();
   const [visible, setVisible] = useState(false);
+  const [step, setStep] = useState(0);
 
   useEffect(() => {
     if (!settings.onboardingCompleted && settings.showTips) {
@@ -12,8 +13,6 @@ export function Onboarding() {
       return () => clearTimeout(timer);
     }
   }, [settings.onboardingCompleted, settings.showTips]);
-
-  if (!visible) return null;
 
   const steps = [
     { title: 'Welcome to OmniCalc', text: 'Free, offline-first, private. 24 tools, no backend, no tracking.' },
@@ -23,7 +22,7 @@ export function Onboarding() {
     { title: 'Your data stays here', text: 'History stored locally. Export anytime. Works offline. PWA installable.' },
   ];
 
-  const [step, setStep] = useState(0);
+  if (!visible) return null;
 
   const close = () => {
     settingsStore.set({ onboardingCompleted: true });
