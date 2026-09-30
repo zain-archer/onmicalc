@@ -2,12 +2,15 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useFocusTrap } from '@/ui/useFocusTrap';
 import {
   createCommands,
+  createHistoryCommands,
   filterCommands,
   moveSelection,
   type Command,
   type CommandHandlers,
 } from '@/ui/commands';
 import { setAsk } from '@/ui/bus';
+import { historyStore } from '@/history/store';
+import { useStore } from '@/storage/useStore';
 
 export interface CommandPaletteProps {
   open: boolean;
@@ -21,15 +24,20 @@ export function CommandPalette({ open, onClose, handlers }: CommandPaletteProps)
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const dialogRef = useFocusTrap<HTMLDivElement>(open);
+  const historyState = useStore(historyStore);
 
-  const commands = useMemo(() => createCommands(handlers), [handlers]);
+  const commands = useMemo(() => {
+    const base = createCommands(handlers);
+    const hist = createHistoryCommands(historyState.entries, handlers);
+    return [...base, ...hist];
+  }, [handlers, historyState.entries]);
 
   /**
    * Whatever is typed is also a request, not just a command search: the last row
    * offers to answer it in the Ask panel, so a question always has a home.
    */
   const results = useMemo(() => {
-    const matches = filterCommands(commands, query);
+    const matches = filterCommands(commands, query, 50);
     const typed = query.trim();
     if (typed.length < 3) return matches;
     const ask: Command = {

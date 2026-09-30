@@ -7,6 +7,9 @@ export interface HistoryEntry {
   value: number;
   at: number;
   favorite: boolean;
+  tool?: string;
+  angleMode?: string;
+  precision?: number;
 }
 
 export interface HistoryState {
@@ -29,6 +32,9 @@ export interface AddEntryInput {
   display: string;
   value: number;
   at?: number;
+  tool?: string;
+  angleMode?: string;
+  precision?: number;
 }
 
 /** Adds an entry, collapsing an immediate duplicate of the previous expression. */
@@ -40,6 +46,9 @@ export function addHistoryEntry(input: AddEntryInput): HistoryEntry {
     value: input.value,
     at: input.at ?? Date.now(),
     favorite: false,
+    tool: input.tool,
+    angleMode: input.angleMode,
+    precision: input.precision,
   };
   const entries = historyStore.get().entries;
   const deduped =

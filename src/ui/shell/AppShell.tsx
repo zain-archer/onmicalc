@@ -1,5 +1,5 @@
 import { useRoute } from '@/ui/router';
-import { getTool } from '@/ui/tools';
+import { getTool, NAV_GROUPS } from '@/ui/tools';
 import { AboutPanel } from '@/ui/panels/AboutPanel';
 import { CalculatorPanel } from '@/ui/panels/CalculatorPanel';
 import { HistoryPanel } from '@/ui/panels/HistoryPanel';
@@ -9,7 +9,7 @@ import { CommandPalette } from './CommandPalette';
 import { AppStatus } from './AppStatus';
 import { ShortcutsDialog } from './ShortcutsDialog';
 import { settingsStore } from '@/settings/store';
-import { answerStore, setDraft } from '@/ui/bus';
+import { answerStore, setAsk, setDraft } from '@/ui/bus';
 import { READY_TOOLS } from '@/ui/tools';
 import { applyBackup, backupFileName, buildBackup, downloadText, parseBackup, readTextFile, serializeBackup } from '@/storage/backup';
 import { pickFile } from '@/storage/pickFile';
@@ -17,12 +17,8 @@ import { notify } from '@/ui/notify';
 import { isTypingTarget, matchesBinding } from '@/ui/shortcuts';
 import { resolveTheme } from '@/ui/theme/theme';
 import { Suspense, lazy, useCallback, useEffect, useMemo, useState, type ComponentType } from 'react';
+import { Onboarding } from '@/ui/components/Onboarding';
 
-/**
- * Panels load on demand so the first paint only ships the shell and the
- * calculator. Everything below is fetched the first time its tool is opened and
- * then cached by the service worker for offline use.
- */
 const panel = (loader: () => Promise<Record<string, unknown>>, name: string) =>
   lazy(async () => {
     const module = await loader();
@@ -30,6 +26,8 @@ const panel = (loader: () => Promise<Record<string, unknown>>, name: string) =>
   });
 
 const AskPanel = panel(() => import('@/ui/panels/AskPanel'), 'AskPanel');
+const HomePanel = panel(() => import('@/ui/panels/HomePanel'), 'HomePanel');
+const ToolsPanel = panel(() => import('@/ui/panels/ToolsPanel'), 'ToolsPanel');
 const ConstantsPanel = panel(() => import('@/ui/panels/ConstantsPanel'), 'ConstantsPanel');
 const ConversionsPanel = panel(() => import('@/ui/panels/ConversionsPanel'), 'ConversionsPanel');
 const FractionsPanel = panel(() => import('@/ui/panels/FractionsPanel'), 'FractionsPanel');
@@ -48,8 +46,9 @@ const FinancePanel = panel(() => import('@/ui/panels/FinancePanel'), 'FinancePan
 const PhysicsPanel = panel(() => import('@/ui/panels/PhysicsPanel'), 'PhysicsPanel');
 const ChemistryPanel = panel(() => import('@/ui/panels/ChemistryPanel'), 'ChemistryPanel');
 
-/** Panels are registered here as each phase lands. */
 const PANELS: Record<string, ComponentType> = {
+  home: HomePanel,
+  tools: ToolsPanel,
   ask: AskPanel,
   calculator: CalculatorPanel,
   fractions: FractionsPanel,
@@ -78,8 +77,10 @@ export function AppShell() {
   const [route, go] = useRoute();
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [globalQuery, setGlobalQuery] = useState('');
   const tool = getTool(route);
   const Panel = PANELS[route] ?? AboutPanel;
+  const currentGroup = NAV_GROUPS.find(g => g.tools.includes(route) || g.id === route);
 
   const toggleTheme = useCallback(() => {
     const settings = settingsStore.get();
@@ -96,6 +97,7 @@ export function AppShell() {
         settingsStore.set({ ...settings, angleMode: mode });
       },
       clearDraft: () => setDraft(''),
+      setDraft: (text: string) => setDraft(text),
       copyResult: () => {
         const display = answerStore.get().display;
         void navigator.clipboard?.writeText(display).catch(() => undefined);
@@ -126,6 +128,12 @@ export function AppShell() {
     }),
     [go, toggleTheme],
   );
+
+  useEffect(() => {
+    const onOpenPalette = () => setPaletteOpen(true);
+    window.addEventListener('omnica:openPalette' as any, onOpenPalette);
+    return () => window.removeEventListener('omnica:openPalette' as any, onOpenPalette);
+  }, []);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -163,6 +171,17 @@ export function AppShell() {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [go, route, toggleTheme]);
 
+  const onGlobalSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!globalQuery.trim()) {
+      setPaletteOpen(true);
+      return;
+    }
+    setAsk(globalQuery.trim());
+    go('ask');
+    setGlobalQuery('');
+  };
+
   return (
     <div className="app">
       <a className="skip-link" href="#main">
@@ -171,35 +190,27 @@ export function AppShell() {
       <Sidebar route={route} onNavigate={go} />
       <div className="app__main">
         <header className="topbar">
-          <h1 className="topbar__title">{tool?.label ?? 'OmniCalc'}</h1>
-          <p className="topbar__summary">{tool?.summary}</p>
+          <div className="topbar__left">
+            <h1 className="topbar__title">{currentGroup ? `${currentGroup.label} • ${tool?.label ?? 'OmniCalc'}` : (tool?.label ?? 'OmniCalc')}</h1>
+            <p className="topbar__summary">{tool?.summary}</p>
+          </div>
+          <div className="topbar__center">
+            <form onSubmit={onGlobalSearch} className="topbar__search" role="search">
+              <input
+                className="field__input topbar__search-input"
+                type="search"
+                placeholder="Search tools, constants, units, formulas... ( / or Ctrl+K )"
+                value={globalQuery}
+                onChange={e => setGlobalQuery(e.target.value)}
+                aria-label="Global search"
+              />
+              <button type="submit" className="btn btn--small" aria-label="Search">⌕</button>
+            </form>
+          </div>
           <div className="topbar__actions">
-            <button
-              type="button"
-              className="btn btn--ghost btn--small"
-              onClick={() => setPaletteOpen(true)}
-              title="Search tools and actions"
-            >
-              Commands <kbd className="kbd-inline">Ctrl K</kbd>
-            </button>
-            <button
-              type="button"
-              className="btn btn--ghost btn--small"
-              onClick={toggleTheme}
-              aria-label="Toggle light or dark theme"
-              title="Toggle theme (Alt+D)"
-            >
-              ◐
-            </button>
-            <button
-              type="button"
-              className="btn btn--ghost btn--small"
-              onClick={() => setShortcutsOpen(true)}
-              aria-label="Keyboard shortcuts"
-              title="Keyboard shortcuts (?)"
-            >
-              ?
-            </button>
+            <button type="button" className="btn btn--ghost btn--small" onClick={() => setPaletteOpen(true)} title="Search tools and actions (Ctrl+K)">Commands <kbd className="kbd-inline">Ctrl K</kbd></button>
+            <button type="button" className="btn btn--ghost btn--small" onClick={toggleTheme} aria-label="Toggle light or dark theme" title="Toggle theme (Alt+D)">◐</button>
+            <button type="button" className="btn btn--ghost btn--small" onClick={() => setShortcutsOpen(true)} aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)">?</button>
           </div>
         </header>
         <main className="panel-host" id="main">
@@ -210,19 +221,17 @@ export function AppShell() {
       </div>
       <BottomNav route={route} onNavigate={go} />
       <AppStatus />
+      <Onboarding />
       <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} handlers={handlers} />
       <ShortcutsDialog open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
     </div>
   );
 }
 
-/** Shown while a tool's code chunk is downloading (once, then cached). */
 function PanelLoading() {
   return (
     <div className="stack" role="status" aria-live="polite">
-      <section className="card">
-        <p className="muted">Loading tool…</p>
-      </section>
+      <section className="card"><p className="muted">Loading tool…</p></section>
     </div>
   );
 }

@@ -3,23 +3,44 @@ import type { AngleMode } from '@/core/numbers/angle';
 export type ThemeMode = 'light' | 'dark' | 'system';
 export type NumberFormat = 'auto' | 'scientific' | 'engineering';
 export type FractionMode = 'auto' | 'decimal' | 'fraction';
+export type GraphQuality = 'performance' | 'balanced' | 'quality';
+export type ProgrammerBase = 'bin' | 'oct' | 'dec' | 'hex';
+export type BitWidth = 8 | 16 | 32 | 64;
 
 export interface Settings {
   theme: ThemeMode;
-  /** Palette pack id (see `src/ui/theme/palettes.json`). */
   palette: string;
   accent: string;
   angleMode: AngleMode;
-  /** Significant digits used when formatting results. */
   precision: number;
   numberFormat: NumberFormat;
   fractionMode: FractionMode;
   thousandsSeparator: boolean;
-  /** Keep history entries after a reload. */
   persistHistory: boolean;
   reducedMotion: boolean;
-  /** Extra border/text contrast for low-vision use. */
   contrast: 'normal' | 'high';
+  // Extended per-section settings
+  graphDefaultMode: 'cartesian' | 'parametric' | 'polar' | 'implicit';
+  graphGrid: boolean;
+  graphAxes: boolean;
+  graphLabels: boolean;
+  graphQuality: GraphQuality;
+  graphLineThickness: number;
+  threeDQuality: GraphQuality;
+  threeDFps: number;
+  threeDGrid: boolean;
+  threeDAxes: boolean;
+  programmerBase: ProgrammerBase;
+  programmerBitWidth: BitWidth;
+  programmerSigned: boolean;
+  financeCurrency: string;
+  financePrecision: number;
+  historySize: number;
+  keyboardShortcutsEnabled: boolean;
+  touchGesturesEnabled: boolean;
+  performanceMode: 'auto' | 'performance' | 'balanced' | 'quality';
+  showTips: boolean;
+  onboardingCompleted: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -34,4 +55,25 @@ export const DEFAULT_SETTINGS: Settings = {
   persistHistory: true,
   reducedMotion: false,
   contrast: 'normal',
+  graphDefaultMode: 'cartesian',
+  graphGrid: true,
+  graphAxes: true,
+  graphLabels: true,
+  graphQuality: 'balanced',
+  graphLineThickness: 2,
+  threeDQuality: 'balanced',
+  threeDFps: 60,
+  threeDGrid: true,
+  threeDAxes: true,
+  programmerBase: 'dec',
+  programmerBitWidth: 32,
+  programmerSigned: true,
+  financeCurrency: 'USD',
+  financePrecision: 2,
+  historySize: 1000,
+  keyboardShortcutsEnabled: true,
+  touchGesturesEnabled: true,
+  performanceMode: 'auto',
+  showTips: true,
+  onboardingCompleted: false,
 };

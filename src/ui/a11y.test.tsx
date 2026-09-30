@@ -86,7 +86,7 @@ describe.each(READY_TOOLS.map((tool) => [tool.label, tool.id] as const))('access
     }
 
     expect(problems, `${label}: ${problems.join(', ')}`).toEqual([]);
-    expect(container.querySelector('h1')?.textContent?.trim()).toBe(label);
+    expect(container.querySelector('h1')?.textContent).toContain(label);
     cleanup();
   });
 });

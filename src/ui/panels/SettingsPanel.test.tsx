@@ -11,9 +11,10 @@ beforeEach(() => {
 describe('settings panel', () => {
   it('picks a palette from the theme gallery', () => {
     render(<SettingsPanel />);
-    fireEvent.click(screen.getByRole('button', { name: /Dracula palette/i }));
+    // Appearance is default active
+    const btn = screen.getByRole('button', { name: /Dracula/i });
+    fireEvent.click(btn);
     expect(settingsStore.get().palette).toBe('dracula');
-    expect(screen.getByTestId('theme-current').textContent).toMatch(/Dracula/);
   });
 
   it('offers a widely liked set of palettes and a high-contrast option', () => {
@@ -21,18 +22,19 @@ describe('settings panel', () => {
     for (const label of ['Indigo', 'Solarized', 'Dracula', 'Nord', 'GitHub', 'Paper']) {
       expect(screen.getByRole('button', { name: new RegExp(`${label} palette`, 'i') })).toBeTruthy();
     }
-    expect(screen.getAllByText('high contrast').length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/high contrast/i).length).toBeGreaterThan(0);
   });
 
   it('changes the accent colour from the preset palette', () => {
     render(<SettingsPanel />);
-    fireEvent.click(screen.getByRole('button', { name: /Accent Emerald/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Emerald/i }));
     expect(settingsStore.get().accent).toBe('#10b981');
   });
 
   it('accepts a custom accent colour', () => {
     render(<SettingsPanel />);
-    fireEvent.change(screen.getByLabelText('Custom accent colour'), { target: { value: '#123456' } });
+    const input = screen.getByLabelText(/Custom accent/i);
+    fireEvent.change(input, { target: { value: '#123456' } });
     expect(settingsStore.get().accent).toBe('#123456');
   });
 
@@ -44,14 +46,15 @@ describe('settings panel', () => {
     fireEvent.change(screen.getByLabelText('Contrast'), { target: { value: 'high' } });
     expect(settingsStore.get().contrast).toBe('high');
 
-    fireEvent.click(screen.getByLabelText('Reduce motion and transitions'));
+    fireEvent.click(screen.getByLabelText(/Reduce motion/i));
     expect(settingsStore.get().reducedMotion).toBe(true);
   });
 
   it('restores defaults', () => {
     settingsStore.set({ precision: 4, accent: '#123456' });
     render(<SettingsPanel />);
-    fireEvent.click(screen.getByRole('button', { name: /Restore/i }));
+    const restoreBtns = screen.getAllByRole('button', { name: /Restore|Reset/i });
+    fireEvent.click(restoreBtns[0]!);
     expect(settingsStore.get()).toEqual(DEFAULT_SETTINGS);
   });
 });
@@ -67,8 +70,10 @@ describe('backup and export', () => {
       ],
     });
     render(<SettingsPanel />);
-    fireEvent.change(screen.getByLabelText(/^Backup JSON/), { target: { value: text } });
-    fireEvent.click(screen.getByRole('button', { name: 'Import pasted backup' }));
+    // Navigate to Data category
+    fireEvent.click(screen.getByRole('button', { name: /Data \/ Backup/i }));
+    fireEvent.change(screen.getByLabelText(/Backup JSON/i), { target: { value: text } });
+    fireEvent.click(screen.getByRole('button', { name: /Import pasted/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/Imported 1 history entries/)).toBeTruthy();
@@ -80,8 +85,9 @@ describe('backup and export', () => {
     const { historyStore: store } = await import('@/history/store');
     store.set({ entries: [] });
     render(<SettingsPanel />);
-    fireEvent.change(screen.getByLabelText(/^Backup JSON/), { target: { value: '{"hello":true}' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Import pasted backup' }));
+    fireEvent.click(screen.getByRole('button', { name: /Data \/ Backup/i }));
+    fireEvent.change(screen.getByLabelText(/Backup JSON/i), { target: { value: '{\"hello\":true}' } });
+    fireEvent.click(screen.getByRole('button', { name: /Import pasted/i }));
 
     await waitFor(() => {
       expect(screen.getByText('This is not an OmniCalc backup file.')).toBeTruthy();

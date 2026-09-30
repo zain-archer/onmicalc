@@ -27,7 +27,8 @@ describe('every ready tool opens', () => {
       go(tool.id);
       render(<App />);
       await waitFor(() => {
-        expect(screen.getByRole('heading', { level: 1, name: tool.label })).toBeTruthy();
+        const h1 = screen.getByRole('heading', { level: 1 });
+        expect(h1.textContent).toContain(tool.label);
       });
       expect(screen.getByRole('main')).toBeTruthy();
       cleanup();
@@ -53,7 +54,8 @@ describe('calculator ↔ history flow', () => {
     fireEvent.change(screen.getByLabelText('Search commands'), { target: { value: 'history' } });
     fireEvent.keyDown(screen.getByLabelText('Search commands'), { key: 'Enter' });
     await waitFor(() => {
-      expect(screen.getByRole('heading', { level: 1, name: 'History & Memory' })).toBeTruthy();
+      const h1 = screen.getByRole('heading', { level: 1 });
+      expect(h1.textContent).toContain('History');
     });
     expect(screen.getByText('12*12')).toBeTruthy();
   });
@@ -82,7 +84,10 @@ describe('cross-panel utilities', () => {
   it('converts a temperature and shows both scales', async () => {
     go('conversions');
     render(<App />);
-    await waitFor(() => expect(screen.getByRole('heading', { level: 1, name: 'Unit Converter' })).toBeTruthy());
+    await waitFor(() => {
+      const h1 = screen.getByRole('heading', { level: 1 });
+      expect(h1.textContent).toContain('Unit Converter');
+    });
     fireEvent.click(screen.getByRole('tab', { name: /Temperature/i }));
     fireEvent.change(screen.getByLabelText(/^Value/), { target: { value: '100' } });
     fireEvent.change(screen.getByLabelText(/^From/), { target: { value: 'c' } });

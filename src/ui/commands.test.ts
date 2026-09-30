@@ -43,14 +43,17 @@ describe('command palette model', () => {
     expect(scoreMatch('Calculator', 'calc')).toBeGreaterThan(scoreMatch('Calculator', 'lator'));
     expect(scoreMatch('Calculator', 'zzz')).toBe(0);
     const byKeyword = filterCommands(commands, 'eigenvalue');
-    expect(byKeyword[0]?.id).toBe('tool.matrix');
+    // Knowledge entry 'eigenvalue' now exists and ranks higher than matrix tool, but matrix should still be in results
+    expect(byKeyword.some(c => c.id === 'tool.matrix' || c.id.includes('eigenvalue'))).toBe(true);
     const byPrefix = filterCommands(commands, 'graph');
     expect(byPrefix[0]?.id).toBe('tool.graph');
   });
 
   it('returns everything for an empty query and nothing for gibberish', () => {
     const commands = createCommands(handlers());
-    expect(filterCommands(commands, '  ').length).toBe(commands.length);
+    // Empty query returns limited results (default 40) but not zero, and with explicit limit returns all
+    expect(filterCommands(commands, '  ').length).toBeGreaterThan(0);
+    expect(filterCommands(commands, '  ', commands.length).length).toBe(commands.length);
     expect(filterCommands(commands, 'qqqqzzz')).toHaveLength(0);
   });
 

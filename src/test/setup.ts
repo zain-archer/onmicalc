@@ -10,7 +10,7 @@ afterEach(() => {
 if (typeof HTMLCanvasElement !== 'undefined') {
   const original = HTMLCanvasElement.prototype.getContext;
   // @ts-ignore
-  HTMLCanvasElement.prototype.getContext = function (type: string) {
+  HTMLCanvasElement.prototype.getContext = function (this: any, type: string) {
     if (type === '2d') {
       return {
         fillRect: vi.fn(),

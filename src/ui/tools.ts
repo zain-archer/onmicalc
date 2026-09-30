@@ -29,6 +29,15 @@ export const TOOL_GROUPS: readonly ToolGroup[] = [
 
 export const TOOLS: readonly ToolDef[] = [
   {
+    id: 'home',
+    label: 'Home',
+    group: 'System',
+    icon: 'M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-5H9v5H4a1 1 0 0 1-1-1V9.5Z',
+    status: 'ready',
+    phase: 33,
+    summary: 'Recent calculations, favorites, quick actions and universal search.',
+  },
+  {
     id: 'ask',
     label: 'Ask OmniCalc',
     group: 'Calculate',
@@ -218,6 +227,15 @@ export const TOOLS: readonly ToolDef[] = [
     summary: 'Theme, precision, angle mode and data controls.',
   },
   {
+    id: 'tools',
+    label: 'All Tools',
+    group: 'System',
+    icon: 'M4 4h6v6H4V4Zm10 0h6v6h-6V4ZM4 14h6v6H4v-6Zm10 0h6v6h-6v-6Z',
+    status: 'ready',
+    phase: 34,
+    summary: 'Browse all calculators by category — Mathematics, Science, Engineering, Business, Computing.',
+  },
+  {
     id: 'about',
     label: 'About & Roadmap',
     group: 'System',
@@ -234,7 +252,43 @@ export function getTool(id: string): ToolDef | undefined {
   return TOOLS.find((tool) => tool.id === id);
 }
 
+/** Intent-based navigation groups for the new shell */
+export interface NavGroup {
+  id: string;
+  label: string;
+  icon: string;
+  tools: string[]; // tool ids
+  defaultTool: string;
+}
+
+export const NAV_GROUPS: readonly NavGroup[] = [
+  { id: 'home', label: 'Home', icon: 'M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-5H9v5H4a1 1 0 0 1-1-1V9.5Z', tools: ['home'], defaultTool: 'home' },
+  { id: 'calculate', label: 'Calculate', icon: 'M6 3h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Zm2 3h8v3H8V6Z', tools: ['calculator', 'fractions', 'complex', 'numbersystems'], defaultTool: 'calculator' },
+  { id: 'graph', label: 'Graph', icon: 'M3 20h18M6 4v14m-3-3 4-6 4 3 5-8', tools: ['graph', 'graph3d'], defaultTool: 'graph' },
+  { id: 'solve', label: 'Solve', icon: 'M8 4H4m4 16H4m0-8h16M15 4h5m-5 16h5', tools: ['equation', 'calculus', 'matrix'], defaultTool: 'equation' },
+  { id: 'convert', label: 'Convert', icon: 'M4 8h13l-3-3m3 11H4l3 3', tools: ['conversions', 'constants'], defaultTool: 'conversions' },
+  { id: 'analyze', label: 'Analyze', icon: 'M4 20V9m6 11V4m6 16v-7M2 20h20', tools: ['statistics', 'probability'], defaultTool: 'statistics' },
+  { id: 'science', label: 'Science', icon: 'M12 3v3m0 12v3M3 12h3m12 0h3M6.3 6.3 8.4 8.4m7.2 7.2 2.1 2.1m0-11.4-2.1 2.1M8.4 15.6l-2.1 2.1', tools: ['physics', 'chemistry', 'graph3d'], defaultTool: 'physics' },
+  { id: 'engineering', label: 'Engineering', icon: 'M12 3v3m0 12v3M3 12h3m12 0h3M6.3 6.3 8.4 8.4m7.2 7.2 2.1 2.1m0-11.4-2.1 2.1M8.4 15.6l-2.1 2.1', tools: ['engineering'], defaultTool: 'engineering' },
+  { id: 'finance', label: 'Finance', icon: 'M3 7h18v10H3V7Zm0 4h18M7 15h3', tools: ['finance'], defaultTool: 'finance' },
+  { id: 'programmer', label: 'Programmer', icon: 'M9 6 4 12l5 6m6-12 5 6-5 6M13 4l-3 16', tools: ['programmer', 'numbersystems'], defaultTool: 'programmer' },
+  { id: 'reference', label: 'Reference', icon: 'M12 3l2.6 5.3 5.9.8-4.3 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8L3.5 9.1l5.9-.8L12 3Z', tools: ['constants', 'about'], defaultTool: 'constants' },
+  { id: 'files', label: 'Files', icon: 'M6 2h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Z', tools: ['ask'], defaultTool: 'ask' },
+  { id: 'history', label: 'History', icon: 'M12 7v5l3 2m6-2a9 9 0 1 1-3.6-7.2M21 3v5h-5', tools: ['history'], defaultTool: 'history' },
+  { id: 'tools', label: 'All Tools', icon: 'M4 4h6v6H4V4Zm10 0h6v6h-6V4ZM4 14h6v6H4v-6Zm10 0h6v6h-6v-6Z', tools: ['tools'], defaultTool: 'tools' },
+  { id: 'settings', label: 'Settings', icon: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm8-3 2 1.5-2 3.5-2.4-1a7.5 7.5 0 0 1-1.6 1l-.3 2.5h-4l-.3-2.5a7.5 7.5 0 0 1-1.6-1L5 16 3 12.5 5 11a7.5 7.5 0 0 1 0-2L3 7.5 5 4l2.4 1a7.5 7.5 0 0 1 1.6-1L9.3 1.5h4l.3 2.5a7.5 7.5 0 0 1 1.6 1L17.6 4 20 7.5 18 9a7.5 7.5 0 0 1 0 2Z', tools: ['settings'], defaultTool: 'settings' },
+];
+
+/** Alias map for backward compatibility: old routes still work */
+export const ROUTE_ALIASES: Record<string, string> = {
+  // keep all existing ids working
+};
+
+export function resolveNavGroup(route: string): NavGroup | undefined {
+  return NAV_GROUPS.find(g => g.tools.includes(route) || g.id === route);
+}
+
 /** Default route used when the URL hash is empty or unknown. */
 export function defaultRoute(): string {
-  return READY_TOOLS[0]?.id ?? 'about';
+  return 'home';
 }

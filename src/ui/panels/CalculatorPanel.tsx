@@ -16,6 +16,7 @@ import { useStore } from '@/storage/useStore';
 import { BASIC_KEYS, SCIENTIFIC_KEYS, trigKeys, type KeyDef } from '@/ui/keypad/keys';
 import { backspace, insertSnippet } from '@/ui/keypad/insert';
 import { CopyButton, Notice, Tabs } from '@/ui/components/primitives';
+import { SendTo } from '@/ui/components/SendTo';
 import { formatFraction, fromDecimal } from '@/math/arithmetic/fractions';
 import type { AngleMode } from '@/core/numbers/angle';
 
@@ -80,9 +81,12 @@ export function CalculatorPanel() {
       expression: evaluation.source,
       display: evaluation.display,
       value: evaluation.value,
+      tool: 'calculator',
+      angleMode: settings.angleMode,
+      precision: settings.precision,
     });
     answerStore.set({ value: evaluation.value, display: evaluation.display });
-  }, [draft.text, evaluation]);
+  }, [draft.text, evaluation, settings.angleMode, settings.precision]);
 
   const onKey = useCallback(
     (key: KeyDef) => {
@@ -239,6 +243,7 @@ export function CalculatorPanel() {
               ) : null}
               <CopyButton text={evaluation.display} label="Copy result" />
               <CopyButton text={evaluation.source} label="Copy expression" />
+              <SendTo expression={evaluation.source} value={evaluation.value} display={evaluation.display} />
             </>
           ) : draft.text.trim() === '' ? (
             <output className="calc__value calc__value--idle" data-testid="calc-value">

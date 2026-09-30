@@ -54,7 +54,7 @@ function panelButtons(container: HTMLElement): HTMLButtonElement[] {
  * enough — wait until the panel has actually rendered its controls.
  */
 async function openTool(container: HTMLElement, label: string): Promise<void> {
-  await waitFor(() => expect(container.querySelector('h1')?.textContent?.trim()).toBe(label));
+  await waitFor(() => expect(container.querySelector('h1')?.textContent).toContain(label));
   await waitFor(
     () => {
       // A tool either offers controls or explains itself — never neither.
