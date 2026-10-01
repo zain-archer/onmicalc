@@ -234,4 +234,35 @@ describe('sampling', () => {
     expect(() => sampleDistribution('nope', [], 10)).toThrow(/Unknown distribution/);
     expect(sampleDistribution('normal', [0, 1], 0)).toEqual([]);
   });
+
+  /**
+   * Regression: the normal and log-normal quantiles were served by the raw
+   * Acklam approximation (~1e-9), while the module already had a
+   * Newton-refined version. At the twelve significant digits the app displays,
+   * that error was visible — the 97.5th percentile read 1.959963986 instead of
+   * 1.9599639845. The registry must use the exact-CDF refinement.
+   */
+  it('returns quantiles at machine precision, matching SciPy', () => {
+    const normal = getDistribution('normal')!;
+    const reference: [number, number][] = [
+      [0.5, 0],
+      [0.9, 1.2815515655446004],
+      [0.95, 1.6448536269514722],
+      [0.975, 1.959963984540054],
+      [0.99, 2.3263478740408408],
+      [0.999, 3.0902323061678132],
+      [0.001, -3.0902323061678132],
+    ];
+    for (const [p, expected] of reference) {
+      expect(normal.quantile(p, [0, 1]), `p=${p}`).toBeCloseTo(expected, 12);
+    }
+    // Round trip: the CDF of the quantile comes back to p.
+    for (const p of [0.01, 0.25, 0.5, 0.75, 0.99]) {
+      expect(normal.cdf(normal.quantile(p, [0, 1]), [0, 1])).toBeCloseTo(p, 12);
+    }
+    // Log-normal is exp(mu + sigma * z) with the same refined z.
+    const lognormal = getDistribution('lognormal')!;
+    expect(lognormal.quantile(0.975, [0, 1])).toBeCloseTo(Math.exp(1.959963984540054), 12);
+    expect(lognormal.quantile(0.5, [0, 0.5])).toBeCloseTo(1, 12);
+  });
 });

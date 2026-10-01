@@ -8,12 +8,14 @@ import { formatNumber } from '@/core/precision/format';
 import type { FormatOptions } from '@/core/precision/format';
 import { evaluateNode } from '@/core/evaluator/evaluate';
 import { createDefaultRegistry } from '@/core/evaluator/functions';
-import type { EvalContext, FunctionRegistry } from '@/core/evaluator/registry';
+import type { EvalContext, FunctionRegistry, PercentMode } from '@/core/evaluator/registry';
 
 export { modulo, power } from '@/core/evaluator/evaluate';
 
 export interface EngineOptions extends Partial<FormatOptions> {
   angleMode?: AngleMode;
+  /** How `%` behaves in a sum or difference; defaults to `contextual`. */
+  percentMode?: PercentMode;
   variables?: Readonly<Record<string, number>>;
   constants?: Readonly<Record<string, number>>;
   functions?: FunctionRegistry;
@@ -55,6 +57,7 @@ export function getDefaultRegistry(): FunctionRegistry {
 export function createContext(options: EngineOptions = {}): EvalContext {
   return {
     angleMode: options.angleMode ?? 'RAD',
+    percentMode: options.percentMode ?? 'contextual',
     constants: { ...ALL_CONSTANT_VALUES, ...(options.constants ?? {}) },
     variables: options.variables ?? {},
     functions: options.functions ?? options.registry ?? getDefaultRegistry(),

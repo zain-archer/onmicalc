@@ -6,8 +6,14 @@ interface NavProps {
   onNavigate: (id: string) => void;
 }
 
-function navItems(route: string, onNavigate: (id: string) => void, variant: 'sidebar' | 'bottom') {
-  return READY_TOOLS.map((tool) => {
+function navItems(
+  route: string,
+  onNavigate: (id: string) => void,
+  variant: 'sidebar' | 'bottom',
+  only?: readonly string[],
+) {
+  const tools = only ? READY_TOOLS.filter((tool) => only.includes(tool.id)) : READY_TOOLS;
+  return tools.map((tool) => {
     const active = tool.id === route;
     return (
       <button
@@ -48,10 +54,31 @@ export function Sidebar({ route, onNavigate }: NavProps) {
   );
 }
 
-export function BottomNav({ route, onNavigate }: NavProps) {
+/**
+ * Tools a phone user needs most often. The full list is twenty-one entries,
+ * which made the bottom bar a ~1500 px horizontal scroller where Settings took
+ * ten swipes to reach; the rest of the app stays one tap away through "More",
+ * which opens the searchable command palette.
+ */
+const MOBILE_PRIMARY = ['calculator', 'ask', 'graph', 'conversions'] as const;
+
+export function BottomNav({ route, onNavigate, onOpenPalette }: NavProps & { onOpenPalette: () => void }) {
+  // The current tool always appears, so the bar never looks like nothing is
+  // selected when the user arrived from a search result.
+  const ids = [route, ...MOBILE_PRIMARY.filter((id) => id !== route)].slice(0, 4);
+
   return (
     <nav className="nav nav--bottom" aria-label="Tools">
-      {navItems(route, onNavigate, 'bottom')}
+      {navItems(route, onNavigate, 'bottom', ids)}
+      <button
+        type="button"
+        className="nav__item nav__item--bottom"
+        onClick={onOpenPalette}
+        title="Search all tools and actions"
+      >
+        <Icon path="M10 4a6 6 0 1 0 0 12 6 6 0 0 0 0-12Zm11 17-5.2-5.2" />
+        <span className="nav__label">More</span>
+      </button>
     </nav>
   );
 }

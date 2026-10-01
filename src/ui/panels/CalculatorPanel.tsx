@@ -21,6 +21,19 @@ import type { AngleMode } from '@/core/numbers/angle';
 
 const ANGLE_MODES: readonly AngleMode[] = ['DEG', 'RAD', 'GRAD'];
 
+/** Controls whose own activation would be cancelled by a global Enter handler. */
+function isInteractiveTarget(target: EventTarget | null): boolean {
+  // The target is not always an element: keydown can fire on `document`.
+  if (!target || typeof (target as Element).tagName !== 'string') return false;
+  const element = target as HTMLElement;
+  if (element.isContentEditable) return true;
+  const tag = element.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || tag === 'BUTTON' || tag === 'A') return true;
+  return typeof element.closest === 'function'
+    ? element.closest('button, a, [role="button"], [role="tab"], [role="option"]') !== null
+    : false;
+}
+
 export function CalculatorPanel() {
   const settings = useSettings();
   const draft = useStore(draftStore);
@@ -43,6 +56,7 @@ export function CalculatorPanel() {
     () =>
       evaluateExpression(draft.text, {
         angleMode: settings.angleMode,
+        percentMode: settings.percentMode,
         precision: settings.precision,
         numberFormat: settings.numberFormat,
         thousandsSeparator: settings.thousandsSeparator,
@@ -131,8 +145,10 @@ export function CalculatorPanel() {
   // Keyboard support lives here so the pad and the physical keyboard share one path.
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement | null;
-      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) return;
+      // Never steal Enter from a focused control: the browser's default action
+      // for Enter on a button *is* that button's click, so preventDefault here
+      // would stop a keyboard user from pressing a keypad key at all.
+      if (isInteractiveTarget(event.target)) return;
       if (event.key === 'Enter') {
         event.preventDefault();
         commit();
@@ -307,6 +323,9 @@ export function CalculatorPanel() {
               key={`${key.label}-${index}`}
               type="button"
               className={`key key--${key.variant ?? 'function'}`}
+              // The spoken name is the `title`; the visual label is often a
+              // single symbol ("√", "±", "n!") that reads badly aloud.
+              aria-label={key.title ?? key.label}
               title={key.title ?? key.label}
               onClick={() => onKey(key)}
             >

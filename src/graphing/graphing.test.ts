@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { compileFunction, explainFunctionSource } from '@/math/calculus';
 import {
   DEFAULT_VIEWPORT,
   formatTick,
@@ -22,7 +23,6 @@ import {
   findRoots,
   tangentAt,
 } from './analysis';
-import { compileFunction } from '@/math/calculus';
 import { CalcError } from '@/core/errors';
 
 const f = (source: string) => {
@@ -171,5 +171,45 @@ describe('analysis', () => {
     const between = areaBetween(f('x'), f('x^2'), 0, 1);
     expect(between.value).toBeCloseTo(1 / 6, 9);
     expect(between.converged).toBe(true);
+  });
+});
+
+/**
+ * Regression: the plot box's own placeholder says `y = x^2`, but entering that
+ * produced no curve at all — the parser has no `=` operator, so the expression
+ * was rejected and the user saw an empty plot for the syntax the app suggested.
+ * A broken definition (`foo(x)`) was worse: it compiled into a function that
+ * threw on every sample, so the plot was silently blank with no explanation.
+ */
+describe('function input as people actually type it', () => {
+  it('accepts a textbook heading such as y = …, f(x) = …', () => {
+    const plain = compileFunction('x^2')!;
+    for (const source of ['y = x^2', 'y=x^2', 'f(x) = x^2', '  F(x)=x^2  ', 'g(x) = x^2']) {
+      const fn = compileFunction(source);
+      expect(fn, source).not.toBeNull();
+      expect(fn!(3), source).toBeCloseTo(plain(3), 12);
+    }
+  });
+
+  it('does not treat a vertical line as a function of x', () => {
+    // `x = 3` must not become the constant 3 (a horizontal line).
+    const fn = compileFunction('x = 3');
+    if (fn) expect(fn(5)).not.toBeCloseTo(3, 12);
+  });
+
+  it('rejects a definition that can never produce a value, and says why', () => {
+    expect(compileFunction('foo(x)')).toBeNull();
+    expect(explainFunctionSource('foo(x)')).toMatch(/unknown function/i);
+    expect(explainFunctionSource('sqrt()')).toMatch(/argument/i);
+    expect(compileFunction('x^2')).not.toBeNull();
+    expect(explainFunctionSource('x^2')).toBeNull();
+  });
+
+  it('still compiles functions whose value is undefined at the probe point', () => {
+    // Domain problems at x = 0 are normal (a gap in the curve), not a bad input.
+    expect(compileFunction('1/x')).not.toBeNull();
+    expect(compileFunction('ln(x)')).not.toBeNull();
+    expect(compileFunction('sqrt(x)')).not.toBeNull();
+    expect(explainFunctionSource('ln(x)')).toBeNull();
   });
 });

@@ -5,7 +5,7 @@ import {
   regularisedBeta,
   regularisedGammaP,
 } from '@/math/special';
-import { inverseNormal, normalCdf, normalPdf, requirePositive } from './normal';
+import { normalCdf, normalPdf, requirePositive, standardNormalQuantile } from './normal';
 
 /**
  * One registry for every distribution the app knows.
@@ -137,7 +137,9 @@ const normalDistribution: Distribution = {
   support: () => ({ min: Number.NEGATIVE_INFINITY, max: Number.POSITIVE_INFINITY }),
   pdf: (x, [mean = 0, sd = 1]) => normalPdf(x, mean, sd),
   cdf: (x, [mean = 0, sd = 1]) => normalCdf(x, mean, sd),
-  quantile: (p, [mean = 0, sd = 1]) => mean + sd * inverseNormal(p),
+  // Newton-refined on the exact CDF: the raw Acklam approximation is only
+  // good to ~1e-9, which is visible at the 10th significant digit the app shows.
+  quantile: (p, [mean = 0, sd = 1]) => mean + sd * standardNormalQuantile(p),
   mean: ([mean = 0]) => mean,
   variance: ([, sd = 1]) => sd * sd,
   use: 'Measurements, test scores, heights — anything that is a sum of many small effects.',
@@ -162,7 +164,7 @@ const lognormalDistribution: Distribution = {
     requirePositive(sigma, 'standard deviation');
     return x <= 0 ? 0 : normalCdf(Math.log(x), mu, sigma);
   },
-  quantile: (p, [mu = 0, sigma = 1]) => Math.exp(mu + sigma * inverseNormal(p)),
+  quantile: (p, [mu = 0, sigma = 1]) => Math.exp(mu + sigma * standardNormalQuantile(p)),
   mean: ([mu = 0, sigma = 1]) => Math.exp(mu + (sigma * sigma) / 2),
   variance: ([mu = 0, sigma = 1]) =>
     (Math.exp(sigma * sigma) - 1) * Math.exp(2 * mu + sigma * sigma),

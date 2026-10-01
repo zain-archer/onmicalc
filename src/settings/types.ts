@@ -3,6 +3,7 @@ import type { AngleMode } from '@/core/numbers/angle';
 export type ThemeMode = 'light' | 'dark' | 'system';
 export type NumberFormat = 'auto' | 'scientific' | 'engineering';
 export type FractionMode = 'auto' | 'decimal' | 'fraction';
+export type PercentSetting = 'contextual' | 'strict';
 
 export interface Settings {
   theme: ThemeMode;
@@ -10,6 +11,8 @@ export interface Settings {
   palette: string;
   accent: string;
   angleMode: AngleMode;
+  /** `200 + 10%` → 220 (contextual) or 200.1 (strict). */
+  percentMode: PercentSetting;
   /** Significant digits used when formatting results. */
   precision: number;
   numberFormat: NumberFormat;
@@ -27,6 +30,7 @@ export const DEFAULT_SETTINGS: Settings = {
   palette: 'classic',
   accent: '#6366f1',
   angleMode: 'DEG',
+  percentMode: 'contextual',
   precision: 12,
   numberFormat: 'auto',
   fractionMode: 'auto',

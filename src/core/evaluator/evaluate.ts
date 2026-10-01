@@ -39,14 +39,28 @@ export function power(base: number, exponent: number): number {
   return Math.pow(base, exponent);
 }
 
+/** A `%` postfix, e.g. the `10%` in `200 + 10%`. */
+function isPercentNode(node: ExpressionNode): boolean {
+  return node.type === 'postfix' && node.operator === '%';
+}
+
 function evaluateBinary(node: BinaryNode, ctx: EvalContext): number {
   const left = evaluateNode(node.left, ctx);
   const right = evaluateNode(node.right, ctx);
 
   switch (node.operator) {
     case '+':
+      // `200 + 10%` reads as "200 increased by 10%" in consumer calculators.
+      // A percentage on both sides keeps the strict reading, so `50% + 50%`
+      // stays 1 rather than becoming 0.75.
+      if ((ctx.percentMode ?? 'contextual') === 'contextual' && isPercentNode(node.right) && !isPercentNode(node.left)) {
+        return guard(left * (1 + right), node, 'This sum');
+      }
       return guard(left + right, node, 'This sum');
     case '-':
+      if ((ctx.percentMode ?? 'contextual') === 'contextual' && isPercentNode(node.right) && !isPercentNode(node.left)) {
+        return guard(left * (1 - right), node, 'This difference');
+      }
       return guard(left - right, node, 'This difference');
     case '*':
       return guard(left * right, node, 'This product');

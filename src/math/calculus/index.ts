@@ -20,11 +20,42 @@ function compile(source: string, extraVariables: Record<string, number> = {}): S
   };
 }
 
+/**
+ * Error codes that mean "this is not a usable definition" rather than "this
+ * point is outside the domain". `1/x` is fine to plot even though x = 0 fails,
+ * but `foo(x)` can never produce a value and must not be handed back as if it
+ * could — the plot would just be silently empty.
+ */
+const DEFINITION_ERRORS = new Set(['SYNTAX', 'UNKNOWN_IDENTIFIER', 'BAD_ARITY', 'NOT_SUPPORTED', 'INPUT']);
+
+/**
+ * Accepts what people actually type into a plot box: a bare expression (`x^2`)
+ * or an equation written in the usual textbook form (`y = x^2`, `f(x) = x^2`).
+ * Only a `y =`/`f(x) =` heading is removed — `x = 3` is deliberately left alone,
+ * because a vertical line is not a function of x and silently plotting it as a
+ * horizontal line would be a lie.
+ */
+export function stripFunctionHeading(source: string): string {
+  const match = /^\s*(?:y|f\s*\(\s*x\s*\)|g\s*\(\s*x\s*\)|h\s*\(\s*x\s*\))\s*=\s*(?!=)/i.exec(source);
+  return match ? source.slice(match[0].length) : source;
+}
+
 /** Builds f(x) from an expression; returns null when the expression is invalid. */
 export function compileFunction(source: string, variable = 'x'): ScalarFunction | null {
-  const multi = compileFunctionOf(source, [variable]);
+  const multi = compileFunctionOf(stripFunctionHeading(source), [variable]);
   if (!multi) return null;
   return (x: number) => multi({ [variable]: x });
+}
+
+/**
+ * The reason an expression cannot be used as a function, or `null` when it is
+ * usable. Mirrors the check `compileFunctionOf` makes, so the message the user
+ * reads is exactly the reason the compiler refused the expression.
+ */
+export function explainFunctionSource(source: string, variable = 'x'): string | null {
+  const parsed = evaluateExpression(stripFunctionHeading(source), { variables: { [variable]: 0 } });
+  if (parsed.ok || !DEFINITION_ERRORS.has(parsed.error.code)) return null;
+  return parsed.error.details ? `${parsed.error.message} — ${parsed.error.details}` : parsed.error.message;
 }
 
 export type MultiFunction = (values: Record<string, number>) => number;
@@ -36,8 +67,12 @@ export type MultiFunction = (values: Record<string, number>) => number;
 export function compileFunctionOf(source: string, variables: string[]): MultiFunction | null {
   const seed: Record<string, number> = {};
   for (const name of variables) seed[name] = 0;
+  // Probe once at the seed point: a definition error there (unknown name,
+  // wrong arity) means the function can never be evaluated, so the caller gets
+  // null instead of a function that throws on every call. Domain errors at the
+  // seed point are not fatal — `1/x` and `ln(x)` are perfectly good functions.
   const parsed = evaluateExpression(source, { variables: seed });
-  if (!parsed.ok && parsed.error.code === 'SYNTAX') return null;
+  if (!parsed.ok && DEFINITION_ERRORS.has(parsed.error.code)) return null;
   let ast;
   try {
     ast = parse(source, { functions: new Set(getDefaultRegistry().primaryNames()) });

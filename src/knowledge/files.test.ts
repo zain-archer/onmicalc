@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { candidateTasks, extractFile, extensionOf, fileKind, stripMarkup, unzip } from './files';
-import { extractPdfText, pdfLiteralToString, textFromContentStream } from './pdf';
+import { binaryStringToBytes, bytesToBinaryString, extractPdfText, pdfLiteralToString, textFromContentStream } from './pdf';
 
 /* ----------------------------- zip test helpers --------------------------- */
 
@@ -154,6 +154,36 @@ describe('file intake — formats', () => {
     const file = await extractFile(makeFile('sheet.pdf', bytes, 'application/pdf'));
     expect(file.text).toContain('Integrate x^2 from 0 to 3');
     expect(file.notes.join(' ')).toMatch(/page/i);
+  });
+
+  /**
+   * Regression: `TextDecoder('latin1')` is windows-1252, not ISO-8859-1, so
+   * bytes 0x80-0x9F were rewritten to other code points and then masked back
+   * with `& 0xff` — corrupting the compressed stream. Every PDF whose DEFLATE
+   * data happened to contain one of those bytes (i.e. most real ones) read as
+   * empty. The bytes must survive a decode/encode round trip untouched.
+   */
+  it('preserves bytes in the 0x80-0x9F range while inflating', async () => {
+    const allBytes = new Uint8Array(256);
+    for (let index = 0; index < 256; index += 1) allBytes[index] = index;
+    expect([...binaryStringToBytes(bytesToBinaryString(allBytes))]).toEqual([...allBytes]);
+
+    const compressed = await import('node:zlib');
+    // A payload whose deflate output is guaranteed to exercise every byte value.
+    const body = `BT (Integrate x^2 from 0 to 3) Tj ET ${Array.from({ length: 40 }, (_, i) => String.fromCharCode(0x80 + (i % 32))).join('')}`;
+    const deflated = compressed.deflateRawSync(Buffer.from(body, 'latin1'));
+    expect(deflated.some((byte) => byte >= 0x80 && byte <= 0x9f)).toBe(true);
+
+    const bytes = new Uint8Array(
+      Buffer.concat([
+        Buffer.from('%PDF-1.5\n1 0 obj\n<< /Filter /FlateDecode >>\nstream\n', 'latin1'),
+        deflated,
+        Buffer.from('\nendstream\nendobj\n', 'latin1'),
+      ]),
+    );
+    const result = extractPdfText(bytes);
+    expect(result.decodedStreams).toBe(1);
+    expect(result.text).toContain('Integrate x^2 from 0 to 3');
   });
 
   it('handles a scanned PDF honestly instead of inventing text', () => {

@@ -39,8 +39,13 @@ The app opens on a single box: *“What do you want to do?”*
 | **Programmer mode** | Register-exact fixed-width arithmetic that wraps and reports overflow, hex/dec/oct/bin keypad, live bit strip. |
 
 Engine guarantees: safe hand-written tokenizer + Pratt parser (**no `eval`/`new Function` anywhere**),
-implicit multiplication, unicode operators, floored `mod`, `%` as percent, exact factorial 0..170,
-error codes with positions, and `evaluateExpression` that never throws.
+implicit multiplication, unicode operators, floored `mod`, exact factorial 0..170, error codes with
+positions, and `evaluateExpression` that never throws.
+
+`%` divides by 100 on its own and when multiplied (`200 * 15%` = 30), and means "increase/decrease by"
+in a sum (`200 + 10%` = 220, `100 - 10%` = 90) so the calculator answers the way every other one does;
+Settings → *Percent in a sum* switches to the strict reading (`200 + 10%` = 200.1). Halves round away
+from zero, so `round(-2.5)` = -3.
 
 ## 3. Analyse
 

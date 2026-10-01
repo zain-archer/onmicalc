@@ -178,9 +178,12 @@ export function AppShell() {
               type="button"
               className="btn btn--ghost btn--small"
               onClick={() => setPaletteOpen(true)}
-              title="Search tools and actions"
+              // Name the action, not the keyboard hint: the kbd text is part of
+              // the button's content and would otherwise be read out as its name.
+              aria-label="Search tools and commands"
+              title="Search tools and actions (Ctrl K)"
             >
-              Commands <kbd className="kbd-inline">Ctrl K</kbd>
+              Search <kbd className="kbd-inline">Ctrl K</kbd>
             </button>
             <button
               type="button"
@@ -208,7 +211,7 @@ export function AppShell() {
           </Suspense>
         </main>
       </div>
-      <BottomNav route={route} onNavigate={go} />
+      <BottomNav route={route} onNavigate={go} onOpenPalette={() => setPaletteOpen(true)} />
       <AppStatus />
       <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} handlers={handlers} />
       <ShortcutsDialog open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />

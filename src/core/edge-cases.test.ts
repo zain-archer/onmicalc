@@ -66,6 +66,65 @@ describe('engine robustness', () => {
     expect(value('ans * 2', { variables: { ans: 21 } })).toBe(42);
     expect(evaluateExpression('ans * 2').ok).toBe(false);
   });
+
+  /**
+   * Regression: `200 + 10%` was 200.1 because `%` was unconditionally `÷ 100`.
+   * Every consumer calculator reads this as "increase by 10%", and a user who
+   * sees 200.1 concludes the app is broken. Multiplication and a bare postfix
+   * keep the strict reading; a percentage on both sides is left alone so
+   * `50% + 50%` stays 1.
+   */
+  describe('percent inside a sum', () => {
+    it('reads a + b% as an increase and a - b% as a decrease', () => {
+      expect(value('200 + 10%')).toBeCloseTo(220, 12);
+      expect(value('100 - 10%')).toBeCloseTo(90, 12);
+      expect(value('200+10%+10%')).toBeCloseTo(242, 12);
+      expect(value('1 + 10%')).toBeCloseTo(1.1, 12);
+    });
+
+    it('leaves every other percent form as division by 100', () => {
+      expect(value('50%')).toBe(0.5);
+      expect(value('200 * 15%')).toBe(30);
+      expect(value('50% + 50%')).toBe(1);
+      expect(value('50% - 10%')).toBeCloseTo(0.4, 12);
+      expect(value('200 / 10%')).toBe(2000);
+      expect(value('10% + 200')).toBeCloseTo(200.1, 12);
+    });
+
+    it('honours the strict setting, which restores ÷ 100 everywhere', () => {
+      expect(value('200 + 10%', { percentMode: 'strict' })).toBeCloseTo(200.1, 12);
+      expect(value('100 - 10%', { percentMode: 'strict' })).toBeCloseTo(99.9, 12);
+      expect(value('50%', { percentMode: 'strict' })).toBe(0.5);
+    });
+  });
+
+  it('rounds halves away from zero, as taught and as spreadsheets do', () => {
+    expect(value('round(2.5)')).toBe(3);
+    expect(value('round(-2.5)')).toBe(-3);
+    expect(value('round(0.5)')).toBe(1);
+    expect(value('round(-0.5)')).toBe(-1);
+    expect(value('round(1.5)')).toBe(2);
+    expect(value('round(-1.5)')).toBe(-2);
+    expect(value('round(3.14159, 2)')).toBe(3.14);
+    expect(value('round(-3.14159, 2)')).toBe(-3.14);
+    expect(value('round(-2.567, 2)')).toBeCloseTo(-2.57, 12);
+    expect(value('round(0)')).toBe(0);
+    expect(value('round(-0.4)')).toBe(-0);
+  });
+
+  /**
+   * Regression: the tokenizer rewrote `∞` to the identifier "inf", which is not
+   * a constant, so the user was told `Unknown name "inf"` for a character they
+   * never typed. It now explains itself in the user's own terms.
+   */
+  it('explains the infinity symbol instead of inventing an identifier', () => {
+    const result = evaluateExpression('1 + ∞');
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.error.code).toBe('SYNTAX');
+    expect(result.error.message).toContain('∞');
+    expect(result.error.details).toMatch(/limit/i);
+  });
 });
 
 describe('number formatting edge cases', () => {

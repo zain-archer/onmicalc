@@ -81,7 +81,11 @@ export const BASIC_FUNCTIONS: readonly FunctionDef[] = [
       require(isNearlyInteger(places), 'round() digits must be a whole number');
       const safe = Math.max(-15, Math.min(15, Math.round(places)));
       const factor = 10 ** safe;
-      return Math.round(x! * factor) / factor;
+      // Round half away from zero (round(-2.5) = -3, round(2.5) = 3), which is
+      // the convention taught in school and used by spreadsheet ROUND().
+      // `Math.round` alone rounds half towards +∞, so -2.5 would give -2.
+      const scaled = x! * factor;
+      return (scaled < 0 ? -Math.round(-scaled) : Math.round(scaled)) / factor;
     },
   },
   {

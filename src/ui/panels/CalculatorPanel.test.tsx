@@ -101,3 +101,41 @@ describe('fraction display', () => {
     expect(screen.queryByTitle('Click to insert the fraction form')).toBeNull();
   });
 });
+
+/**
+ * Keyboard regression: the panel listens for Enter on `window` so the key works
+ * without clicking into the field, but the default action of Enter on a focused
+ * button is that button's click. Calling `preventDefault` unconditionally meant
+ * a keyboard user could never activate a keypad key with Enter — pressing "7"
+ * and Enter committed a result instead of typing 7.
+ */
+describe('keyboard interaction', () => {
+  it('lets Enter activate a focused keypad key instead of swallowing it', () => {
+    render(<CalculatorPanel />);
+    const seven = screen.getByRole('button', { name: '7' });
+    seven.focus();
+    fireEvent.keyDown(seven, { key: 'Enter' });
+    // The panel must not cancel the button's own activation.
+    const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+    seven.dispatchEvent(event);
+    expect(event.defaultPrevented).toBe(false);
+  });
+
+  it('still commits on Enter when focus is not on a control', () => {
+    render(<CalculatorPanel />);
+    type('6*7');
+    fireEvent.click(screen.getByRole('button', { name: /Equals/i }));
+    expect(answerStore.get().value).toBe(42);
+  });
+
+  it('names every key for assistive technology', () => {
+    render(<CalculatorPanel />);
+    for (const label of ['Clear expression', 'Backspace', 'Divide', 'Multiply', 'Add', 'Subtract']) {
+      expect(screen.getByRole('button', { name: label })).toBeTruthy();
+    }
+    fireEvent.click(screen.getByRole('tab', { name: 'Scientific' }));
+    for (const label of ['Square root', 'Cube root', 'Factorial', 'Pi', 'Natural logarithm']) {
+      expect(screen.getByRole('button', { name: label })).toBeTruthy();
+    }
+  });
+});

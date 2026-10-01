@@ -23,7 +23,16 @@ const IDENT_MAP: Readonly<Record<string, string>> = {
   'ϕ': 'phi',
   '√': 'sqrt',
   '∛': 'cbrt',
-  '∞': 'inf',
+};
+
+/**
+ * Symbols that are recognised but cannot be a *value*. They used to be rewritten
+ * to an identifier the engine does not know (`∞` became the name "inf"), so the
+ * user was told "Unknown name \"inf\"" for a character they never typed.
+ */
+const REJECTED_SYMBOLS: Readonly<Record<string, string>> = {
+  '∞': 'Infinity is not a value you can calculate with — it describes what a result approaches. Use the Calculus tool for limits, or type a very large number.',
+  '⧜': 'This symbol is not supported. Type a number, a name, or an operator instead.',
 };
 
 const POSTFIX_MAP: Readonly<Record<string, string>> = {
@@ -105,6 +114,15 @@ export function tokenize(source: string): Token[] {
       pushOperator(mapped, i, i + 1);
       i += 1;
       continue;
+    }
+
+    const rejection = REJECTED_SYMBOLS[ch];
+    if (rejection) {
+      throw new CalcError('SYNTAX', `Unsupported symbol "${ch}"`, {
+        position: i,
+        length: 1,
+        details: rejection,
+      });
     }
 
     const ident = IDENT_MAP[ch];

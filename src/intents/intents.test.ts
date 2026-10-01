@@ -73,7 +73,11 @@ const ROUTING: [sentence: string, capability: string][] = [
 const ANSWERS: [sentence: string, expected: string | RegExp][] = [
   ['20 percent of 250', '50'],
   ['what percent is 45 of 300', '15%'],
-  ['increase 80 by 15 percent', '+15%'],
+  // The user asked for the new value, so the headline is the value (92), not a
+  // restatement of the percentage they typed.
+  ['increase 80 by 15 percent', '92'],
+  ['decrease 500 by 12.5%', '437.5'],
+  ['percentage change from 200 to 250', '+25%'],
   ['tip 15 percent on a bill of 60', '69'],
   ['price 240 with 25 percent discount', '180'],
   ['split 120 between 4 people', /^30/],

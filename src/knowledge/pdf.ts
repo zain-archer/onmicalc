@@ -24,7 +24,32 @@ export interface PdfTextResult {
   warnings: string[];
 }
 
-const latin1 = new TextDecoder('latin1');
+/**
+ * Byte <-> "binary string" conversion that is *actually* one code unit per byte.
+ *
+ * `TextDecoder('latin1')` must not be used here: per the WHATWG encoding
+ * standard that label maps to windows-1252, so bytes 0x80-0x9F come back as
+ * different code points (0x88 becomes U+02C6, 0x93 becomes U+201C, ...). Feeding
+ * the result back through `charCodeAt(0) & 0xff` then corrupts the byte stream,
+ * which silently broke every compressed PDF whose DEFLATE data contained one of
+ * those bytes — the inflater would raise "bad distance" and the file read as
+ * empty. `String.fromCharCode` has no such mapping.
+ */
+const CHUNK = 0x8000;
+
+export function bytesToBinaryString(bytes: Uint8Array): string {
+  let result = '';
+  for (let index = 0; index < bytes.length; index += CHUNK) {
+    result += String.fromCharCode(...bytes.subarray(index, index + CHUNK));
+  }
+  return result;
+}
+
+export function binaryStringToBytes(text: string): Uint8Array {
+  const bytes = new Uint8Array(text.length);
+  for (let index = 0; index < text.length; index += 1) bytes[index] = text.charCodeAt(index) & 0xff;
+  return bytes;
+}
 
 function inflate(data: Uint8Array): Uint8Array | null {
   try {
@@ -247,7 +272,7 @@ export function textFromContentStream(content: string): string {
 }
 
 export function extractPdfText(bytes: Uint8Array): PdfTextResult {
-  const raw = latin1.decode(bytes);
+  const raw = bytesToBinaryString(bytes);
   const warnings: string[] = [];
   const encrypted = /\/Encrypt\b/.test(raw);
   const chunks: string[] = [];
@@ -264,12 +289,12 @@ export function extractPdfText(bytes: Uint8Array): PdfTextResult {
     totalStreams += 1;
     const header = raw.slice(Math.max(0, match.index - 400), match.index);
     const body = raw.slice(start, end);
-    const data = Uint8Array.from(body, (character) => character.charCodeAt(0) & 0xff);
+    const data = binaryStringToBytes(body);
     let content: string | null = null;
     if (/\/Filter\s*\/FlateDecode/.test(header)) {
       const inflated = inflate(data);
       if (inflated) {
-        content = latin1.decode(inflated);
+        content = bytesToBinaryString(inflated);
         decodedStreams += 1;
       }
     } else if (!/\/Filter/.test(header)) {

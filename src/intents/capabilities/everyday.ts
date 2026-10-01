@@ -426,9 +426,18 @@ export const percentChangeCapability: Capability = {
     const target = to ?? from * (1 + (decreasing ? -1 : 1) * ((percent ?? 0) / 100));
     const change = from === 0 ? Number.NaN : ((target - from) / Math.abs(from)) * 100;
 
+    /*
+     * The headline answers the question that was asked. "From 200 to 250" asks
+     * for the change, so that is the answer; "increase 80 by 15%" asks for the
+     * new value, and answering "+15%" merely restated the question — the number
+     * the user wants (92) was buried in the detail rows.
+     */
+    const askedForPercentageChange = to !== undefined;
+    const changeText = `${change >= 0 ? '+' : ''}${formatNumber(change, { precision: 6 })}%`;
+
     return {
       ok: true,
-      headline: `${change >= 0 ? '+' : ''}${formatNumber(change, { precision: 6 })}%`,
+      headline: askedForPercentageChange ? changeText : money(target),
       understood:
         to !== undefined
           ? `change from ${money(from)} to ${money(target)}`
@@ -438,7 +447,13 @@ export const percentChangeCapability: Capability = {
         {
           kind: 'stats',
           rows: [
-            { label: 'Change', value: `${change >= 0 ? '+' : ''}${formatNumber(change, { precision: 6 })}%`, emphasize: true },
+            {
+              label: askedForPercentageChange ? 'Change' : 'New value',
+              value: askedForPercentageChange ? changeText : money(target),
+              emphasize: true,
+            },
+            // When the headline is already the change, do not repeat the row.
+            ...(askedForPercentageChange ? [] : [{ label: 'Change', value: changeText }]),
             { label: 'Difference', value: money(target - from) },
             { label: 'Starting value', value: money(from) },
             { label: 'New value', value: money(target) },

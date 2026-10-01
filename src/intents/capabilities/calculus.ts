@@ -1,5 +1,6 @@
 import { formatNumber } from '@/core/precision/format';
 import { compileFunction, derivative, differentiate, integrate, limit, taylorSeries, taylorString } from '@/math/calculus';
+import { symbolicLimit } from '@/math/cas/limits';
 import { DEFAULT_VIEWPORT, visibleBounds } from '@/graphing/viewport';
 import { findExtrema, findRoots } from '@/graphing/analysis';
 import type { Capability, SolveOutcome, ResultBlock } from '../types';
@@ -229,12 +230,13 @@ export const integralCapability: Capability = {
 export const limitCapability: Capability = {
   id: 'limit',
   title: 'Find a limit',
-  promise: '“Limit of sin(x)/x as x goes to 0”, “limit of 1/x as x approaches 0”.',
+  promise: '“Limit of sin(x)/x as x goes to 0”, “limit of 1/x as x tends to infinity”.',
   group: 'Graphs & calculus',
   keywords: ['limit', 'approaches', 'tends to', 'as x goes to', 'as x approaches'],
   examples: [
     { text: 'limit of sin(x)/x as x approaches 0', capabilityId: 'limit', captures: [{ name: 'point', value: 0 }] },
     { text: 'limit of 1/x as x goes to 0', capabilityId: 'limit', captures: [{ name: 'point', value: 0 }] },
+    { text: 'limit of 1/x as x tends to infinity', capabilityId: 'limit', captures: [] },
   ],
   inputs: [
     { name: 'function', label: 'Function', expression: true, example: 'sin(x)/x' },
@@ -242,13 +244,58 @@ export const limitCapability: Capability = {
   ],
   run(context): SolveOutcome {
     const source = context.getText('function') ?? extractFunction(context.raw).replace(/\s+as\s+.*$/i, '');
-    const pointMatch = /(?:as\s*x\s*(?:goes to|approaches|tends to|→)|at)\s*(-?[\d.]+|0)/i.exec(context.raw);
-    const point = context.get('point') ?? (pointMatch ? Number(pointMatch[1]) : undefined);
+    /*
+     * The point can also be infinity: "limit of 1/x as x tends to infinity" is a
+     * standard question and the symbolic engine answers it exactly, but nothing
+     * in the app could ask for it before — this pattern only matched digits.
+     */
+    const pointMatch =
+      /(?:as\s*x\s*(?:goes to|approaches|tends to|→|tends towards)|at)\s*(minus\s+)?(-?[\d.]+|infinity|inf|∞)/i.exec(
+        context.raw,
+      );
+    const infinity = pointMatch ? /infinity|inf|∞/i.test(pointMatch[2] ?? '') : false;
+    const point =
+      context.get('point') ??
+      (pointMatch
+        ? infinity
+          ? pointMatch[1]
+            ? Number.NEGATIVE_INFINITY
+            : Number.POSITIVE_INFINITY
+          : Number(pointMatch[2])
+        : undefined);
     if (point === undefined) {
       return { ok: false, message: 'Say where it approaches, for example “as x approaches 0”.' };
     }
     const f = compileFunction(source);
     if (!f) return { ok: false, message: `I could not read “${source}” as a function of x.` };
+
+    if (!Number.isFinite(point)) {
+      const symbolic = symbolicLimit(source, point, 'x', 'both');
+      if (!symbolic) {
+        return {
+          ok: false,
+          message: `The limit as x → ${point > 0 ? '+∞' : '−∞'} could not be determined.`,
+        };
+      }
+      const label = `lim (x → ${point > 0 ? '+∞' : '−∞'}) of ${source}`;
+      return {
+        ok: true,
+        headline: nf(symbolic.value),
+        understood: label,
+        blocks: [
+          {
+            kind: 'stats',
+            rows: [
+              { label: 'Limit', value: nf(symbolic.value), emphasize: true },
+              { label: 'Method', value: symbolic.exact ? `${symbolic.method} (exact)` : symbolic.method },
+              { label: 'Confidence', value: symbolic.exact ? 'Exact' : 'Estimated' },
+            ],
+          },
+          { kind: 'note', text: symbolic.exact ? symbolic.note : 'Comparing how fast the numerator and denominator grow.' },
+        ],
+        copyText: `${label} = ${symbolic.value}`,
+      };
+    }
 
     try {
       const result = limit(f, point);

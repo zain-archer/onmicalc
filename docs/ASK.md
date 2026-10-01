@@ -12,12 +12,12 @@ The app opens on **Ask OmniCalc** (`#/ask`). Type a sentence in ordinary words, 
 | What you want | Type something like |
 | --- | --- |
 | Everyday sums | `what is 12 + 34 * 2` · `2^10` |
-| Percentages | `20 percent of 250` · `what percent is 45 of 300` · `increase 80 by 15 percent` |
+| Percentages | `20 percent of 250` · `what percent is 45 of 300` · `increase 80 by 15 percent` (answers with the new value, 92) |
 | Tips, discounts, splitting | `tip 15 percent on a bill of 60` · `price 240 with 25 percent discount` · `split 120 between 4 people` |
 | Units | `convert 5 km to miles` · `how many ounces is 250 g` · `72 fahrenheit in celsius` |
 | Equations | `solve 3x + 5 = 20` · `x^2 - 5x + 6 = 0` · `solve 2x + y = 10, x - y = 2` |
 | Graphs | `plot x^2 - 4` · `graph sin(x) from 0 to 6.28` · `where does x^3 - 3x cross zero` |
-| Calculus | `differentiate x^3 + 2x` · `slope of x^2 at 3` · `integrate x^2 from 0 to 3` · `limit of sin(x)/x as x approaches 0` · `taylor series of sin(x) to order 5` |
+| Calculus | `differentiate x^3 + 2x` · `slope of x^2 at 3` · `integrate x^2 from 0 to 3` · `limit of sin(x)/x as x approaches 0` · `limit of 1/x as x tends to infinity` · `taylor series of sin(x) to order 5` |
 | Statistics | `summarise 12, 15, 11, 19, 15` · `average of 4, 8, 15, 16, 23, 42` · `standard deviation of 2 4 4 4 5 5 7 9` |
 | Regression | `linear regression for x 1, 2, 3, 4 y 1.9, 4.1, 5.9, 8.2` |
 | Probability | `probability z < 1.96` · `probability between -1 and 1` · `chance of at most 8 successes in 10 trials with p 0.3` |

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { notify } from '@/ui/notify';
 import { useSettings } from '@/settings/useSettings';
 import { settingsStore } from '@/settings/store';
-import { DEFAULT_SETTINGS, type NumberFormat, type ThemeMode } from '@/settings/types';
+import { DEFAULT_SETTINGS, type NumberFormat, type PercentSetting, type ThemeMode } from '@/settings/types';
 import { clearHistory } from '@/history/store';
 import { memoryStore, memoryStoreValue } from '@/history/memory';
 import { ANGLE_MODES } from '@/core/numbers/angle';
@@ -167,6 +167,16 @@ export function SettingsPanel() {
               { value: 'auto', label: 'Show both number and fraction' },
               { value: 'fraction', label: 'Prefer fractions' },
               { value: 'decimal', label: 'Decimals only' },
+            ]}
+          />
+          <SelectField
+            label="Percent in a sum"
+            hint="Percent always divides by 100 when multiplied; this picks the reading for “a + b%”."
+            value={settings.percentMode ?? 'contextual'}
+            onChange={(value) => settingsStore.set({ percentMode: value as PercentSetting })}
+            options={[
+              { value: 'contextual', label: 'Increase / decrease (200 + 10% = 220)' },
+              { value: 'strict', label: 'Divide by 100 (200 + 10% = 200.1)' },
             ]}
           />
           <label className="field">

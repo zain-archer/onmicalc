@@ -6,6 +6,53 @@ All notable changes to OmniCalc are documented here. The format follows
 
 ## [Unreleased] — 2.0.0 (in progress)
 
+### Fixed — correctness and reliability pass (2026-09-30)
+
+- **Compressed PDFs read as empty.** `TextDecoder('latin1')` is windows-1252, not ISO-8859-1: bytes
+  in `0x80–0x9F` came back as different code points, and masking them with `& 0xff` corrupted the
+  DEFLATE stream, so the inflater raised `bad distance` and the file yielded no text at all. The
+  reader now uses a true byte↔code-unit conversion (`bytesToBinaryString` / `binaryStringToBytes`),
+  with a regression test that round-trips every byte value.
+- **`200 + 10%` returned 200.1.** `%` was unconditionally `÷ 100`, so adding a percentage — the
+  single most common thing a non-technical user types — produced a number nobody expects. A `%` on
+  the right of `+`/`-` now means "increase/decrease by", matching every consumer calculator:
+  `200 + 10% = 220`, `100 - 10% = 90`. Multiplication, division and a bare `%` are unchanged
+  (`200 * 15% = 30`, `50% = 0.5`), and a percentage on both sides keeps the strict reading so
+  `50% + 50% = 1`. Settings → *Percent in a sum* switches back to plain `÷ 100`.
+- **`round(-2.5)` returned -2.** Halves are now rounded away from zero (`-3`), the convention taught
+  in school and used by spreadsheet `ROUND()`.
+- **The `∞` key from the maths keyboard could not be typed.** The tokenizer rewrote `∞` to the
+  identifier `inf`, which the engine does not define, so the user was told `Unknown name "inf"` for a
+  character they never typed. It now reports that infinity is not a value and points at the limit
+  tools.
+- **Normal and log-normal quantiles were only accurate to ~1e-9.** The distribution registry used the
+  raw Acklam approximation while the module already provided `standardNormalQuantile`, refined with
+  one Newton step on the exact CDF. At the twelve significant digits the app shows, the 97.5th
+  percentile read `1.959963986` instead of `1.9599639845`. Both now use the refined version
+  (error ~7e-15, checked against SciPy reference values).
+- **`y = x^2` — the syntax the plot box itself suggests — plotted nothing.** The parser has no `=`
+  operator, so the placeholder taught a syntax the app rejected. A leading `y =`, `f(x) =`, `g(x) =`
+  or `h(x) =` heading is now accepted (`x = 3` is deliberately still rejected rather than being
+  drawn as a horizontal line).
+- **A plot could be silently blank.** `foo(x)` compiled into a function that threw on every sample,
+  so the curve quietly disappeared. Definition errors (unknown name, wrong arity) are now rejected at
+  compile time, and the function row shows the engine's own explanation instead of a bare `!`.
+- **"increase 80 by 15 percent" answered `+15%`.** The headline restated the question while the answer
+  (92) sat in a detail row; the headline is now the new value, and the percentage change when both
+  values were given.
+
+### Added — correctness and reliability pass
+
+- **Limits at infinity are reachable.** The symbolic engine could already compute them, but the limit
+  tool only accepted a number and the plain-language layer only matched digits, so no user could ask
+  "lim x → ∞". The Calculus tool now accepts `infinity`/`∞`, evaluates `x → ±∞` by substituting
+  `u = 1/x` (accurate to ~1e-15 on `atan(x)`, where the growth comparison was off by 1e-6) and refuses
+  to invent a value when the tail never settles.
+- **Plain words for limits at infinity**: "limit of 1/x as x tends to infinity" and "…tends to minus
+  infinity" now route to the same engine.
+- **Settings → *Percent in a sum*** lets anyone switch between the consumer reading
+  (`200 + 10% = 220`) and the strict one (`200 + 10% = 200.1`).
+
 The engine upgrade: exact symbolic work, advanced mathematics and 3D/field graphing, landing tier by
 tier. Each tier keeps the existing 819 checks green and adds its own.
 

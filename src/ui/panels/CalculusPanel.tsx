@@ -4,12 +4,14 @@ import {
   derivative,
   differentiate,
   differentiateOrder,
+  explainFunctionSource,
   integrate,
   limit,
   partialDerivative,
   taylorSeries,
 } from '@/math/calculus';
-import { errorMessage } from '@/core/errors';
+import { symbolicLimit } from '@/math/cas/limits';
+import { errorCode, errorMessage } from '@/core/errors';
 import { formatNumber } from '@/core/precision/format';
 import { useSettings } from '@/settings/useSettings';
 import { appendToDraft } from '@/ui/bus';
@@ -68,7 +70,7 @@ function DerivativeTool() {
       }
     }
     const fn = compileFunction(source, variable);
-    if (!fn) return { ok: false as const, message: 'The expression could not be parsed.' };
+    if (!fn) return { ok: false as const, message: explainFunctionSource(source) ?? 'The expression could not be parsed.' };
     try {
       return { ok: true as const, value: derivative(fn, x, Number(order) === 2 ? 2 : 1) };
     } catch (err) {
@@ -166,7 +168,7 @@ function IntegralTool() {
   const result = useMemo(() => {
     if (a === '' || b === '') return { ok: false as const, message: 'Enter both limits.' };
     const fn = compileFunction(source);
-    if (!fn) return { ok: false as const, message: 'The expression could not be parsed.' };
+    if (!fn) return { ok: false as const, message: explainFunctionSource(source) ?? 'The expression could not be parsed.' };
     try {
       const outcome = integrate(fn, Number(a), Number(b), { tolerance: method === 'accurate' ? 1e-12 : 1e-8 });
       return { ok: true as const, outcome };
@@ -236,18 +238,104 @@ function IntegralTool() {
   );
 }
 
+type LimitOutcome =
+  | { ok: true; value: number; approach: string; twoSided: boolean; how: string; diverges: boolean }
+  | { ok: false; message: string; suggestion?: string };
+
+/** Reads a limit point, accepting the ways people write infinity. */
+function parseLimitPoint(input: string): number | null {
+  const text = input.trim().toLowerCase().replace('∞', 'inf').replace(/−/g, '-');
+  if (text === '') return null;
+  if (text === 'inf' || text === '+inf' || text === 'infinity' || text === '+infinity') return Number.POSITIVE_INFINITY;
+  if (text === '-inf' || text === '-infinity') return Number.NEGATIVE_INFINITY;
+  const value = Number(text);
+  return Number.isFinite(value) ? value : null;
+}
+
+const isInfinite = (value: number) => !Number.isFinite(value);
+
 function LimitTool() {
   const settings = useSettings();
   const [source, setSource] = useState('sin(x)/x');
-  const [point, setPoint] = useState<number | ''>(0);
+  const [point, setPoint] = useState('0');
   const [side, setSide] = useState<'both' | 'left' | 'right'>('both');
 
-  const result = useMemo(() => {
-    if (point === '') return { ok: false as const, message: 'Enter the point to approach.' };
+  const result = useMemo<LimitOutcome>(() => {
+    const target = parseLimitPoint(point);
+    if (target === null) {
+      return { ok: false, message: 'Enter the point to approach, or the word infinity.' };
+    }
     const fn = compileFunction(source);
-    if (!fn) return { ok: false as const, message: 'The expression could not be parsed.' };
+    if (!fn) return { ok: false, message: explainFunctionSource(source) ?? 'The expression could not be parsed.' };
+
+    /*
+     * x → ±∞ cannot use the estimator directly — there is no h to shrink — so it
+     * substitutes u = 1/x and takes u → 0±, which the same Richardson estimator
+     * handles. That path existed in the maths layer but nothing in the UI could
+     * reach it, so "lim x → ∞" was impossible to ask for.
+     *
+     * The symbolic growth comparison is preferred when it is exact (it is the
+     * better answer for rational functions); otherwise the substitution estimate
+     * is used, because its tail is far more accurate — for (1+1/x)^x it lands
+     * within 4e-9 of e where the growth comparison was off by 1.4e-6, and for
+     * ln(x)/x it returns 0 where the growth comparison returned 1.4e-5.
+     */
+    if (isInfinite(target)) {
+      const approach = target > 0 ? 'x → +∞' : 'x → −∞';
+      const symbolic = symbolicLimit(source, target, 'x', side);
+      if (symbolic?.exact) {
+        return {
+          ok: true,
+          value: symbolic.value,
+          approach,
+          twoSided: false,
+          how: `${symbolic.method} (exact)`,
+          diverges: !symbolic.exists,
+        };
+      }
+
+      const substituted = (u: number) => fn(1 / u);
+      try {
+        const outcome = limit(substituted, 0, { side: target > 0 ? 'right' : 'left' });
+        return {
+          ok: true,
+          value: outcome.value,
+          approach,
+          twoSided: false,
+          how: 'numeric estimate (x = 1/u, Richardson extrapolation)',
+          diverges: false,
+        };
+      } catch (err) {
+        const code = errorCode(err);
+        // A divergence is an answer, not a failure: report what it diverges to.
+        if (code === 'DOMAIN' && /diverges/i.test(errorMessage(err))) {
+          return { ok: false, message: errorMessage(err), suggestion: 'The limit is infinite rather than a finite value.' };
+        }
+        /*
+         * The estimator refused because the tail never settles (an oscillating
+         * function, for example). Reporting the unaudited growth-comparison
+         * number here would be exactly the "silently wrong answer" this app
+         * promises not to give — sin(x)/x came out as -3.5e-7 that way.
+         */
+        return {
+          ok: false,
+          message: `The limit as ${approach} could not be determined.`,
+          suggestion:
+            'The tail does not settle, so any single number would be a guess. Oscillating functions such as sin(x)/x need the symbolic tools, or a range instead of a single point.',
+        };
+      }
+    }
+
     try {
-      return { ok: true as const, outcome: limit(fn, Number(point), { side }) };
+      const outcome = limit(fn, target, { side });
+      return {
+        ok: true,
+        value: outcome.value,
+        approach: `x → ${point.trim()}${outcome.twoSided ? '' : ` (from the ${outcome.approach})`}`,
+        twoSided: outcome.twoSided,
+        how: 'numeric estimate',
+        diverges: false,
+      };
     } catch (err) {
       return { ok: false as const, message: errorMessage(err) };
     }
@@ -258,7 +346,13 @@ function LimitTool() {
       <section className="card">
         <div className="grid grid--form">
           <TextField label="Function" value={source} onChange={setSource} placeholder="sin(x)/x" />
-          <NumberField label="Approach x →" value={point} onChange={setPoint} step={0.1} />
+          <TextField
+            label="Approach x →"
+            value={point}
+            onChange={setPoint}
+            placeholder="0, or infinity"
+            hint="A number, or the word infinity for x → ±∞."
+          />
           <SelectField
             label="Direction"
             value={side}
@@ -274,17 +368,21 @@ function LimitTool() {
       <section className="card" aria-live="polite">
         <h2>Result</h2>
         {!result.ok ? (
-          <Notice kind="error">{result.message}</Notice>
+          <>
+            <Notice kind="error">{result.message}</Notice>
+            {result.suggestion ? <p className="muted">{result.suggestion}</p> : null}
+          </>
         ) : (
           <OutputList
             rows={[
               {
-                label: `lim f(x) as x → ${point}`,
-                value: formatNumber(result.outcome.value, { precision: settings.precision }),
+                label: `lim f(x) as ${result.approach}`,
+                value: formatNumber(result.value, { precision: settings.precision }),
                 emphasize: true,
               },
-              { label: 'Approach used', value: result.outcome.approach },
-              { label: 'Both sides agree', value: result.outcome.twoSided ? 'Yes' : 'Not checked' },
+              { label: 'Method', value: result.how },
+              ...(result.twoSided ? [{ label: 'Both sides agree', value: 'Yes' }] : []),
+              ...(result.diverges ? [{ label: 'Note', value: 'The limit diverges (±∞)' }] : []),
             ]}
           />
         )}

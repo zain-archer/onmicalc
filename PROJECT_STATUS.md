@@ -2,10 +2,39 @@
 
 _Last updated: 2026-09-25 (Phase 29 complete: 1.0.0 → 1.3.0 · 2.0.0 in progress: engine upgrade tiers)_
 
+## Correctness and reliability pass (2026-09-30)
+
+An audit-and-fix pass over the shipped 1.3.0 surface. Everything below is covered by a regression test;
+`npm run verify` (themes:check → typecheck → 1006 tests → production build) is green.
+
+| Finding | Effect before | Status |
+| --- | --- | --- |
+| `TextDecoder('latin1')` in the PDF reader (windows-1252, not ISO-8859-1) | Most compressed PDFs extracted **no text at all** | Fixed, byte round-trip test |
+| `%` meant `÷ 100` even after `+`/`-` | `200 + 10%` gave 200.1 | Fixed (220), setting for strict mode |
+| `round` used `Math.round` | `round(-2.5)` gave -2 | Fixed (-3, half away from zero) |
+| The `∞` from the maths keyboard | `Unknown name "inf"` | Fixed, explanatory error |
+| Normal/log-normal quantiles used raw Acklam | ~1e-9 error, visible at 12 digits | Fixed: ~7e-15 (SciPy-checked) |
+| `y = x^2` — the plot box's own placeholder | Plotted nothing | Fixed; `x = 3` still rejected on purpose |
+| `foo(x)` in the plot box | Silently blank curve, bare `!` badge | Fixed: refused at compile, reason shown |
+| Limits at infinity | Unreachable from any UI (maths existed) | Wired into Calculus + Ask |
+| "increase 80 by 15 percent" | Headline was `+15%`, not 92 | Fixed |
+| Hints inside `<label>` | Field's accessible name included the whole hint | Moved to `aria-describedby` |
+| Keypad symbol keys | No spoken name ("√", "n!") | Every key has one |
+| Global Enter handler | Cancelled a focused keypad key's activation | Fixed |
+| Bottom nav on a phone | 21 tools in a ~1500 px scroller | 5 entries + search |
+
+### Known issues (documented, not hidden)
+
+| What | Why | Impact | Recommended next step |
+| --- | --- | --- | --- |
+| `npm audit` reports 2 moderate advisories in `@vitest/mocker` (via `vitest`) | Fixed only in vitest 5, a breaking major | **Development only** — the mock server is not part of `dist/`, and the advisory needs a malicious redirect mock in the test config | Upgrade `vitest` 3 → 5 in its own change, run `npm run verify`, and review the breaking changes list |
+| No browser-based end-to-end run | The build sandbox has no browser and blocks Playwright's download | Layout, real touch gestures and cross-browser behaviour rest on jsdom tests + CSS review | Run the Playwright suite in CI (GitHub Actions has browsers) — the flows are already covered by `interaction.test.tsx` |
+| `x = 3` in the plot box is refused rather than drawn | A vertical line is not a function of x, and sampling y = f(x) cannot draw one | A user wanting a vertical line gets an explanatory error, not a wrong line | Add parametric/vertical-line plotting to the Graphing tool |
+
 ## Current phase
 
 **2.0.0 — engine upgrade (in progress).** Phase 29 and everything before it is complete: 57 test
-files and 819 checks up to 1.3.0, now **68 files / 980 checks**, with `npm run typecheck` clean after
+files and 819 checks up to 1.3.0, now **69 files / 1006 checks**, with `npm run typecheck` clean after
 every tier. Tiers land one at a time, each with its own module set, tests and a commit:
 
 | Tier | Area | Where | Status |

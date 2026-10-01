@@ -1,4 +1,4 @@
-import { useId, useState, type ChangeEvent, type ReactNode } from 'react';
+import { useId, useRef, useState, type ChangeEvent, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
 
 /* ---------- Tabs ---------- */
 export interface TabDef {
@@ -6,6 +6,12 @@ export interface TabDef {
   label: string;
 }
 
+/**
+ * Tabs follow the WAI-ARIA "tabs with automatic activation" pattern: one tab
+ * stop in the tab list, arrow keys move between tabs, Home/End jump to the
+ * ends. Without this a keyboard user has to Tab through every tab button and
+ * cannot discover the others at all.
+ */
 export function Tabs({
   tabs,
   value,
@@ -17,14 +23,44 @@ export function Tabs({
   onChange: (id: string) => void;
   label: string;
 }) {
+  const listRef = useRef<HTMLDivElement>(null);
+
+  const focusTab = (index: number) => {
+    const buttons = listRef.current?.querySelectorAll<HTMLButtonElement>('[role="tab"]');
+    if (!buttons || buttons.length === 0) return;
+    const next = ((index % buttons.length) + buttons.length) % buttons.length;
+    buttons[next]?.focus();
+    const id = tabs[next]?.id;
+    if (id && id !== value) onChange(id);
+  };
+
+  const onKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+    const current = tabs.findIndex((tab) => tab.id === value);
+    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+      event.preventDefault();
+      focusTab(current + 1);
+    } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      focusTab(current - 1);
+    } else if (event.key === 'Home') {
+      event.preventDefault();
+      focusTab(0);
+    } else if (event.key === 'End') {
+      event.preventDefault();
+      focusTab(tabs.length - 1);
+    }
+  };
+
   return (
-    <div className="tabs" role="tablist" aria-label={label}>
+    <div className="tabs" role="tablist" aria-label={label} ref={listRef} onKeyDown={onKeyDown}>
       {tabs.map((tab) => (
         <button
           key={tab.id}
           type="button"
           role="tab"
           aria-selected={tab.id === value}
+          // Roving tab stop: only the selected tab is in the page tab order.
+          tabIndex={tab.id === value ? 0 : -1}
           className={`tabs__tab${tab.id === value ? ' is-active' : ''}`}
           onClick={() => onChange(tab.id)}
         >
@@ -59,12 +95,17 @@ export function NumberField({
   max?: number;
 }) {
   const id = useId();
+  const hintId = `${id}-hint`;
   return (
-    <label className="field" htmlFor={id}>
-      <span className="field__label">
+    // The hint is a sibling of the label, not part of it: anything inside the
+    // <label> becomes part of the field's accessible name, so a hint in there
+    // makes a screen reader read the whole sentence as the field's name.
+    // `aria-describedby` keeps it announced, after the name, on request.
+    <div className="field">
+      <label className="field__label" htmlFor={id}>
         {label}
         {unit ? <span className="field__unit">{unit}</span> : null}
-      </span>
+      </label>
       <input
         id={id}
         className="field__input"
@@ -74,13 +115,18 @@ export function NumberField({
         step={step}
         min={min}
         max={max}
+        aria-describedby={hint ? hintId : undefined}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           const raw = event.target.value;
           onChange(raw === '' ? '' : Number(raw));
         }}
       />
-      {hint ? <span className="field__hint">{hint}</span> : null}
-    </label>
+      {hint ? (
+        <span className="field__hint" id={hintId}>
+          {hint}
+        </span>
+      ) : null}
+    </div>
   );
 }
 
@@ -107,12 +153,13 @@ export function TextField({
   onFile?: (file: File) => void;
 }) {
   const id = useId();
+  const hintId = `${id}-hint`;
   return (
-    <label className="field" htmlFor={id}>
-      <span className="field__label">
+    <div className="field">
+      <label className="field__label" htmlFor={id}>
         {label}
         {unit ? <span className="field__unit">{unit}</span> : null}
-      </span>
+      </label>
       {multiline ? (
         <textarea
           id={id}
@@ -121,6 +168,7 @@ export function TextField({
           value={value}
           placeholder={placeholder}
           spellCheck={false}
+          aria-describedby={hint ? hintId : undefined}
           onChange={(event) => onChange(event.target.value)}
         />
       ) : (
@@ -131,6 +179,7 @@ export function TextField({
           value={type === 'file' ? undefined : value}
           placeholder={placeholder}
           spellCheck={false}
+          aria-describedby={hint ? hintId : undefined}
           onChange={(event) => {
             if (type === 'file') {
               const file = event.target.files?.[0];
@@ -141,14 +190,19 @@ export function TextField({
           }}
         />
       )}
-      {hint ? <span className="field__hint">{hint}</span> : null}
-    </label>
+      {hint ? (
+        <span className="field__hint" id={hintId}>
+          {hint}
+        </span>
+      ) : null}
+    </div>
   );
 }
 
 export function SelectField({
   label,
   hint,
+  unit,
   value,
   onChange,
   options,
@@ -158,13 +212,18 @@ export function SelectField({
   options: readonly { value: string; label: string }[];
 }) {
   const id = useId();
+  const hintId = `${id}-hint`;
   return (
-    <label className="field" htmlFor={id}>
-      <span className="field__label">{label}</span>
+    <div className="field">
+      <label className="field__label" htmlFor={id}>
+        {label}
+        {unit ? <span className="field__unit">{unit}</span> : null}
+      </label>
       <select
         id={id}
         className="field__input"
         value={value}
+        aria-describedby={hint ? hintId : undefined}
         onChange={(event) => onChange(event.target.value)}
       >
         {options.map((option) => (
@@ -173,8 +232,12 @@ export function SelectField({
           </option>
         ))}
       </select>
-      {hint ? <span className="field__hint">{hint}</span> : null}
-    </label>
+      {hint ? (
+        <span className="field__hint" id={hintId}>
+          {hint}
+        </span>
+      ) : null}
+    </div>
   );
 }
 

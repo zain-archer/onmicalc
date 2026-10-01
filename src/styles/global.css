@@ -176,10 +176,24 @@ button { font: inherit; color: inherit; }
     padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
     background: var(--bg-elev);
     border-top: 1px solid var(--border);
-    overflow-x: auto;
+    /* Five equal entries (current + most used + More) fit any phone width, so
+       the bar no longer scrolls sideways to reach the rest of the tools. */
+    overflow: hidden;
     z-index: 20;
   }
-  .nav__item--bottom { flex-direction: column; gap: 2px; padding: 6px 12px; font-size: 11px; flex: 0 0 auto; min-width: 68px; justify-content: center; }
+  .nav__item--bottom {
+    flex: 1 1 0;
+    min-width: 0;
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px 4px;
+    font-size: 11px;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .nav__item--bottom .nav__label { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+  /* The keyboard hint is meaningless on a touch device. */
+  .kbd-inline { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

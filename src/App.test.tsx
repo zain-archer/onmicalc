@@ -71,3 +71,32 @@ describe('shell shortcuts', () => {
     expect(screen.getByRole('dialog', { name: 'Keyboard shortcuts' })).toBeTruthy();
   });
 });
+
+/**
+ * The bottom bar used to render all twenty-one tools in a horizontal scroller,
+ * so on a phone the last entries were ten swipes away. It now shows the current
+ * tool plus the most-used four and hands everything else to the palette search.
+ */
+describe('mobile navigation', () => {
+  it('keeps the bottom bar to five entries and offers search for the rest', () => {
+    window.location.hash = '#/calculator';
+    render(<App />);
+    const bottom = document.querySelector('.nav--bottom');
+    expect(bottom).toBeTruthy();
+    const items = [...bottom!.querySelectorAll('.nav__item--bottom')];
+    expect(items.length).toBeLessThanOrEqual(5);
+    expect(items.at(-1)?.textContent).toContain('More');
+    // Every tool is still reachable: the palette lists them all.
+    fireEvent.click(items.at(-1)!);
+    const list = document.querySelector('.palette__list');
+    expect(list?.textContent).toContain('Chemistry');
+    expect(list?.textContent).toContain('Settings');
+  });
+
+  it('marks the current tool when it is not one of the primaries', () => {
+    window.location.hash = '#/chemistry';
+    render(<App />);
+    const active = document.querySelector('.nav--bottom .is-active');
+    expect(active?.textContent).toContain('Chemistry');
+  });
+});

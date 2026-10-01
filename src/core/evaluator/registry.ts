@@ -1,8 +1,22 @@
 import { CalcError } from '@/core/errors';
 import type { AngleMode } from '@/core/numbers/angle';
 
+/**
+ * How `%` behaves when it is added to or subtracted from a value.
+ *
+ * - `contextual` (default): `200 + 10%` is 220 — the increase/decrease reading
+ *   that every consumer calculator (Google, iOS, Windows) and most users mean.
+ * - `strict`: `%` always divides by 100, so `200 + 10%` is 200.1.
+ *
+ * Multiplication, division and the bare postfix are `÷ 100` in both modes;
+ * this only changes the additive reading, where the two conventions disagree.
+ */
+export type PercentMode = 'contextual' | 'strict';
+
 export interface EvalContext {
   angleMode: AngleMode;
+  /** Defaults to `contextual` when omitted. */
+  percentMode?: PercentMode;
   constants: Readonly<Record<string, number>>;
   variables: Readonly<Record<string, number>>;
   functions: FunctionRegistry;
