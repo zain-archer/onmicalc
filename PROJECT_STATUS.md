@@ -1,6 +1,25 @@
 # OmniCalc — Project Status
 
-_Last updated: 2026-09-25 (Phase 29 complete: 1.0.0 → 1.3.0 · 2.0.0 in progress: engine upgrade tiers)_
+_Last updated: 2026-10-01 (Phase 29 complete: 1.0.0 → 1.3.0 · 2.0.0 in progress: correctness pass and
+architecture pass complete)_
+
+## Architecture and code quality pass (2026-10-01)
+
+An audit of the module graph, followed by four contained fixes. **No calculation behaviour changed and
+no public API changed** — every symbol that existed before still exists with the same signature.
+`npm run verify` is green: themes:check, `tsc -b --force`, **69 files / 1006 tests**, production build.
+
+| Finding | Effect before | Status |
+| --- | --- | --- |
+| `math/statistics` had a runtime import cycle (`index → descriptive → index`) | Correct only by module-initialisation order | Fixed: moments moved to a leaf module `statistics/moments.ts`; SCC scan over 149 modules confirms one cycle left, and it is type-only |
+| `erf()` implemented twice, byte-identically | Two copies of the accuracy base for every continuous distribution — silent numeric drift if either were edited | Fixed: one implementation in `@/math/special`, re-exported by `normal.ts` |
+| Seven exported symbols referenced nowhere in the repo | Maintenance surface that implies capabilities that do not exist | Removed |
+| `PALETTE_ACCENT` never read; its comment named the wrong sentinel | The `''` sentinel was written as a bare literal in two places | Kept, comment corrected, and now used by `SettingsPanel` |
+| About screen claimed "688 automated tests" | The app's only checkable quality claim was wrong by 46% (actual: 1006) | Replaced with a claim that cannot rot |
+
+Full analysis, including what was deliberately **not** changed and why, is in `ARCHITECTURE_AUDIT.md`;
+the current architecture is described in `ARCHITECTURE.md`. The only remaining layer violation
+(`storage/backup.ts` importing `@/ui`) is documented with a consumer-by-consumer plan and deferred.
 
 ## Correctness and reliability pass (2026-09-30)
 

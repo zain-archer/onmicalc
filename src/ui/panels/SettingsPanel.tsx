@@ -7,7 +7,7 @@ import { clearHistory } from '@/history/store';
 import { memoryStore, memoryStoreValue } from '@/history/memory';
 import { ANGLE_MODES } from '@/core/numbers/angle';
 import { SelectField, Notice } from '@/ui/components/primitives';
-import { ACCENT_PRESETS, CONTRAST_OPTIONS, THEME_OPTIONS, type ContrastMode } from '@/ui/theme/presets';
+import { ACCENT_PRESETS, CONTRAST_OPTIONS, PALETTE_ACCENT, THEME_OPTIONS, type ContrastMode } from '@/ui/theme/presets';
 import { PALETTE_PACKS, paletteById, paletteSwatchStyle } from '@/ui/theme/palettes';
 import {
   applyBackup,
@@ -71,7 +71,7 @@ export function SettingsPanel() {
               <button
                 type="button"
                 className="btn btn--small"
-                onClick={() => settingsStore.set({ accent: '' })}
+                onClick={() => settingsStore.set({ accent: PALETTE_ACCENT })}
                 aria-label="Use the palette's own accent colour"
               >
                 Palette accent
@@ -107,7 +107,7 @@ export function SettingsPanel() {
                   className={`theme-card${active ? ' is-active' : ''}`}
                   aria-pressed={active}
                   aria-label={`${pack.label} palette${active ? ' (current)' : ''}`}
-                  onClick={() => settingsStore.set({ palette: pack.id, accent: '' })}
+                  onClick={() => settingsStore.set({ palette: pack.id, accent: PALETTE_ACCENT })}
                 >
                   <span className="theme-card__preview" aria-hidden="true">
                     <span className="theme-card__preview-pane" style={paletteSwatchStyle(pack.id, 'dark', true)}>

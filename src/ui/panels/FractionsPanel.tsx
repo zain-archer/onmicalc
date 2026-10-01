@@ -4,7 +4,6 @@ import {
   compare,
   divide,
   formatFraction,
-  fraction,
   fromDecimal,
   multiply,
   parseFraction,
@@ -204,13 +203,4 @@ function comparisonLabel(left: Fraction, right: Fraction): string {
   const order = compare(left, right);
   if (order === 0) return 'Equal';
   return order < 0 ? `${formatFraction(left)} < ${formatFraction(right)}` : `${formatFraction(left)} > ${formatFraction(right)}`;
-}
-
-/** Re-exported helpers used by the calculator panel for fraction display. */
-export function fractionFromDecimal(value: number, maxDenominator = 1_000_000) {
-  return fromDecimal(value, { maxDenominator });
-}
-
-export function fractionOf(numerator: number, denominator = 1): Fraction {
-  return fraction(numerator, denominator);
 }

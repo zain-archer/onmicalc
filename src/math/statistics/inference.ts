@@ -1,7 +1,7 @@
 import { CalcError } from '@/core/errors';
 import { normalCdf } from '@/math/probability/normal';
 import { requireDistribution } from '@/math/probability/distributions';
-import { mean, standardDeviation, variance } from './index';
+import { mean, standardDeviation, variance } from './moments';
 
 /**
  * Classical hypothesis tests and confidence intervals.

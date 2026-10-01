@@ -1,5 +1,5 @@
 import { CalcError } from '@/core/errors';
-import { mean, standardDeviation, variance } from './index';
+import { mean, standardDeviation, variance } from './moments';
 
 /**
  * Descriptive statistics beyond the basic summary: shape, spread, spread

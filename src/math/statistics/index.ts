@@ -1,27 +1,16 @@
 import { CalcError } from '@/core/errors';
+import { mean, requireData, standardDeviation, sum, variance } from './moments';
 
-/** Descriptive statistics and regression. All functions are pure. */
+/**
+ * Descriptive statistics and regression. All functions are pure.
+ *
+ * The moments (`sum`, `mean`, `variance`, `standardDeviation`) and the input
+ * guard live in `./moments` so that this module can re-export `descriptive` and
+ * `inference` without creating an import cycle. They are re-exported below, so
+ * `@/math/statistics` keeps the same public surface as before.
+ */
 
-function requireData(values: readonly number[], minimum = 1, label = 'data set'): void {
-  if (values.length < minimum) {
-    throw new CalcError('INPUT', `The ${label} needs at least ${minimum} value${minimum === 1 ? '' : 's'}`, {
-      details: `Received ${values.length}.`,
-    });
-  }
-  if (!values.every(Number.isFinite)) {
-    throw new CalcError('INPUT', 'Every data point must be a finite number');
-  }
-}
-
-export function sum(values: readonly number[]): number {
-  requireData(values);
-  return values.reduce((total, value) => total + value, 0);
-}
-
-export function mean(values: readonly number[]): number {
-  requireData(values);
-  return sum(values) / values.length;
-}
+export { mean, standardDeviation, sum, variance };
 
 export function median(values: readonly number[]): number {
   requireData(values);
@@ -54,21 +43,6 @@ export const max = (values: readonly number[]): number => {
 };
 
 export const range = (values: readonly number[]): number => max(values) - min(values);
-
-/** Sample variance (n − 1 denominator) — the default in scientific work. */
-export function variance(values: readonly number[], kind: 'sample' | 'population' = 'sample'): number {
-  requireData(values, kind === 'sample' ? 2 : 1);
-  const average = mean(values);
-  const squares = values.reduce((total, value) => total + (value - average) ** 2, 0);
-  return squares / (kind === 'sample' ? values.length - 1 : values.length);
-}
-
-export function standardDeviation(
-  values: readonly number[],
-  kind: 'sample' | 'population' = 'sample',
-): number {
-  return Math.sqrt(variance(values, kind));
-}
 
 export function quartiles(values: readonly number[]): { q1: number; q2: number; q3: number } {
   requireData(values, 2);

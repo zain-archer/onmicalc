@@ -260,11 +260,3 @@ export function ProgrammerPanel() {
     </div>
   );
 }
-
-export function safeIntegerOperation(op: IntegerOp, a: string, b: string, width: BitWidth) {
-  try {
-    return integerOperation(op, a, b, width);
-  } catch (err) {
-    return { error: errorMessage(err) };
-  }
-}

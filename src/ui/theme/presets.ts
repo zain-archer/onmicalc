@@ -7,7 +7,11 @@ export interface AccentPreset {
   value: string;
 }
 
-/** `#000000` means "use the palette's own accent" (the default). */
+/**
+ * "Use the palette's own accent colour" (the default). The theme only applies an
+ * accent override for a valid hex value that differs from the palette's own, so
+ * any non-colour value is a sentinel — an empty string is the explicit one.
+ */
 export const PALETTE_ACCENT = '';
 
 export const ACCENT_PRESETS: readonly AccentPreset[] = [

@@ -332,28 +332,6 @@ export function CopyButton({
   );
 }
 
-/* ---------- Layout ---------- */
-export function ToolLayout({
-  form,
-  output,
-  wide = false,
-}: {
-  form: ReactNode;
-  output: ReactNode;
-  wide?: boolean;
-}) {
-  return (
-    <div className={`tool${wide ? ' tool--wide' : ''}`}>
-      <section className="tool__form" aria-label="Inputs">
-        {form}
-      </section>
-      <section className="tool__output" aria-label="Results" aria-live="polite">
-        {output}
-      </section>
-    </div>
-  );
-}
-
 export function EmptyState({ children }: { children: ReactNode }) {
   return <p className="empty">{children}</p>;
 }

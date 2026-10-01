@@ -1,21 +1,19 @@
 import { CalcError } from '@/core/errors';
-import { regularisedGammaP } from '@/math/special';
+import { erf } from '@/math/special';
 
 /**
  * The normal distribution — the base every other continuous distribution here
  * borrows its accuracy checks from, so it lives in its own module.
  */
 
-/**
- * Error function via the (high accuracy) regularised incomplete gamma function:
- * erf(x) = sign(x) · P(1/2, x²). Accurate to ~1e-15, unlike the classic
- * Abramowitz–Stegun polynomial (good to only 1e-7).
+/*
+ * `erf` used to be implemented here as well as in `@/math/special`, with
+ * byte-identical bodies. It is the accuracy base for the normal CDF, which in
+ * turn underpins every continuous distribution and the inference tools, so a
+ * second copy was a real risk of silent drift. It now has one home; it is
+ * re-exported below so existing importers are unaffected.
  */
-export function erf(x: number): number {
-  if (x === 0) return 0;
-  const value = regularisedGammaP(0.5, x * x);
-  return x > 0 ? value : -value;
-}
+export { erf };
 
 export function requirePositive(value: number, label: string): void {
   if (!(value > 0) || !Number.isFinite(value)) {

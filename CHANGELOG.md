@@ -41,6 +41,34 @@ All notable changes to OmniCalc are documented here. The format follows
   (92) sat in a detail row; the headline is now the new value, and the percentage change when both
   values were given.
 
+### Changed — architecture and code quality pass (2026-10-01)
+
+No calculation behaviour changed in this pass. It removes a real module cycle, a duplicated
+implementation of a numerically critical function, and code that was never reachable. One user-visible
+string was corrected, noted at the end.
+
+- **The statistics module had a real import cycle** (`index → descriptive → index`). `sum`, `mean`,
+  `variance` and `standardDeviation` moved to a new leaf module, `src/math/statistics/moments.ts`, so
+  the dependency graph for that package is now acyclic. `@/math/statistics` re-exports exactly the same
+  symbols as before, so no caller changed. Verified with a Tarjan SCC scan over all 149 modules: the
+  only remaining cycle is `constants/{math,physical}`, which is type-only and erased at compile time.
+- **`erf()` was implemented twice**, byte-identically, in `math/probability/normal.ts` and
+  `math/special/index.ts`. `erf` is the accuracy base for the normal CDF, which in turn underpins every
+  continuous distribution and the inference tools, so two copies risked silent numerical drift. It now
+  has one home (`@/math/special`); `normal.ts` re-exports it, so its importers are unaffected.
+- **Seven unreachable exports removed**: `ToolLayout`, `safeIntegerOperation`, `fractionFromDecimal`,
+  `fractionOf`, `APP_VERSION_SHORT`, `REPO_URL`, `POPULAR_PALETTE_IDS`. Each was referenced nowhere in
+  the repository, including the build scripts. `safeIntegerOperation` read like a safety net but was
+  redundant — `ProgrammerPanel` already catches `integerOperation` failures and shows the message.
+- **`PALETTE_ACCENT` was dead but kept**, and is now used. Its comment claimed the sentinel was
+  `#000000`; the theme actually treats any non-colour value as "use the palette's own accent", so
+  `#000000` would have been a real black override. The constant now names the `''` sentinel that
+  Settings was writing as a bare literal, and the comment says what the code does.
+- **The About screen advertised "688 automated tests"** while the suite runs 1006 — the one place the
+  app made a checkable claim about its own quality, wrong by 46%. Replaced with a statement that is true
+  and does not rot with the next test added: no network requests at runtime, no accounts, everything
+  computed on the device.
+
 ### Added — correctness and reliability pass
 
 - **Limits at infinity are reachable.** The symbolic engine could already compute them, but the limit

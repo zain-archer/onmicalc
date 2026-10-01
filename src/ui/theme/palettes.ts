@@ -45,11 +45,6 @@ export function isPaletteId(id: string): boolean {
   return PALETTE_PACKS.some((pack) => pack.id === id);
 }
 
-/** The pack the App Store / Play Store screenshots show: the most-liked ones. */
-export const POPULAR_PALETTE_IDS: readonly string[] = PALETTE_PACKS.filter((pack) =>
-  pack.tags.includes('popular'),
-).map((pack) => pack.id);
-
 /** Resolved colours for a pack in the given (already resolved) mode. */
 export function paletteColors(id: string, resolved: 'light' | 'dark'): Palette {
   const pack = paletteById(id);
