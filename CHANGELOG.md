@@ -69,6 +69,37 @@ string was corrected, noted at the end.
   and does not rot with the next test added: no network requests at runtime, no accounts, everything
   computed on the device.
 
+### Fixed — repository hygiene
+
+- **`README.md` contained 12 NUL bytes**, in the form of a UTF-16LE fragment appended after the
+  licence section. Files with NUL bytes are treated as binary by `grep` and `ripgrep`, so the project's
+  front page was silently skipped by any search over the repository. The corruption was pre-existing in
+  the baseline (verified against the original commit) and present in no other text file — a sweep of all
+  300 tracked files found NUL bytes only in `README.md` and 12 genuine PNGs. Removed, leaving the rest
+  of the file byte-identical, and the stale test counts in it corrected to 1069/70.
+
+### Added — direct tests for the special functions, and the defect they found
+
+`src/math/special/` had no test file of its own, yet every continuous distribution gets its pdf/CDF
+from `gamma`, `logGamma`, `regularisedGammaP` and `regularisedBeta`, and the normal CDF is built on
+`erf` — the function the pass above consolidated. `src/math/special/special.test.ts` (65 tests) now
+pins those against values computed independently with MPFR (`mpmath`, 30–40 significant digits),
+including cross-checks between independent implementations (`P(½, x²) = erf(x)`).
+
+Writing it surfaced a real defect, recorded rather than silently fixed because it is a calculation
+issue for a later pass:
+
+- **The Bessel functions are wrong outside a limited range, and `besselY` had no test at all.**
+  `besselY` seeds `Y₀`/`Y₁` with a large-`x` asymptotic where it has not converged, so `Y₀(1)` returns
+  0.1699 against a true 0.0883 (93% off), worst at small arguments. Both functions also fall back to a
+  single asymptotic term for `x ≥ 16`, losing accuracy as the order grows (`J₅(20)` is 58% off). `besselJ`
+  below 16 is accurate to better than 1e-11 and correct for negative arguments. Neither function is
+  reachable from the calculator, the Ask layer or any panel — `@/math/special` is imported only by
+  `@/math/probability`, which uses none of the Bessel functions — so no user can obtain a wrong answer
+  from this code today. The accurate ranges are pinned, and the two defects are recorded as `it.todo`
+  entries so they appear in every test run. References, error table and the recommended fix are in
+  `ARCHITECTURE_AUDIT.md` (B1).
+
 ### Added — correctness and reliability pass
 
 - **Limits at infinity are reachable.** The symbolic engine could already compute them, but the limit

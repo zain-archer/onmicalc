@@ -78,7 +78,7 @@ Everything above ships the same build: one engine, one UI, no per-platform forks
 ```bash
 npm ci
 npm run dev        # http://localhost:5173
-npm run verify     # themes:check + typecheck + 1006 tests + production build (the gate for every change)
+npm run verify     # themes:check + typecheck + 1069 tests + production build (the gate for every change)
 npm run build      # type-check + production bundle + service worker
 npm run preview    # serve the production build
 ```
@@ -132,7 +132,7 @@ Rules the codebase enforces (all covered by automated guard tests):
 | Gate | Command | What it covers |
 | --- | --- | --- |
 | Typecheck | `npm run typecheck` | strict TS across app, tests and build scripts |
-| Tests | `npm test` | 1006 tests in 69 files: engine, every math domain, every panel, knowledge and file intake, themes, packaging, a11y sweep, integration, perf and safety guardrails |
+| Tests | `npm test` | 1069 tests in 70 files: engine, every math domain, every panel, knowledge and file intake, themes, packaging, a11y sweep, integration, perf and safety guardrails |
 | Build | `npm run build` | production bundle + generated service worker |
 | All three | `npm run verify` | the single release gate (also run by CI on Node 20 and 22) |
 
@@ -151,6 +151,3 @@ and favourites are stored locally on your device and can be exported or erased a
 ## License
 
 MIT — see [LICENSE](./LICENSE).
-#   o n m i c a l c 
- 
- 

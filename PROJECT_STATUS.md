@@ -7,7 +7,8 @@ architecture pass complete)_
 
 An audit of the module graph, followed by four contained fixes. **No calculation behaviour changed and
 no public API changed** — every symbol that existed before still exists with the same signature.
-`npm run verify` is green: themes:check, `tsc -b --force`, **69 files / 1006 tests**, production build.
+`npm run verify` is green: themes:check, `tsc -b --force`, **70 files / 1069 tests + 2 documented
+`todo`s**, production build.
 
 | Finding | Effect before | Status |
 | --- | --- | --- |
@@ -16,6 +17,15 @@ no public API changed** — every symbol that existed before still exists with t
 | Seven exported symbols referenced nowhere in the repo | Maintenance surface that implies capabilities that do not exist | Removed |
 | `PALETTE_ACCENT` never read; its comment named the wrong sentinel | The `''` sentinel was written as a bare literal in two places | Kept, comment corrected, and now used by `SettingsPanel` |
 | About screen claimed "688 automated tests" | The app's only checkable quality claim was wrong by 46% (actual: 1006) | Replaced with a claim that cannot rot |
+
+A direct test suite was added for `src/math/special/` — the module that had none, and that now holds the
+single implementation of `erf` plus the gamma/beta functions every continuous distribution is built on.
+Every expected value was computed independently with MPFR (`mpmath`). Writing it surfaced a real defect
+that is documented rather than hidden: **the Bessel functions are wrong outside a limited range**
+(`Y₀(1)` is 93% off; `J₅(20)` is 58% off), and `besselY` had no test at all. Neither is reachable from
+the calculator, the Ask layer or any panel, so no user can obtain a wrong answer today; the accurate
+ranges are pinned and the two defects appear as `it.todo` entries in every test run. See
+`ARCHITECTURE_AUDIT.md` (B1) for the error table and the recommended fix.
 
 Full analysis, including what was deliberately **not** changed and why, is in `ARCHITECTURE_AUDIT.md`;
 the current architecture is described in `ARCHITECTURE.md`. The only remaining layer violation
@@ -53,7 +63,7 @@ An audit-and-fix pass over the shipped 1.3.0 surface. Everything below is covere
 ## Current phase
 
 **2.0.0 — engine upgrade (in progress).** Phase 29 and everything before it is complete: 57 test
-files and 819 checks up to 1.3.0, now **69 files / 1006 checks**, with `npm run typecheck` clean after
+files and 819 checks up to 1.3.0, now **70 files / 1069 checks**, with `npm run typecheck` clean after
 every tier. Tiers land one at a time, each with its own module set, tests and a commit:
 
 | Tier | Area | Where | Status |
